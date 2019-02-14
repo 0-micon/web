@@ -1,6 +1,10 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
+import { FormsModule } from "@angular/forms";
+
+// Third party imports:
+import { NgxLoadingModule } from "ngx-loading";
 
 // Services:
 import { WorkoutsApiService } from "./services/workouts-api.service";
@@ -23,7 +27,13 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
     EntryEditorComponent,
     NavMenuComponent
   ],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
+  imports: [
+    NgxLoadingModule.forRoot({}),
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule
+  ],
   providers: [WorkoutsApiService],
   bootstrap: [AppComponent]
 })
