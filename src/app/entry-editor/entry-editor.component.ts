@@ -24,6 +24,8 @@ export class EntryEditorComponent implements OnInit {
         this.api.getWorkout(params.id).subscribe(data => {
           this.workout = data;
           this.loading = false;
+        }, err => {
+          this.loading = false;
         });
       }
     });

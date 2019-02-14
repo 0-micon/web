@@ -24,7 +24,7 @@
             ],
             "styles": [
               "src/styles.css",
-              "src/css/bootstrap.superhero.min.css"
+              "src/css/bootstrap.minty.css"
             ],
             "scripts": [],
             "es5BrowserSupport": true

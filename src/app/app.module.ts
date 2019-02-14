@@ -4,11 +4,12 @@ import { HttpClientModule } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 
 // Third party imports:
-import { NgxLoadingModule } from "ngx-loading";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgxLoadingModule, ngxLoadingAnimationTypes } from "ngx-loading";
+import { NgbModule, NgbDateAdapter } from "@ng-bootstrap/ng-bootstrap";
 
 // Services:
 import { WorkoutsApiService } from "./services/workouts-api.service";
+import { DateStringAdapterService } from "./services/date-string-adapter.service";
 
 // Routing:
 import { AppRoutingModule } from "./app-routing.module";
@@ -29,14 +30,24 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
     NavMenuComponent
   ],
   imports: [
-    NgxLoadingModule.forRoot({}),
+    NgxLoadingModule.forRoot({
+      animationType: ngxLoadingAnimationTypes.circleSwish,
+      //backdropBackgroundColour: "rgba(0,0,0,0.1)",
+      backdropBorderRadius: "14px"
+      //primaryColour: "#ffffff",
+      //secondaryColour: "#ffffff",
+      //tertiaryColour: "#ffffff"
+    }),
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
     NgbModule
   ],
-  providers: [WorkoutsApiService],
+  providers: [
+    WorkoutsApiService,
+    { provide: NgbDateAdapter, useClass: DateStringAdapterService }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -26,6 +26,8 @@ export class WorkoutsComponent implements OnInit {
     this.api.getWorkouts().subscribe(data => {
       this.workouts = (data as unknown) as Entry[];
       this.loading = false;
+    }, err => {
+      this.loading = false;
     });
   }
 
