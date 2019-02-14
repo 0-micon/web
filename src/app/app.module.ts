@@ -5,6 +5,7 @@ import { FormsModule } from "@angular/forms";
 
 // Third party imports:
 import { NgxLoadingModule } from "ngx-loading";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
 // Services:
 import { WorkoutsApiService } from "./services/workouts-api.service";
@@ -32,7 +33,8 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    NgbModule
   ],
   providers: [WorkoutsApiService],
   bootstrap: [AppComponent]
