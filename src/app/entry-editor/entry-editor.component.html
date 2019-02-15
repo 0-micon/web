@@ -17,7 +17,12 @@
               <option value="run">Run</option>
               <option value="row">Row</option>
             </select> -->
-            <div class="btn-group btn-group-toggle" ngbRadioGroup name="wtype" [(ngModel)]="workout.type">
+            <div
+              class="btn-group btn-group-toggle"
+              ngbRadioGroup
+              name="wtype"
+              [(ngModel)]="workout.type"
+            >
               <label ngbButtonLabel class="btn-primary">
                 <input ngbButton type="radio" value="bike" />
                 Bike
@@ -37,29 +42,53 @@
           <label class="col-form-label col-sm-2">Date:</label>
           <div class="col-sm-3">
             <!-- <input type="text" name="wdate" class="form-control" [(ngModel)]="workout.date" /> -->
-            <ngb-datepicker #d name="wdate" [(ngModel)]="model" [startDate]="start" [maxDate]="limit"></ngb-datepicker>
-            <!-- <ngb-datepicker #d name="wdate" [(ngModel)]="workout.date" [maxDate]="maxDate"></ngb-datepicker> -->
+            <!-- <ngb-datepicker #d name="wdate" [(ngModel)]="model" [startDate]="start" [maxDate]="limit"></ngb-datepicker> -->
+            <div class="input-group">
+              <input
+                class="form-control"
+                type="text"
+                placeholder="yyyy-mm-dd"
+                name="wdate"
+                #d="ngbDatepicker"
+                ngbDatepicker
+                [(ngModel)]="model"
+                [maxDate]="limit"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-info calendar"
+                  (click)="d.toggle()"
+                  type="button"
+                ></button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="form-group row">
           <label class="col-form-label col-sm-2">Distance:</label>
           <div class="col-sm-3">
-            <input type="text" name="wdist" class="form-control" [(ngModel)]="workout.distance" />
+            <input
+              type="text"
+              name="wdist"
+              class="form-control"
+              [(ngModel)]="workout.distance"
+            />
           </div>
         </div>
         <div class="form-group row">
           <div class="col-sm-4 mt-sm-3">
-            <button class="btn btn-primary mr-sm-2" (click)="save()">Save</button>
+            <button class="btn btn-primary mr-sm-2" (click)="save()">
+              Save
+            </button>
             <a class="btn btn-secondary" [routerLink]="['/workouts']">Cancel</a>
           </div>
         </div>
       </form>
     </div>
-
   </div>
 
   <pre>
-    <b>Model:</b> {{model | json}}
-    <b>Start:</b> {{start | json}}
+    <b>Model:</b> {{ model | json }}
+    <b>Start:</b> {{ start | json }}
   </pre>
 </div>

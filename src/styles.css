@@ -19,3 +19,12 @@ body {
   /* Pad bottom by footer height */
   padding: 0 0 90px;
 }
+
+button.calendar,
+button.calendar:active {
+  width: 2.75rem;
+  background-repeat: no-repeat;
+  background-size: 23px;
+  background-position: center;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAcCAYAAAAEN20fAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuNBNAaMQAAADESURBVEhL7ZdbCsIwEEXzpxvy8Rnywrg1re7RLkRvwkzBFIsfYdJCDlxobyg5NGlLldZ675x7Iu9GeSQHhYOWEjne+yGJ5BNr7UEJE0I48fyTCI2J00VKZiKtsz4RulPidJGS7YjgtXtFxhRjTKS6Ws/8IzLyGPKiulrP8Nj6RdJtTBem4IN4obpaz6BfFpFiOyJY2/7UfLEakV+7vVbPoF8WkaKLlMxEsJZHGhMD854nEezqgU8a5pZ/OVvK4Em6xxh3H5H2z9jSwOn2AAAAAElFTkSuQmCC') !important;
+}
