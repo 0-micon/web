@@ -6,12 +6,19 @@ import {
   toNgbDateStruct,
   fromNgbDateStruct
 } from "../services/date-string-adapter.service";
+import { Observable } from "rxjs";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 
 const ngbDate = (year: number, month: number, day: number): NgbDateStruct => ({
   year,
   month,
   day
 });
+
+interface LocationEntry {
+  id: number;
+  name: string;
+}
 
 @Component({
   selector: "app-entry-editor",
@@ -25,6 +32,8 @@ export class EntryEditorComponent implements OnInit {
   start: NgbDateStruct;
   model: NgbDateStruct;
   limit: NgbDateStruct;
+
+  locations: LocationEntry[];
 
   //maxDate: NgbDate;
 
@@ -46,6 +55,12 @@ export class EntryEditorComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.api
+      .getLocations()
+      .subscribe(
+        data => (this.locations = (data as unknown) as LocationEntry[])
+      );
+
     this.router.params.subscribe(params => {
       if (params.id !== "new") {
         this.loading = true;
@@ -85,4 +100,23 @@ export class EntryEditorComponent implements OnInit {
       this.nav.navigate(["/workouts"]);
     });
   }
+
+  locationSearch = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+
+      map(term => {
+        if (this.locations && term.length > 1) {
+          term = term.trim().toLowerCase();
+          if (term.length > 1) {
+            return this.locations
+              .filter(entry => entry.name.toLowerCase().indexOf(term) >= 0)
+              .slice(0, 10)
+              .map(entry => entry.name);
+          }
+        }
+        return [];
+      })
+    );
 }

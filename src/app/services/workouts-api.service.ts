@@ -5,9 +5,12 @@ import { Observable } from "rxjs";
 
 const baseUrl = "http://localhost:3000";
 const basePath = "/workouts";
+const locationsPath = "/locations";
 
 const workoutsUrl = baseUrl + basePath;
 const idToWorkout = id => workoutsUrl + "/" + id;
+
+const locationsUrl = baseUrl + locationsPath;
 
 @Injectable({
   providedIn: "root"
@@ -41,5 +44,9 @@ export class WorkoutsApiService {
 
   deleteWorkout(id: number): Observable<any> {
     return this.http.delete(idToWorkout(id));
+  }
+
+  getLocations(): Observable<ArrayBuffer> {
+    return this.http.get<ArrayBuffer>(locationsUrl);
   }
 }
