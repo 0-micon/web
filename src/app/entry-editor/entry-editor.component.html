@@ -37,7 +37,8 @@
           <label class="col-form-label col-sm-2">Date:</label>
           <div class="col-sm-3">
             <!-- <input type="text" name="wdate" class="form-control" [(ngModel)]="workout.date" /> -->
-            <ngb-datepicker #d name="wdate" [(ngModel)]="workout.date"></ngb-datepicker>
+            <ngb-datepicker #d name="wdate" [(ngModel)]="model" [startDate]="start" [maxDate]="limit"></ngb-datepicker>
+            <!-- <ngb-datepicker #d name="wdate" [(ngModel)]="workout.date" [maxDate]="maxDate"></ngb-datepicker> -->
           </div>
         </div>
         <div class="form-group row">
@@ -56,4 +57,9 @@
     </div>
 
   </div>
+
+  <pre>
+    <b>Model:</b> {{model | json}}
+    <b>Start:</b> {{start | json}}
+  </pre>
 </div>

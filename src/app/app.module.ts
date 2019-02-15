@@ -46,7 +46,7 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
   ],
   providers: [
     WorkoutsApiService,
-    { provide: NgbDateAdapter, useClass: DateStringAdapterService }
+    //{ provide: NgbDateAdapter, useClass: DateStringAdapterService }
   ],
   bootstrap: [AppComponent]
 })
