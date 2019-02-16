@@ -7,11 +7,11 @@
     </p>
   </div>
 
-  <ngb-accordion closeOthers="true" activeIds="panel_1">
+  <ngb-accordion closeOthers="true" activeIds="panel_1" #acc="ngbAccordion">
     <ngb-panel id="panel_1">
       <ng-template ngbPanelTitle>
         <p class="font-weight-bold">
-          Run
+          Welcome to Run
         </p>
       </ng-template>
       <ng-template ngbPanelContent>
@@ -23,19 +23,33 @@
           with these 3 awesome runs. Each one takes only 15 minutes, but still gets your heart rate up and your blood
           pumping.
         </div>
+        <div class="float-right">
+          <button class="btn btn-info" (click)="acc.toggle('panel_2')">Next</button>
+        </div>
       </ng-template>
     </ngb-panel>
 
     <ngb-panel title="Row" id="panel_2">
       <ng-template ngbPanelContent>
         Warm Up to Stretching Before & After Your Row
+        <div class="float-right">
+          <button class="btn btn-info" (click)="acc.toggle('panel_3')">Next</button>
+        </div>
       </ng-template>
     </ngb-panel>
 
     <ngb-panel title="Bike" id="panel_3">
       <ng-template ngbPanelContent>
-        Both training types have their pros and cons, but choosing the right one for you is largely dependent on your
-        running goals. We'll help you find out how to train to maximize your performance.
+        <p>
+          Both training types have their pros and cons, but choosing the right one for you is largely dependent on your
+          running goals. We'll help you find out how to train to maximize your performance.
+        </p>
+        <p>
+          Enjoy!
+        </p>
+        <div class="float-right">
+          <button class="btn btn-info" (click)="acc.toggle('panel_3')">Close</button>
+        </div>
       </ng-template>
     </ngb-panel>
   </ngb-accordion>
