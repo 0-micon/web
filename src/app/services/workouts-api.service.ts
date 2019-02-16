@@ -61,6 +61,7 @@ export class WorkoutsApiService {
   }
 
   setPerfTargets(perfTargets: any): Observable<any> {
+    console.log("Saving:", perfTargets);
     return this.http.put(performanceUrl, perfTargets);
   }
 }
