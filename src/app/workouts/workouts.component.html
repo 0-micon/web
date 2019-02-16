@@ -13,7 +13,8 @@
       <div class="mt-sm-2" [ngbCollapse]="!isCollapsed">
         <div class="card">
           <div class="card-body">
-            This will enable you to set performance targets for each activity and enable you to track progress toward you goals.
+            This will enable you to set performance targets for each activity and enable you to track progress toward
+            you goals.
           </div>
         </div>
       </div>
@@ -46,7 +47,7 @@
               <a class="btn btn-info btn-sm mr-2" [routerLink]="['/workouts', entry.id]">
                 Edit
               </a>
-              <button class="btn btn-danger btn-sm" (click)="deleteWorkout(entry.id)">Delete</button>
+              <button class="btn btn-danger btn-sm" (click)="deleteWorkout(entry.id, deleteModalDlg)">Delete</button>
             </td>
           </tr>
 
@@ -54,4 +55,25 @@
       </table>
     </div>
   </div>
+
+  <ng-template #deleteModalDlg let-modalDlg>
+    <div class="modal-header">
+      <h4 class="modal-title">
+        Delete?
+      </h4>
+    </div>
+    <div class="modal-body">
+      <p>
+        Are you sure you want to delete?
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" (click)="modalDlg.close()">
+        Yes (Delete)
+      </button>
+      <button class="btn btn-danger" (click)="modalDlg.dismiss()">
+        No (Cancel)
+      </button>
+    </div>
+  </ng-template>
 </div>
