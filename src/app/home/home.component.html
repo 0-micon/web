@@ -6,4 +6,37 @@
       Welcome to Workout Tracker!
     </p>
   </div>
+
+  <ngb-accordion closeOthers="true" activeIds="panel_1">
+    <ngb-panel id="panel_1">
+      <ng-template ngbPanelTitle>
+        <p class="font-weight-bold">
+          Run
+        </p>
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <h3>
+          A Short Run Is Better Than No Run
+        </h3>
+        <div>
+          When your schedule feels too packed, you may be tempted to cancel your workout first. But there's no need
+          with these 3 awesome runs. Each one takes only 15 minutes, but still gets your heart rate up and your blood
+          pumping.
+        </div>
+      </ng-template>
+    </ngb-panel>
+
+    <ngb-panel title="Row" id="panel_2">
+      <ng-template ngbPanelContent>
+        Warm Up to Stretching Before & After Your Row
+      </ng-template>
+    </ngb-panel>
+
+    <ngb-panel title="Bike" id="panel_3">
+      <ng-template ngbPanelContent>
+        Both training types have their pros and cons, but choosing the right one for you is largely dependent on your
+        running goals. We'll help you find out how to train to maximize your performance.
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
 </div>
