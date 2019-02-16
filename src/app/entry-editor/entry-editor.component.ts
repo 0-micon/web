@@ -7,7 +7,13 @@ import {
   fromNgbDateStruct
 } from "../services/date-string-adapter.service";
 import { Observable } from "rxjs";
-import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  tap,
+  switchMap
+} from "rxjs/operators";
 
 const ngbDate = (year: number, month: number, day: number): NgbDateStruct => ({
   year,
@@ -105,18 +111,34 @@ export class EntryEditorComponent implements OnInit {
     text$.pipe(
       debounceTime(200),
       distinctUntilChanged(),
-
-      map(term => {
-        if (this.locations && term.length > 1) {
-          term = term.trim().toLowerCase();
-          if (term.length > 1) {
-            return this.locations
-              .filter(entry => entry.name.toLowerCase().indexOf(term) >= 0)
-              .slice(0, 10)
-              .map(entry => entry.name);
-          }
-        }
-        return [];
-      })
+      tap(term => console.log("Start search for: " + term)),
+      switchMap(term => {
+        term = term.trim().toLowerCase();
+//        if (term.length > 1) {
+          return this.api.searchLocations(term);
+//        }
+//        return [];
+      }),
+      map(term => term.map(entry => entry.name)),
+      tap(term => console.log("Result: " + term))
     );
+
+  // locationSearch = (text$: Observable<string>) =>
+  //   text$.pipe(
+  //     debounceTime(200),
+  //     distinctUntilChanged(),
+
+  //     map(term => {
+  //       if (this.locations && term.length > 1) {
+  //         term = term.trim().toLowerCase();
+  //         if (term.length > 1) {
+  //           return this.locations
+  //             .filter(entry => entry.name.toLowerCase().indexOf(term) >= 0)
+  //             .slice(0, 10)
+  //             .map(entry => entry.name);
+  //         }
+  //       }
+  //       return [];
+  //     })
+  //   );
 }

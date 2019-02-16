@@ -8,7 +8,15 @@
       </h4>
     </div>
     <div class="card-body">
-      <button class="btn btn-sm btn-primary">Set Performance Target</button>
+      <button class="btn btn-sm btn-primary mr-sm-2">Set Performance Target</button>
+      <button class="btn btn-sm" (click)="isCollapsed = !isCollapsed" [ngClass]="isCollapsed ? 'btn-info' : 'btn-outline-info'">?</button>
+      <div class="mt-sm-2" [ngbCollapse]="!isCollapsed">
+        <div class="card">
+          <div class="card-body">
+            This will enable you to set performance targets for each activity and enable you to track progress toward you goals.
+          </div>
+        </div>
+      </div>
       <!--
         TODO: Progress bar here
       -->

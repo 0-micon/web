@@ -49,4 +49,8 @@ export class WorkoutsApiService {
   getLocations(): Observable<ArrayBuffer> {
     return this.http.get<ArrayBuffer>(locationsUrl);
   }
+
+  searchLocations(term: string): Observable<any> {
+    return this.http.get(locationsUrl + "?q=" + term);
+  }
 }
