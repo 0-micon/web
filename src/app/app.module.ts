@@ -21,6 +21,7 @@ import { WorkoutsComponent } from "./workouts/workouts.component";
 import { EntryEditorComponent } from "./entry-editor/entry-editor.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { PerformanceTargetsModalComponent } from "./performance-targets-modal/performance-targets-modal.component";
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { PerformanceTargetsModalComponent } from "./performance-targets-modal/pe
     WorkoutsComponent,
     EntryEditorComponent,
     NavMenuComponent,
-    PerformanceTargetsModalComponent
+    PerformanceTargetsModalComponent,
+    AdminComponent
   ],
   entryComponents: [PerformanceTargetsModalComponent],
   imports: [
