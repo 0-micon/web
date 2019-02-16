@@ -6,11 +6,13 @@ import { Observable } from "rxjs";
 const baseUrl = "http://localhost:3000";
 const basePath = "/workouts";
 const locationsPath = "/locations";
+const performancePath = "/performanceTargets";
 
 const workoutsUrl = baseUrl + basePath;
 const idToWorkout = id => workoutsUrl + "/" + id;
 
 const locationsUrl = baseUrl + locationsPath;
+const performanceUrl = baseUrl + performancePath;
 
 @Injectable({
   providedIn: "root"
@@ -52,5 +54,13 @@ export class WorkoutsApiService {
 
   searchLocations(term: string): Observable<any> {
     return this.http.get(locationsUrl + "?q=" + term);
+  }
+
+  getPerfTargets(): Observable<any> {
+    return this.http.get(performanceUrl);
+  }
+
+  setPerfTargets(perfTargets: any): Observable<any> {
+    return this.http.put(performanceUrl, perfTargets);
   }
 }

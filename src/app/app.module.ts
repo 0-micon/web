@@ -20,6 +20,7 @@ import { HomeComponent } from "./home/home.component";
 import { WorkoutsComponent } from "./workouts/workouts.component";
 import { EntryEditorComponent } from "./entry-editor/entry-editor.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
+import { PerformanceTargetsModalComponent } from "./performance-targets-modal/performance-targets-modal.component";
 
 @NgModule({
   declarations: [
@@ -27,8 +28,10 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
     HomeComponent,
     WorkoutsComponent,
     EntryEditorComponent,
-    NavMenuComponent
+    NavMenuComponent,
+    PerformanceTargetsModalComponent
   ],
+  entryComponents: [PerformanceTargetsModalComponent],
   imports: [
     NgxLoadingModule.forRoot({
       animationType: ngxLoadingAnimationTypes.circleSwish,
@@ -45,7 +48,7 @@ import { NavMenuComponent } from "./nav-menu/nav-menu.component";
     NgbModule
   ],
   providers: [
-    WorkoutsApiService,
+    WorkoutsApiService
     //{ provide: NgbDateAdapter, useClass: DateStringAdapterService }
   ],
   bootstrap: [AppComponent]
