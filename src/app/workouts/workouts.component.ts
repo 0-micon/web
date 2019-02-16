@@ -20,8 +20,9 @@ interface Entry {
 })
 export class WorkoutsComponent implements OnInit {
   loading: boolean = false;
-  workouts = [];
+  workouts: Entry[] = [];
   perfTargets: any = {};
+  total = {};
 
   constructor(private api: WorkoutsApiService, private modal: NgbModal) {}
 
@@ -33,6 +34,7 @@ export class WorkoutsComponent implements OnInit {
         this.perfTargets = perfTargets;
         this.loading = false;
         console.log("data: ", this.workouts, this.perfTargets);
+        this.calculatePerformance();
       },
       err => {
         this.loading = false;
@@ -98,5 +100,42 @@ export class WorkoutsComponent implements OnInit {
         console.log("Dissmissed with reason: " + reason);
       }
     );
+  }
+
+  calculatePerformance() {
+    let bike = 0,
+      row = 0,
+      run = 0;
+    this.workouts.forEach(item => {
+      const n = parseInt(item.distance, 10);
+      if (n > 0) {
+        switch (item.type) {
+          case "bike":
+            bike += n;
+            break;
+          case "row":
+            row += n;
+            break;
+          case "run":
+            run += n;
+            break;
+        }
+      }
+    });
+    this.total = { bike, row, run };
+    console.log("totals: ", this.total);
+  }
+
+  getPBType(total: number, target: number): string {
+    const pct = (total / target) * 100;
+    let type = "success";
+    if (pct > 25 && pct <= 50) {
+      type = "info";
+    } else if (pct > 50 && pct <= 75) {
+      type = "warning";
+    } else if (pct > 75) {
+      type = "danger";
+    }
+    return type;
   }
 }

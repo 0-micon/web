@@ -18,9 +18,24 @@
           </div>
         </div>
       </div>
-      <!--
-        TODO: Progress bar here
-      -->
+
+      <hr />
+      <p>
+        <ngb-progressbar [value]="total.bike" [max]="perfTargets.bike" [type]="getPBType(total.bike, perfTargets.bike)">
+          (Bike) {{total.bike}} of {{perfTargets.bike}}
+        </ngb-progressbar>
+      </p>
+      <p>
+        <ngb-progressbar [value]="total.row" [max]="perfTargets.row" [type]="getPBType(total.row, perfTargets.row)">
+          (Row) {{total.row}} of {{perfTargets.row}}
+        </ngb-progressbar>
+      </p>
+      <p>
+        <ngb-progressbar [value]="total.run" [max]="perfTargets.run" [type]="getPBType(total.run, perfTargets.run)">
+          (Run) {{total.run}} of {{perfTargets.run}}
+        </ngb-progressbar>
+      </p>
+
     </div>
   </div>
 
