@@ -24,6 +24,12 @@ export class WorkoutsApiService {
     return this.http.get<ArrayBuffer>(workoutsUrl);
   }
 
+  getPagedWorkouts(page: number, pageSize: number): Observable<ArrayBuffer> {
+    return this.http.get<ArrayBuffer>(
+      workoutsUrl + "?_page=" + page + "&_limit=" + pageSize
+    );
+  }
+
   getWorkout(id: number): Observable<any> {
     return this.http.get(idToWorkout(id));
   }

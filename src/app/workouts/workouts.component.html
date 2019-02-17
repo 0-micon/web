@@ -52,6 +52,16 @@
     </h3>
 
     <div class="card-body">
+
+      <div class="row">
+        <div class="col">
+          <ngb-pagination [collectionSize]="51" [boundaryLinks]="true" [pageSize]="pageSize" maxSize="5"
+            rotate="true" [(page)]="page" (pageChange)="refreshGrid()">
+
+          </ngb-pagination>
+        </div>
+      </div>
+
       <table class="table table-striped">
         <thead>
           <th>Date</th>

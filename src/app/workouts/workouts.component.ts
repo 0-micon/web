@@ -24,12 +24,17 @@ export class WorkoutsComponent implements OnInit {
   perfTargets: any = {};
   total: any = {};
   isCollapsed: boolean = false;
+  pageSize: number = 5;
+  page: number = 1;
 
   constructor(private api: WorkoutsApiService, private modal: NgbModal) {}
 
   ngOnInit() {
     this.loading = true;
-    forkJoin(this.api.getWorkouts(), this.api.getPerfTargets()).subscribe(
+    forkJoin(
+      this.api.getPagedWorkouts(this.page, this.pageSize),
+      this.api.getPerfTargets()
+    ).subscribe(
       ([workouts, perfTargets]) => {
         this.workouts = (workouts as unknown) as Entry[];
         this.perfTargets = perfTargets;
@@ -138,5 +143,20 @@ export class WorkoutsComponent implements OnInit {
       type = "danger";
     }
     return type;
+  }
+
+  refreshGrid() {
+    this.loading = true;
+    this.api.getPagedWorkouts(this.page, this.pageSize).subscribe(
+      value => {
+        this.workouts = (value as unknown) as Entry[];
+        this.loading = false;
+        this.calculatePerformance();
+      },
+      error => {
+        this.loading = false;
+        console.log("Error:", error);
+      }
+    );
   }
 }
