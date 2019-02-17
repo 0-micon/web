@@ -6,16 +6,11 @@ import { WorkoutsComponent } from "./workouts/workouts.component";
 import { EntryEditorComponent } from "./entry-editor/entry-editor.component";
 import { AdminComponent } from "./admin/admin.component";
 
-const _R_ = (path: string, component?: Type<any>): Route => ({
-  path,
-  component
-});
-
 const routes: Routes = [
-  _R_("", HomeComponent),
-  _R_("workouts", WorkoutsComponent),
-  _R_("workouts/:id", EntryEditorComponent),
-  _R_("admin", AdminComponent)
+  { path: "", component: HomeComponent },
+  { path: "workouts", component: WorkoutsComponent },
+  { path: "workouts/:id", component: EntryEditorComponent },
+  { path: "admin", component: AdminComponent }
 ];
 
 @NgModule({

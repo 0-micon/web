@@ -22,7 +22,8 @@ export class WorkoutsComponent implements OnInit {
   loading: boolean = false;
   workouts: Entry[] = [];
   perfTargets: any = {};
-  total = {};
+  total: any = {};
+  isCollapsed: boolean = false;
 
   constructor(private api: WorkoutsApiService, private modal: NgbModal) {}
 
