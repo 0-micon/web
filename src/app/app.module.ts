@@ -21,7 +21,10 @@ import { WorkoutsComponent } from "./workouts/workouts.component";
 import { EntryEditorComponent } from "./entry-editor/entry-editor.component";
 import { NavMenuComponent } from "./nav-menu/nav-menu.component";
 import { PerformanceTargetsModalComponent } from "./performance-targets-modal/performance-targets-modal.component";
-import { AdminComponent } from './admin/admin.component';
+import { AdminComponent } from "./admin/admin.component";
+
+import { FreecellHomeComponent } from "./freecell/freecell-home.component";
+import { FreecellGameComponent } from "./freecell/freecell-game.component";
 
 @NgModule({
   declarations: [
@@ -31,7 +34,9 @@ import { AdminComponent } from './admin/admin.component';
     EntryEditorComponent,
     NavMenuComponent,
     PerformanceTargetsModalComponent,
-    AdminComponent
+    AdminComponent,
+    FreecellHomeComponent,
+    FreecellGameComponent
   ],
   entryComponents: [PerformanceTargetsModalComponent],
   imports: [
