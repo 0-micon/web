@@ -1,3 +1,12 @@
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  AfterViewChecked
+} from "@angular/core";
+
 interface Frame {
   x: number;
   y: number;
@@ -11,20 +20,13 @@ interface FrameHash {
 
 type FrameArray = Frame[];
 
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  ViewChild,
-  AfterViewInit
-} from "@angular/core";
-
 @Component({
   selector: "app-sprite-maker",
   templateUrl: "./sprite-maker.component.html",
   styleUrls: ["./sprite-maker.component.css"]
 })
-export class SpriteMakerComponent implements OnInit, AfterViewInit {
+export class SpriteMakerComponent
+  implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild("canvas")
   canvasRef: ElementRef<HTMLCanvasElement>;
 
@@ -33,7 +35,11 @@ export class SpriteMakerComponent implements OnInit, AfterViewInit {
   height: number = 100;
 
   sprite: ImageBitmap;
-  frames: FrameHash;
+  frames: FrameHash = {};
+
+  newFrame = { name: "frame", x: 0, y: 0, w: 1, h: 1 };
+
+  mousedown: boolean = false;
 
   get frameNames(): string[] {
     return Object.keys(this.frames);
@@ -49,6 +55,10 @@ export class SpriteMakerComponent implements OnInit, AfterViewInit {
     console.log("ngAfterViewInit", this.canvasRef.nativeElement);
   }
 
+  ngAfterViewChecked(): void {
+    this.repaint();
+  }
+
   loadSprites($event): void {
     console.log("Event: ", $event);
     if ($event.target && $event.target.files[0]) {
@@ -61,9 +71,9 @@ export class SpriteMakerComponent implements OnInit, AfterViewInit {
           this.name = file.name;
           console.log("Success!");
 
-          setTimeout(() => {
-            this.paint();
-          });
+          //setTimeout(() => {
+          //  this.repaint();
+          //});
         });
 
         // const reader: FileReader = new FileReader();
@@ -93,7 +103,7 @@ export class SpriteMakerComponent implements OnInit, AfterViewInit {
             try {
               this.selection = -1;
               this.frames = JSON.parse(result);
-              this.paint();
+              //this.repaint();
             } catch (error) {
               console.log("Parse Error: " + (error as SyntaxError).message);
             }
@@ -104,20 +114,44 @@ export class SpriteMakerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  paint(): void {
-    if (!this.sprite) {
-      return;
-    }
-
+  repaint(): void {
     const canvas = this.canvasRef.nativeElement;
     const g = canvas.getContext("2d");
-    g.drawImage(this.sprite, 0, 0);
+    g.save();
+
+    g.clearRect(0, 0, this.width, this.height);
+    if (this.sprite) {
+      g.drawImage(this.sprite, 0, 0);
+    }
+
+    g.globalAlpha = 0.7;
 
     for (let key in this.frames) {
       const frame = this.frames[key];
 
+      g.strokeStyle = "red";
       g.strokeRect(frame.x, frame.y, frame.w, frame.h);
     }
+
+    let x = +this.newFrame.x;
+    let y = +this.newFrame.y;
+    let w = +this.newFrame.w;
+    let h = +this.newFrame.h;
+    if (!(isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h))) {
+      if (this.mousedown) {
+        g.beginPath();
+        g.moveTo(x, y);
+        g.lineTo(x + w, y + h);
+
+        g.strokeStyle = "grey";
+        g.stroke();
+      } else {
+        g.strokeStyle = "blue";
+        g.strokeRect(x + 0.5, y + 0.5, w, h);
+      }
+    }
+
+    g.restore();
   }
 
   editFrame(name: string): void {}
@@ -125,7 +159,79 @@ export class SpriteMakerComponent implements OnInit, AfterViewInit {
   deleteFrame(name: string): void {
     if (this.frames[name]) {
       delete this.frames[name];
-      this.paint();
+      //this.repaint();
     }
+  }
+
+  get isNewFrameValid(): boolean {
+    const f = this.newFrame;
+    return (
+      !this.frames[f.name] && +f.x >= 0 && +f.y >= 0 && +f.w > 0 && +f.h > 0
+    );
+  }
+
+  addFrame(): void {
+    if (this.isNewFrameValid) {
+      this.frames[this.newFrame.name] = {
+        x: +this.newFrame.x,
+        y: +this.newFrame.y,
+        w: +this.newFrame.w,
+        h: +this.newFrame.h
+      };
+      //this.repaint();
+    }
+  }
+
+  extractCoords($event: MouseEvent) {
+    const target: HTMLCanvasElement = $event.target as HTMLCanvasElement;
+
+    //const style = target.style || window.getComputedStyle(target, null);
+    //console.log("style", style);
+
+    //const dx = parseInt(style.borderLeftWidth, 10) || 0;
+    //const dy = parseInt(style.borderTopWidth, 10) || 0;
+    const rect = target.getBoundingClientRect();
+    const xOffset = Math.floor($event.clientX - rect.left);
+    const yOffset = Math.floor($event.clientY - rect.top);
+    return { xOffset, yOffset };
+  }
+
+  onMouseDown($event: MouseEvent) {
+    const pos = this.extractCoords($event);
+
+    this.newFrame.x = pos.xOffset;
+    this.newFrame.y = pos.yOffset;
+    this.newFrame.w = 1;
+    this.newFrame.h = 1;
+    this.mousedown = true;
+    //this.repaint();
+  }
+
+  onMouseMove($event: MouseEvent) {
+    if (this.mousedown) {
+      const pos = this.extractCoords($event);
+      this.newFrame.w = pos.xOffset - this.newFrame.x;
+      this.newFrame.h = pos.yOffset - this.newFrame.y;
+      //this.repaint();
+    }
+  }
+
+  onMouseUp($event) {
+    const pos = this.extractCoords($event);
+    this.newFrame.w = pos.xOffset - this.newFrame.x;
+    this.newFrame.h = pos.yOffset - this.newFrame.y;
+
+    if (this.newFrame.w < 0) {
+      this.newFrame.x += this.newFrame.w;
+      this.newFrame.w = -this.newFrame.w;
+    }
+
+    if (this.newFrame.h < 0) {
+      this.newFrame.y += this.newFrame.h;
+      this.newFrame.h = -this.newFrame.h;
+    }
+
+    this.mousedown = false;
+    //this.repaint();
   }
 }
