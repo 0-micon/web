@@ -25,6 +25,7 @@ import { AdminComponent } from "./admin/admin.component";
 
 import { FreecellHomeComponent } from "./freecell/freecell-home.component";
 import { FreecellGameComponent } from "./freecell/freecell-game.component";
+import { SpriteMakerComponent } from './sprite/sprite-maker/sprite-maker.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { FreecellGameComponent } from "./freecell/freecell-game.component";
     PerformanceTargetsModalComponent,
     AdminComponent,
     FreecellHomeComponent,
-    FreecellGameComponent
+    FreecellGameComponent,
+    SpriteMakerComponent
   ],
   entryComponents: [PerformanceTargetsModalComponent],
   imports: [

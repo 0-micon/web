@@ -7,12 +7,14 @@ import { EntryEditorComponent } from "./entry-editor/entry-editor.component";
 import { AdminComponent } from "./admin/admin.component";
 import { FreecellHomeComponent } from './freecell/freecell-home.component';
 import { FreecellGameComponent } from './freecell/freecell-game.component';
+import { SpriteMakerComponent } from './sprite/sprite-maker/sprite-maker.component';
 
 const routes: Routes = [
   { path: "workouts", component: WorkoutsComponent },
   { path: "workouts/:id", component: EntryEditorComponent },
   { path: "freecell", component: FreecellHomeComponent },
   { path: "freecell/:id", component: FreecellGameComponent },
+  { path: "spritemaker", component: SpriteMakerComponent },
   { path: "admin", component: AdminComponent },
   { path: "", component: HomeComponent },
 ];

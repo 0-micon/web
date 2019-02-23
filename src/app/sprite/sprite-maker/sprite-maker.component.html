@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col-6">
+    <label class="btn btn-light" title="Choose a sprite file (image)">
+      Sprite:
+      <input type="file" [multiple]="false" (change)="loadSprites($event)" placeholder="Upload file..." />
+    </label>
+  </div>
+  <div class="col-6">
+    <label class="btn btn-light" title="Choose a frame file (json)">
+      Frame:
+      <input type="file" [multiple]="false" (change)="loadFrames($event)" placeholder="Upload file..." />
+    </label>
+  </div>
+</div>
+
+<div class="row mh-100">
+  <div class="col-6 overflow-auto">
+    <canvas #canvas [width]="width" [height]="height"></canvas>
+  </div>
+  <div class="col-6 overflow-auto">
+    <table class="table table-striped">
+      <thead>
+        <th>Name</th>
+        <th>X</th>
+        <th>Y</th>
+        <th>W</th>
+        <th>H</th>
+        <th></th>
+      </thead>
+      <tbody *ngIf="frames">
+        <tr *ngFor="let name of frameNames">
+          <td>{{name}}</td>
+          <td>{{frames[name].x}}</td>
+          <td>{{frames[name].y}}</td>
+          <td>{{frames[name].w}}</td>
+          <td>{{frames[name].h}}</td>
+          <td>
+            <button class="btn btn-info btn-sm mr-2" (click)="editFrame(name)">Edit</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteFrame(name)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- <div *ngIf="sprite"> -->
+<!-- <img [src]="data" [alt]="name" /> -->
+<!-- </div> -->
+
+<div *ngIf="frames">
+  <ul class="list-group">
+    <li *ngFor="let name of frameNames;let i = index" class="list-group-item list-group-item-action" [class.active]="i===selection"
+      (click)="selection=i">{{name}}</li>
+  </ul>
+  {{frames | json}}
+</div>
