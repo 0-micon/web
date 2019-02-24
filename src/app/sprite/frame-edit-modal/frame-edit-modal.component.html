@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    Frame: {{frame.name}}
+  </h4>
+</div>
+
+<div class="modal-body">
+  <form>
+    <div class="form-group">
+      <label>X offset: <input type="number" name="wx" class="form-control" [(ngModel)]="frame.x"></label>
+      <label>Y offset: <input type="number" name="wy" class="form-control" [(ngModel)]="frame.y"></label>
+      <label>Width: <input type="number" name="ww" class="form-control" [(ngModel)]="frame.w"></label>
+      <label>Height: <input type="number" name="wh" class="form-control" [(ngModel)]="frame.h"></label>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-primary" (click)="save()" [disabled]="!isFrameValid">
+    Save
+  </button>
+  <button class="btn btn-secondary" (click)="dismiss()">
+    Cancel
+  </button>
+</div>

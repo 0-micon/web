@@ -7,19 +7,24 @@ import {
   AfterViewChecked
 } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { FrameEditModalComponent } from "../frame-edit-modal/frame-edit-modal.component";
 
-interface Frame {
+export interface Frame {
   x: number;
   y: number;
   w: number;
   h: number;
 }
 
-interface FrameHash {
+export interface NamedFrame extends Frame {
+  name: string;
+}
+
+export interface FrameHash {
   [key: string]: Frame;
 }
 
-type FrameArray = Frame[];
+export type FrameArray = Frame[];
 
 @Component({
   selector: "app-sprite-maker",
@@ -38,7 +43,7 @@ export class SpriteMakerComponent
   sprite: ImageBitmap;
   frames: FrameHash = {};
 
-  newFrame = { name: "frame", x: 0, y: 0, w: 1, h: 1 };
+  newFrame: NamedFrame = { name: "frame", x: 0, y: 0, w: 1, h: 1 };
 
   mousedown: boolean = false;
 
@@ -130,6 +135,9 @@ export class SpriteMakerComponent
     for (let key in this.frames) {
       const frame = this.frames[key];
 
+      g.fillStyle = "yellow";
+      g.fillRect(frame.x, frame.y, frame.w, frame.h);
+
       g.strokeStyle = "red";
       g.strokeRect(frame.x, frame.y, frame.w, frame.h);
     }
@@ -172,7 +180,34 @@ export class SpriteMakerComponent
     }
   }
 
-  editFrame(name: string): void {}
+  editFrame(name: string): void {
+    const frame = this.frames[name];
+    if (frame) {
+      const modalRef = this.modal.open(FrameEditModalComponent);
+      const componentInstance = modalRef.componentInstance;
+      componentInstance.frame = {
+        name: name,
+        x: frame.x,
+        y: frame.y,
+        w: frame.w,
+        h: frame.h
+      };
+
+      modalRef.result.then(data => {
+        //console.log("Data:", data);
+        const x = +data.x;
+        const y = +data.y;
+        const h = +data.h;
+        const w = +data.w;
+        if (!(isNaN(x) || isNaN(y) || isNaN(w) || isNaN(h))) {
+          frame.x = x;
+          frame.y = y;
+          frame.w = w;
+          frame.h = h;
+        }
+      });
+    }
+  }
 
   deleteFrame(name: string, confirmDlg): void {
     this.modal.open(confirmDlg, { size: "sm" }).result.then(result => {
