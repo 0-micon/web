@@ -6,6 +6,7 @@ import {
   AfterViewInit,
   AfterViewChecked
 } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 interface Frame {
   x: number;
@@ -47,7 +48,7 @@ export class SpriteMakerComponent
 
   selection: number = -1;
 
-  constructor() {}
+  constructor(private modal: NgbModal) {}
 
   ngOnInit() {}
 
@@ -154,13 +155,31 @@ export class SpriteMakerComponent
     g.restore();
   }
 
+  copyFrame(name: string): void {
+    const src = this.frames[name];
+    if (src) {
+      const dst = this.newFrame;
+      dst.x = src.x;
+      dst.y = src.y;
+      dst.w = src.w;
+      dst.h = src.h;
+
+      let i = 1;
+      while (this.frames[name + i]) {
+        i++;
+      }
+      dst.name = name + i;
+    }
+  }
+
   editFrame(name: string): void {}
 
-  deleteFrame(name: string): void {
-    if (this.frames[name]) {
-      delete this.frames[name];
-      //this.repaint();
-    }
+  deleteFrame(name: string, confirmDlg): void {
+    this.modal.open(confirmDlg, { size: "sm" }).result.then(result => {
+      if (this.frames[name]) {
+        delete this.frames[name];
+      }
+    });
   }
 
   get isNewFrameValid(): boolean {

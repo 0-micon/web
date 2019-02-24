@@ -23,8 +23,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "src/css/bootstrap.minty.css"
+              "src/css/bootstrap.minty.css",
+              "src/styles.css"
             ],
             "scripts": [],
             "es5BrowserSupport": true

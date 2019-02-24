@@ -1,3 +1,7 @@
 div.test-border {
   border: 5px solid red;
 }
+
+.dropdown-menu {
+  min-width: 6rem;
+}
