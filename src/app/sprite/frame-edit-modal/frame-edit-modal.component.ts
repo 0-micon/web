@@ -18,6 +18,7 @@ export class FrameEditModalComponent implements OnInit, AfterViewChecked {
   canvasRef: ElementRef<HTMLCanvasElement>;
   frame: NamedFrame;
   sprite: ImageBitmap;
+  zoom: number = 4;
 
   get isFrameValid(): boolean {
     const frame = this.frame;
@@ -38,6 +39,8 @@ export class FrameEditModalComponent implements OnInit, AfterViewChecked {
   ngOnInit() {}
 
   ngAfterViewChecked() {
+    console.log(this.zoom);
+
     const frame = this.frame;
     const canvas = this.canvasRef.nativeElement;
     const w = canvas.width;

@@ -2,22 +2,45 @@
   <h4 class="modal-title">
     Frame: {{frame.name}}
   </h4>
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 
 <div class="modal-body">
 
   <form>
-    <div class="form-group">
-      <div class="form-row">
+    <!-- <div class="form-group"> -->
+    <div class="form-row">
+      <div class="col btn-group-sm mr-4">
         <label>X offset: <input type="number" name="wx" class="form-control form-control-sm" [(ngModel)]="frame.x"></label>
         <label>Y offset: <input type="number" name="wy" class="form-control form-control-sm" [(ngModel)]="frame.y"></label>
         <label>Width: <input type="number" name="ww" class="form-control form-control-sm" [(ngModel)]="frame.w"></label>
         <label>Height: <input type="number" name="wh" class="form-control form-control-sm" [(ngModel)]="frame.h"></label>
       </div>
+
+      <div class="col btn-group-sm">
+        <label>Zoom: {{zoom}}x<input type="range" name="wzoom" class="form-control form-control-range form-control-sm"
+            [(ngModel)]="zoom" min="0.25" max="10" step="0.25"></label>
+        <!-- <label> -->
+        <!-- <div class="btn-group-toggle" ngbRadioGroup name="wzoom" [(ngModel)]="zoom"> -->
+        <!-- <label>Zoom: <input type="number" name="wzoom" class="form-control form-control-sm" step="0.25" min="0" max="10"
+              [(ngModel)]="zoom"> -->
+        <!-- <label ngbButtonLabel class="btn-outline-dark">1x<input ngbButton type="radio" [value]="1"></label>
+          <label ngbButtonLabel class="btn-outline-dark">2x<input ngbButton type="radio" [value]="2"></label>
+          <label ngbButtonLabel class="btn-outline-dark">3x<input ngbButton type="radio" [value]="3"></label>
+          <label ngbButtonLabel class="btn-outline-dark">4x<input ngbButton type="radio" [value]="4"></label>
+          <label ngbButtonLabel class="btn-outline-dark">5x<input ngbButton type="radio" [value]="5"></label> -->
+        <!-- </label> -->
+        <!-- <input type="number" name="wz" class="form-control form-control-sm" step="0.25" min="0" max="50" [(ngModel)]="zoom"> -->
+        <!-- </div> -->
+        <!-- </label> -->
+      </div>
     </div>
+    <!-- </div> -->
   </form>
   <div>
-    <canvas #canvas [width]="frame.w * 4" [height]="frame.h * 4"></canvas>
+    <canvas #canvas [width]="frame.w * zoom" [height]="frame.h * zoom"></canvas>
   </div>
 
 </div>
