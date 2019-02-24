@@ -5,14 +5,21 @@
 </div>
 
 <div class="modal-body">
+
   <form>
     <div class="form-group">
-      <label>X offset: <input type="number" name="wx" class="form-control" [(ngModel)]="frame.x"></label>
-      <label>Y offset: <input type="number" name="wy" class="form-control" [(ngModel)]="frame.y"></label>
-      <label>Width: <input type="number" name="ww" class="form-control" [(ngModel)]="frame.w"></label>
-      <label>Height: <input type="number" name="wh" class="form-control" [(ngModel)]="frame.h"></label>
+      <div class="form-row">
+        <label>X offset: <input type="number" name="wx" class="form-control form-control-sm" [(ngModel)]="frame.x"></label>
+        <label>Y offset: <input type="number" name="wy" class="form-control form-control-sm" [(ngModel)]="frame.y"></label>
+        <label>Width: <input type="number" name="ww" class="form-control form-control-sm" [(ngModel)]="frame.w"></label>
+        <label>Height: <input type="number" name="wh" class="form-control form-control-sm" [(ngModel)]="frame.h"></label>
+      </div>
     </div>
   </form>
+  <div>
+    <canvas #canvas [width]="frame.w * 4" [height]="frame.h * 4"></canvas>
+  </div>
+
 </div>
 
 <div class="modal-footer">

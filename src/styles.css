@@ -34,6 +34,11 @@ button.calendar:active {
   .container {
     max-width: 1526px;
   }
+
+  .modal-lg,
+  .modal-xl {
+    max-width: 85%;
+  }
 }
 
 /* FHD desktops (1900px and up) */
@@ -41,11 +46,21 @@ button.calendar:active {
   .container {
     max-width: 1814px;
   }
+
+  .modal-lg,
+  .modal-xl {
+    max-width: 85%;
+  }
 }
 
 /* QHD desktops (2500px and up) */
 @media (min-width: 2500px) {
   .container {
     max-width: 2402px;
+  }
+
+  .modal-lg,
+  .modal-xl {
+    max-width: 85%;
   }
 }

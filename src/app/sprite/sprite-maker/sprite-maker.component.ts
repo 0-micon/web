@@ -183,7 +183,10 @@ export class SpriteMakerComponent
   editFrame(name: string): void {
     const frame = this.frames[name];
     if (frame) {
-      const modalRef = this.modal.open(FrameEditModalComponent);
+      const modalRef = this.modal.open(FrameEditModalComponent, {
+        size: "lg"
+        //windowClass: "mw-100 w-75"
+      });
       const componentInstance = modalRef.componentInstance;
       componentInstance.frame = {
         name: name,
@@ -192,6 +195,7 @@ export class SpriteMakerComponent
         w: frame.w,
         h: frame.h
       };
+      componentInstance.sprite = this.sprite;
 
       modalRef.result.then(data => {
         //console.log("Data:", data);
