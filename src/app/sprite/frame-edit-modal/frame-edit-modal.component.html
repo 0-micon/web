@@ -1,27 +1,72 @@
 <div class="modal-header">
-  <h4 class="modal-title">
-    Frame: {{frame.name}}
-  </h4>
+  <h4 class="modal-title">Frame: {{ frame.name }}</h4>
   <button type="button" class="close" aria-label="Close" (click)="dismiss()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 
 <div class="modal-body">
-
   <form>
-    <!-- <div class="form-group"> -->
+    <!-- <div class="form-group btn-group-sm"> -->
     <div class="form-row">
-      <div class="col btn-group-sm mr-4">
-        <label>X offset: <input type="number" name="wx" class="form-control form-control-sm" [(ngModel)]="frame.x"></label>
-        <label>Y offset: <input type="number" name="wy" class="form-control form-control-sm" [(ngModel)]="frame.y"></label>
-        <label>Width: <input type="number" name="ww" class="form-control form-control-sm" [(ngModel)]="frame.w"></label>
-        <label>Height: <input type="number" name="wh" class="form-control form-control-sm" [(ngModel)]="frame.h"></label>
+      <div class="col">
+        <label>
+          X offset:
+          <input
+            type="number"
+            name="wx"
+            class="form-control form-control-sm"
+            [(ngModel)]="frame.x"
+          />
+        </label>
+        <label
+          >Y offset:
+          <input
+            type="number"
+            name="wy"
+            class="form-control form-control-sm"
+            [(ngModel)]="frame.y"
+        /></label>
+        <label
+          >Width:
+          <input
+            type="number"
+            name="ww"
+            class="form-control form-control-sm"
+            [(ngModel)]="frame.w"
+        /></label>
+        <label
+          >Height:
+          <input
+            type="number"
+            name="wh"
+            class="form-control form-control-sm"
+            [(ngModel)]="frame.h"
+        /></label>
       </div>
 
-      <div class="col btn-group-sm">
-        <label>Zoom: {{zoom}}x<input type="range" name="wzoom" class="form-control form-control-range form-control-sm"
-            [(ngModel)]="zoom" min="0.25" max="10" step="0.25"></label>
+      <div class="col">
+        <label class="d-block">Zoom: {{ zoom }}x</label>
+        <input
+          type="range"
+          name="wzoom"
+          class="form-control form-control-range form-control-sm w-25 d-inline-flex"
+          [(ngModel)]="zoom"
+          min="0.25"
+          max="8"
+          step="0.25"
+        />
+        <div class="btn-group align-top">
+          <button
+            *ngFor="let z of [0.25, 0.5, 1, 2, 4, 8]"
+            class="btn btn-sm"
+            [class.btn-dark]="zoom == z"
+            [class.btn-outline-dark]="zoom != z"
+            (click)="zoom = z"
+          >
+            {{ z }}x
+          </button>
+        </div>
         <!-- <label> -->
         <!-- <div class="btn-group-toggle" ngbRadioGroup name="wzoom" [(ngModel)]="zoom"> -->
         <!-- <label>Zoom: <input type="number" name="wzoom" class="form-control form-control-sm" step="0.25" min="0" max="10"
@@ -42,7 +87,6 @@
   <div>
     <canvas #canvas [width]="frame.w * zoom" [height]="frame.h * zoom"></canvas>
   </div>
-
 </div>
 
 <div class="modal-footer">
