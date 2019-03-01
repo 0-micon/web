@@ -13,6 +13,9 @@
         Frame:
         <input type="file" [multiple]="false" (change)="loadFrames($event)" placeholder="Upload file..." />
       </label>
+      <button class="btn btn-info" (click)="packFrames()">
+        Pack
+      </button>
     </div>
   </div>
 
@@ -92,10 +95,10 @@
 <!-- </div> -->
 
 <div *ngIf="frames">
-  <ul class="list-group">
+  <!-- <ul class="list-group">
     <li *ngFor="let name of frameNames;let i = index" class="list-group-item list-group-item-action" [class.active]="i===selection"
       (click)="selection=i">{{name}}</li>
-  </ul>
+  </ul> -->
   {{frames | json}}
 </div>
 

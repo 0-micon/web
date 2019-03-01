@@ -27,6 +27,7 @@ import { FreecellHomeComponent } from "./freecell/freecell-home.component";
 import { FreecellGameComponent } from "./freecell/freecell-game.component";
 import { SpriteMakerComponent } from "./sprite/sprite-maker/sprite-maker.component";
 import { FrameEditModalComponent } from "./sprite/frame-edit-modal/frame-edit-modal.component";
+import { FramePackModalComponent } from "./sprite/frame-pack-modal/frame-pack-modal.component";
 
 @NgModule({
   declarations: [
@@ -40,9 +41,14 @@ import { FrameEditModalComponent } from "./sprite/frame-edit-modal/frame-edit-mo
     FreecellHomeComponent,
     FreecellGameComponent,
     SpriteMakerComponent,
-    FrameEditModalComponent
+    FrameEditModalComponent,
+    FramePackModalComponent
   ],
-  entryComponents: [PerformanceTargetsModalComponent, FrameEditModalComponent],
+  entryComponents: [
+    PerformanceTargetsModalComponent,
+    FrameEditModalComponent,
+    FramePackModalComponent
+  ],
   imports: [
     NgxLoadingModule.forRoot({
       animationType: ngxLoadingAnimationTypes.circleSwish,

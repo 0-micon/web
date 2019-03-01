@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { FrameEditModalComponent } from "../frame-edit-modal/frame-edit-modal.component";
+import { FramePackModalComponent } from "../frame-pack-modal/frame-pack-modal.component";
 
 export interface Frame {
   x: number;
@@ -238,6 +239,17 @@ export class SpriteMakerComponent
       };
       //this.repaint();
     }
+  }
+
+  packFrames() {
+    const modalRef = this.modal.open(FramePackModalComponent, {
+      size: "lg"
+    });
+    const componentInstance = modalRef.componentInstance;
+    componentInstance.sprite = this.sprite;
+    componentInstance.frames = this.frames;
+
+    modalRef.result.then(result => {});
   }
 
   extractCoords($event: MouseEvent) {
