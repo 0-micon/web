@@ -10,6 +10,39 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { FrameEditModalComponent } from "../frame-edit-modal/frame-edit-modal.component";
 import { FramePackModalComponent } from "../frame-pack-modal/frame-pack-modal.component";
 
+function toBlob(dataURI: string): Blob | null {
+  // dataURI format: data:image/png;base64,iVBORw0AAAAA
+  const data = dataURI.split(",");
+
+  // separate out the mime type
+  const match = data[0].match(/\:([^;]+)/);
+  if (match.length > 1) {
+    console.log("Match:", match);
+
+    const type = match[1]; // data[0].split(":")[1].split(";")[0];
+
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    const byteString = atob(data[1]);
+
+    // write the bytes of the string to an ArrayBuffer
+    const buf = new ArrayBuffer(byteString.length);
+
+    // create a view into the buffer
+    const arr = new Uint8Array(buf);
+
+    // set the bytes of the buffer to the correct values
+    for (let i = 0; i < byteString.length; i++) {
+      arr[i] = byteString.charCodeAt(i);
+    }
+
+    // write the ArrayBuffer to a blob, and you're done
+    return new Blob([buf], { type });
+  }
+
+  return null;
+}
+
 export interface Frame {
   x: number;
   y: number;
@@ -56,13 +89,36 @@ export class SpriteMakerComponent
 
   constructor(private modal: NgbModal) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (window.localStorage) {
+      const frames = localStorage.getItem("frames");
+      if (frames && frames.length > 0) {
+        this.frames = JSON.parse(frames);
+      }
+
+      const dataUrl = localStorage.getItem("sprite");
+      if (dataUrl && dataUrl.length > 0) {
+        const blob = toBlob(dataUrl);
+        if (blob) {
+          createImageBitmap(blob).then(value => {
+            this.width = value.width;
+            this.height = value.height;
+            this.sprite = value;
+            console.log("Success!");
+          });
+        }
+      }
+    }
+  }
 
   ngAfterViewInit(): void {
     console.log("ngAfterViewInit", this.canvasRef.nativeElement);
   }
 
   ngAfterViewChecked(): void {
+    if (window.localStorage) {
+      localStorage.setItem("frames", JSON.stringify(this.frames));
+    }
     this.repaint();
   }
 
@@ -77,6 +133,16 @@ export class SpriteMakerComponent
           this.sprite = value;
           this.name = file.name;
           console.log("Success!");
+
+          if (window.localStorage) {
+            const reader = new FileReader();
+            reader.onload = (ev: ProgressEvent) => {
+              if (typeof reader.result === "string") {
+                window.localStorage.setItem("sprite", reader.result);
+              }
+            };
+            reader.readAsDataURL(file);
+          }
 
           //setTimeout(() => {
           //  this.repaint();
