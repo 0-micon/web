@@ -227,7 +227,11 @@ export class FramePackModalComponent implements OnInit {
     this.packer = new Packer(w, h);
 
     const names = Object.keys(this.frames);
-    names.sort((a, b) => this.frames[b].h - this.frames[a].h);
+    names.sort(
+      (a, b) =>
+        this.frames[b].h * this.frames[b].w -
+        this.frames[a].h * this.frames[a].w
+    );
 
     for (let i = 0; i < names.length; i++) {
       const frame: Frame = this.frames[names[i]];
@@ -264,7 +268,7 @@ export class FramePackModalComponent implements OnInit {
 
     g.strokeStyle = "gold";
     this.packer.empty.forEach(r => {
-      g.strokeRect(r.x, r.y, r.w, r.h);
+      g.strokeRect(r.x + 0.5, r.y + 0.5, r.w - 1, r.h - 1);
     });
     // this.packer.forAll(0, 0, (x, y, w, h, name) => {
     //   if (this.sprite) {
