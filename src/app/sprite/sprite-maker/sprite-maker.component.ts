@@ -60,6 +60,117 @@ export interface FrameHash {
 
 export type FrameArray = Frame[];
 
+type Graphics = CanvasRenderingContext2D;
+
+interface IPaint {
+  (g: Graphics): void;
+}
+
+class SceneNode {
+  next?: SceneNode[];
+  paintBackground?: IPaint;
+  paintForeground?: IPaint;
+
+  // Transformation:
+  // 1. translation
+  x: number = 0;
+  y: number = 0;
+  // 2. rotation
+  angle: number = 0; // The rotation angle, clockwise in radians.
+  // 3. scale
+  scaleX: number = 1; // A negative value flips pixels across the axis.
+  scaleY: number = 1;
+
+  draw(g: Graphics): void {
+    g.save();
+
+    if (this.x !== 0 || this.y !== 0) {
+      g.translate(this.x, this.y);
+    }
+
+    if (this.angle !== 0) {
+      g.rotate(this.angle);
+    }
+
+    if (this.scaleX !== 1 || this.scaleY !== 1) {
+      g.scale(this.scaleX, this.scaleY);
+    }
+
+    if (this.paintBackground) {
+      this.paintBackground(g);
+    }
+
+    if (this.next) {
+      this.next.forEach(child => child.draw(g));
+    }
+
+    if (this.paintForeground) {
+      this.paintForeground(g);
+    }
+
+    g.restore();
+  }
+
+  addChild(node: SceneNode): void {
+    if (this.next) {
+      this.next.push(node);
+    } else {
+      this.next = [node];
+    }
+  }
+}
+
+class SpriteStore {
+  frames: FrameHash;
+  sprite: ImageBitmap;
+
+  loadSprite(file: ImageBitmapSource): void {
+    createImageBitmap(file).then(value => {
+      this.sprite = value;
+    });
+  }
+
+  draw(g: Graphics, frameName: string) {
+    const frame = this.frames[frameName];
+    if (frame && this.sprite) {
+      g.drawImage(this.sprite, frame.x, frame.y, frame.w, frame.h);
+    }
+  }
+}
+
+class SpriteNode extends SceneNode {
+  constructor(public store: SpriteStore, public name: string) {
+    super();
+    this.paintBackground = this.paint;
+  }
+  paint(g: Graphics): void {
+    this.store.draw(g, this.name);
+  }
+}
+
+class TransformableSceneNode extends SceneNode {
+  draw(g: Graphics): void {
+    // The drawing state that gets saved onto a stack consists of:
+    //  The current transformation matrix.
+    //  The current clipping region.
+    //  The current dash list.
+    //  The current values of the following attributes:
+    //   (stroke|fill)Style,
+    //   global(Alpha|CompositeOperation),
+    //   line(Width|Cap|Join|DashOffset),
+    //   miterLimit,
+    //   shadow(Offset(X|Y)|Blur|Color),
+    //   font,
+    //   text(Align|Baseline),
+    //   direction,
+    //   imageSmoothingEnabled.
+    g.save();
+
+    super.draw(g);
+    g.restore();
+  }
+}
+
 @Component({
   selector: "app-sprite-maker",
   templateUrl: "./sprite-maker.component.html",
@@ -69,6 +180,15 @@ export class SpriteMakerComponent
   implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild("canvas")
   canvasRef: ElementRef<HTMLCanvasElement>;
+
+  page: number = 1;
+  pageSize: number = 10;
+
+  nameFilter: string = "";
+  xFilter: string = "";
+  yFilter: string = "";
+  wFilter: string = "";
+  hFilter: string = "";
 
   name: string;
   width: number = 100;
@@ -82,7 +202,61 @@ export class SpriteMakerComponent
   mousedown: boolean = false;
 
   get frameNames(): string[] {
-    return Object.keys(this.frames);
+    let names = Object.keys(this.frames);
+    const nameFilter =
+      this.nameFilter && this.nameFilter.length > 0
+        ? this.nameFilter.trim().toLowerCase()
+        : "";
+    const xFilter =
+      this.xFilter && this.xFilter.length > 0
+        ? this.xFilter.trim().toLowerCase()
+        : "";
+    const yFilter =
+      this.yFilter && this.yFilter.length > 0
+        ? this.yFilter.trim().toLowerCase()
+        : "";
+    const wFilter =
+      this.wFilter && this.wFilter.length > 0
+        ? this.wFilter.trim().toLowerCase()
+        : "";
+    const hFilter =
+      this.hFilter && this.hFilter.length > 0
+        ? this.hFilter.trim().toLowerCase()
+        : "";
+
+    if (nameFilter) {
+      names = names.filter(
+        value => value.toLowerCase().indexOf(nameFilter) >= 0
+      );
+    }
+    if (xFilter) {
+      names = names.filter(
+        value => this.frames[value].x.toString(10).indexOf(xFilter) >= 0
+      );
+    }
+    if (yFilter) {
+      names = names.filter(
+        value => this.frames[value].y.toString(10).indexOf(yFilter) >= 0
+      );
+    }
+    if (wFilter) {
+      names = names.filter(
+        value => this.frames[value].w.toString(10).indexOf(wFilter) >= 0
+      );
+    }
+    if (hFilter) {
+      names = names.filter(
+        value => this.frames[value].h.toString(10).indexOf(hFilter) >= 0
+      );
+    }
+    return names;
+  }
+
+  get frameNamesPaged(): string[] {
+    return this.frameNames.slice(
+      (this.page - 1) * this.pageSize,
+      this.page * this.pageSize
+    );
   }
 
   selection: number = -1;
@@ -199,14 +373,20 @@ export class SpriteMakerComponent
 
     g.globalAlpha = 0.7;
 
+    const names = this.frameNames;
     for (let key in this.frames) {
       const frame = this.frames[key];
 
-      g.fillStyle = "yellow";
-      g.fillRect(frame.x, frame.y, frame.w, frame.h);
+      if (names.indexOf(key) >= 0) {
+        g.fillStyle = "yellow";
+        g.fillRect(frame.x, frame.y, frame.w, frame.h);
 
-      g.strokeStyle = "red";
-      g.strokeRect(frame.x, frame.y, frame.w, frame.h);
+        g.strokeStyle = "red";
+        g.strokeRect(frame.x, frame.y, frame.w, frame.h);
+      } else {
+        g.strokeStyle = "grey";
+        g.strokeRect(frame.x, frame.y, frame.w, frame.h);
+      }
     }
 
     let x = +this.newFrame.x;
