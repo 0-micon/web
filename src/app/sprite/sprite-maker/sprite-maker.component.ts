@@ -171,6 +171,12 @@ class TransformableSceneNode extends SceneNode {
   }
 }
 
+interface IFrameTableEntry {
+  id: "name" | "x" | "y" | "w" | "h";
+  name: string;
+  filter: string;
+}
+
 @Component({
   selector: "app-sprite-maker",
   templateUrl: "./sprite-maker.component.html",
@@ -184,11 +190,13 @@ export class SpriteMakerComponent
   page: number = 1;
   pageSize: number = 10;
 
-  nameFilter: string = "";
-  xFilter: string = "";
-  yFilter: string = "";
-  wFilter: string = "";
-  hFilter: string = "";
+  frameTable: IFrameTableEntry[] = [
+    { id: "name", name: "Name", filter: "" },
+    { id: "x", name: "X", filter: "" },
+    { id: "y", name: "Y", filter: "" },
+    { id: "w", name: "W", filter: "" },
+    { id: "h", name: "H", filter: "" }
+  ];
 
   name: string;
   width: number = 100;
@@ -203,51 +211,22 @@ export class SpriteMakerComponent
 
   get frameNames(): string[] {
     let names = Object.keys(this.frames);
-    const nameFilter =
-      this.nameFilter && this.nameFilter.length > 0
-        ? this.nameFilter.trim().toLowerCase()
-        : "";
-    const xFilter =
-      this.xFilter && this.xFilter.length > 0
-        ? this.xFilter.trim().toLowerCase()
-        : "";
-    const yFilter =
-      this.yFilter && this.yFilter.length > 0
-        ? this.yFilter.trim().toLowerCase()
-        : "";
-    const wFilter =
-      this.wFilter && this.wFilter.length > 0
-        ? this.wFilter.trim().toLowerCase()
-        : "";
-    const hFilter =
-      this.hFilter && this.hFilter.length > 0
-        ? this.hFilter.trim().toLowerCase()
-        : "";
 
-    if (nameFilter) {
-      names = names.filter(
-        value => value.toLowerCase().indexOf(nameFilter) >= 0
-      );
-    }
-    if (xFilter) {
-      names = names.filter(
-        value => this.frames[value].x.toString(10).indexOf(xFilter) >= 0
-      );
-    }
-    if (yFilter) {
-      names = names.filter(
-        value => this.frames[value].y.toString(10).indexOf(yFilter) >= 0
-      );
-    }
-    if (wFilter) {
-      names = names.filter(
-        value => this.frames[value].w.toString(10).indexOf(wFilter) >= 0
-      );
-    }
-    if (hFilter) {
-      names = names.filter(
-        value => this.frames[value].h.toString(10).indexOf(hFilter) >= 0
-      );
+    for (let i = 0; i < this.frameTable.length; i++) {
+      const entry = this.frameTable[i];
+      const filter =
+        entry.filter && entry.filter.length > 0
+          ? entry.filter.trim().toLowerCase()
+          : "";
+      if (filter) {
+        if (entry.id === "name") {
+          names = names.filter(n => n.toLowerCase().indexOf(filter) >= 0);
+        } else {
+          names = names.filter(
+            n => this.frames[n][entry.id].toString(10).indexOf(filter) >= 0
+          );
+        }
+      }
     }
     return names;
   }

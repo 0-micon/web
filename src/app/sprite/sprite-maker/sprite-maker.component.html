@@ -31,92 +31,37 @@
     <div class="col-sm-6">
       <table class="table table-striped table-hover">
         <thead>
-          <th class="w-25">
+
+          <th *ngFor="let entry of frameTable" [class.w-25]="entry.id === 'name'">
             <div class="input-group input-group-sm mb-3">
               <div class="input-group-prepend">
-                <span class="input-group-text">Name</span>
+                <span class="input-group-text">{{ entry.name }}</span>
               </div>
-              <input type="text" name="m_namefilter" class="form-control" [(ngModel)]="nameFilter" placeholder="filter">
-              <div *ngIf="nameFilter.length > 0" class="input-group-append" (click)="nameFilter = ''">
+              <input type="text" [name]="'m_filter_' + entry.id" class="form-control" [(ngModel)]="entry.filter"
+                placeholder="filter">
+              <div *ngIf="entry.filter.length > 0" class="input-group-append" (click)="entry.filter = ''">
                 <button class="input-group-text" title="Clear filter">&times;</button>
               </div>
             </div>
           </th>
-          <th>
-            <div class="input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">X</span>
-              </div>
-              <input type="text" name="m_xfilter" class="form-control" [(ngModel)]="xFilter" placeholder="filter">
-              <div *ngIf="xFilter.length > 0" class="input-group-append" (click)="xFilter = ''">
-                <button class="input-group-text" title="Clear filter">&times;</button>
-              </div>
-            </div>
-          </th>
-          <th>
-            <div class="input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">Y</span>
-              </div>
-              <input type="text" name="m_yfilter" class="form-control" [(ngModel)]="yFilter" placeholder="filter">
-              <div *ngIf="yFilter.length > 0" class="input-group-append" (click)="yFilter = ''">
-                <button class="input-group-text" title="Clear filter">&times;</button>
-              </div>
-            </div>
-          </th>
-          <th>
-            <div class="input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">W</span>
-              </div>
-              <input type="text" name="m_wfilter" class="form-control" [(ngModel)]="wFilter" placeholder="filter">
-              <div *ngIf="wFilter.length > 0" class="input-group-append" (click)="wFilter = ''">
-                <button class="input-group-text" title="Clear filter">&times;</button>
-              </div>
-            </div>
-          </th>
-          <th>
-            <div class="input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">H</span>
-              </div>
-              <input type="text" name="m_hfilter" class="form-control" [(ngModel)]="hFilter" placeholder="filter">
-              <div *ngIf="hFilter.length > 0" class="input-group-append" (click)="hFilter = ''">
-                <button class="input-group-text" title="Clear filter">&times;</button>
-              </div>
-            </div>
-          </th>
+
           <th></th>
         </thead>
         <tbody>
           <tr>
-            <td>
-              <input type="text" name="m_name" class="form-control" [(ngModel)]="newFrame.name" />
-            </td>
-            <td>
-              <input type="number" name="m_x" class="form-control" [(ngModel)]="newFrame.x" />
-            </td>
-            <td>
-              <input type="number" name="m_y" class="form-control" [(ngModel)]="newFrame.y" />
-            </td>
-            <td>
-              <input type="number" name="m_w" class="form-control" [(ngModel)]="newFrame.w" />
-            </td>
-            <td>
-              <input type="number" name="m_h" class="form-control" [(ngModel)]="newFrame.h" />
+            <td *ngFor="let entry of frameTable">
+              <input [type]="entry.id === 'name' ? 'text' : 'number'" [name]="'m_input_' + entry.id" class="form-control"
+                [(ngModel)]="newFrame[entry.id]" />
             </td>
             <td>
               <button class="btn btn-primary btn-sm" [disabled]="!isNewFrameValid" (click)="addFrame()">Add</button>
             </td>
           </tr>
+
           <tr *ngFor="let name of frameNamesPaged">
-            <td>
-              <ngb-highlight [result]="name" [term]="nameFilter"></ngb-highlight>
+            <td *ngFor="let entry of frameTable">
+              <ngb-highlight [result]="entry.id === 'name' ? name : frames[name][entry.id]" [term]="entry.filter"></ngb-highlight>
             </td>
-            <td>{{frames[name].x}}</td>
-            <td>{{frames[name].y}}</td>
-            <td>{{frames[name].w}}</td>
-            <td>{{frames[name].h}}</td>
             <td>
               <div ngbDropdown class="d-inline-block">
                 <button ngbDropdownToggle class="btn btn-outline-primary btn-sm">
