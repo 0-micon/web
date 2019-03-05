@@ -1,19 +1,37 @@
-<h2>
+<div>
   Button
 
-  <button mat-button title="Rectangular text button w/ no elevation">mat-button</button>
-  <button mat-button title="Rectangular contained button w/ elevation">mat-raised-button</button>
-  <button mat-button title="Rectangular contained button w/ no elevation">mat-flat-button</button>
-  <button mat-button title="Rectangular outlined button w/ no elevation">mat-stroked-button</button>
-  <button mat-button title="Circular button with a transparent background, meant to contain an icon">mat-icon-button</button>
-  <button mat-button title="Circular button w/ elevation, defaults to theme's accent color">mat-fab</button>
-  <button mat-button title="Same as mat-fab but smaller">mat-mini-fab</button>
-</h2>
+  <button mat-button title="Rectangular text button w/ no elevation">
+    <mat-icon>face</mat-icon>
+    mat-button
+  </button>
+  <button mat-raised-button title="Rectangular contained button w/ elevation">
+    <mat-icon>info</mat-icon>
+    mat-raised-button
+  </button>
+  <button mat-flat-button title="Rectangular contained button w/ no elevation">
+    <mat-icon>lock</mat-icon>
+    mat-flat-button
+  </button>
+  <button mat-stroked-button title="Rectangular outlined button w/ no elevation">
+    <mat-icon>grade</mat-icon>
+    mat-stroked-button
+  </button>
+  <button mat-icon-button title="mat-icon-button: Circular button with a transparent background, meant to contain an icon">
+    <mat-icon>favorite</mat-icon>
+  </button>
+  <button mat-fab title="mat-fab: Circular button w/ elevation, defaults to theme's accent color">
+    <mat-icon>event</mat-icon>
+  </button>
+  <button mat-mini-fab title="mat-mini-fab: Same as mat-fab but smaller">
+    <mat-icon>done</mat-icon>
+  </button>
+</div>
 
-<h2>
+<div>
   Checkbox
   <mat-checkbox>mat-checkbox</mat-checkbox>
-</h2>
+</div>
 
 <router-outlet></router-outlet>
 
@@ -21,5 +39,10 @@
 <h2>
   <a target="_blank" rel="noopener" href="https://material.angular.io/components/categories">
     Angular Material Components
+  </a>
+</h2>
+<h2>
+  <a target="_blank" rel="noopener" href="https://material.io/tools/icons/?style=baseline">
+    Material Icons
   </a>
 </h2>
