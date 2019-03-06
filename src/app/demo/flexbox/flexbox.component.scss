@@ -1,0 +1,27 @@
+.flex-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+$item-width: 200px;
+$item-height: 150px;
+
+@media all and (max-width: 800px) {
+  .flex-container {
+    justify-content: flex-start;
+  }
+}
+
+.flex-item {
+  width: $item-width;
+  height: $item-height;
+  line-height: $item-height;
+
+  margin-top: 5px;
+  background: tomato;
+  color: wheat;
+  font-weight: bold;
+  font-size: 3em;
+  text-align: center;
+}
