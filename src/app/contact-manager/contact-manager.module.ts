@@ -11,6 +11,9 @@ import { ToolbarComponent } from "./components/toolbar/toolbar.component";
 import { MainContentComponent } from "./components/main-content/main-content.component";
 import { SideNavComponent } from "./components/side-nav/side-nav.component";
 
+import { UserService } from "./services/user.service";
+import { HttpClientModule } from "@angular/common/http";
+
 const routes: Routes = [
   {
     path: "",
@@ -29,10 +32,12 @@ const routes: Routes = [
   ],
   imports: [
     CommonModule,
+    HttpClientModule,
     FormsModule,
     FlexLayoutModule,
     MaterialModule,
     RouterModule.forChild(routes)
-  ]
+  ],
+  providers: [UserService]
 })
 export class ContactManagerModule {}

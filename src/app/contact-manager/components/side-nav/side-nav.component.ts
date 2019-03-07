@@ -1,4 +1,8 @@
 import { Component, OnInit, NgZone } from "@angular/core";
+import { Observable } from "rxjs";
+
+import { UserService } from "../../services/user.service";
+import { UserModel } from "../../models/user-model";
 
 const SMALL_SCREEN_WIDTH_QUERY = "(max-width: 720px)";
 
@@ -11,8 +15,9 @@ export class SideNavComponent implements OnInit {
   private mediaMatcher: MediaQueryList;
 
   isSmallScreen: boolean;
+  users: Observable<UserModel[]>;
 
-  constructor(private zone: NgZone) {}
+  constructor(private zone: NgZone, private userService: UserService) {}
 
   ngOnInit() {
     this.mediaMatcher = matchMedia(SMALL_SCREEN_WIDTH_QUERY);
@@ -21,5 +26,12 @@ export class SideNavComponent implements OnInit {
     this.mediaMatcher.addListener(mql =>
       this.zone.run(() => (this.isSmallScreen = mql.matches))
     );
+
+    this.users = this.userService.users;
+    this.userService.load();
+
+    this.users.subscribe(data => {
+      console.log("Users:", data);
+    });
   }
 }
