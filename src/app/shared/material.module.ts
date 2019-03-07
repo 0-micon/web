@@ -5,8 +5,15 @@ import {
   MatIconModule
 } from "@angular/material";
 
+import { MatSidenavModule } from "@angular/material/sidenav";
+
 @NgModule({
-  imports: [MatButtonModule, MatCheckboxModule, MatIconModule],
-  exports: [MatButtonModule, MatCheckboxModule, MatIconModule]
+  imports: [
+    MatButtonModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatSidenavModule
+  ],
+  exports: [MatButtonModule, MatCheckboxModule, MatIconModule, MatSidenavModule]
 })
 export class MaterialModule {}
