@@ -1,12 +1,22 @@
 <mat-drawer-container class="app-container" [hasBackdrop]="isSmallScreen">
   <mat-drawer #drawer class="app-sidenav mat-elevation-z4" [mode]="isSmallScreen ? 'over' : 'side'" [opened]="!isSmallScreen">
     <mat-toolbar color="primary">Contacts</mat-toolbar>
+    <mat-nav-list>
+      <mat-list-item *ngFor="let user of users | async">
+        <a matLine [routerLink]="['/contactmanager', user.id]">
+          <mat-icon svgIcon="{{ user.avatar }}"></mat-icon>
+          {{ user.name }}
+        </a>
+      </mat-list-item>
+    </mat-nav-list>
     <mat-list role="list">
       <mat-list-item role="listitem">Item 1</mat-list-item>
-      <mat-list-item role="listitem"><a target="_blank" rel="noopener" href="https://material.angular.io/components/categories">
+      <mat-list-item role="listitem">
+        <a target="_blank" rel="noopener" href="https://material.angular.io/components/categories">
           Angular Material Components
         </a></mat-list-item>
-      <mat-list-item role="listitem"><a target="_blank" rel="noopener" href="https://material.io/tools/icons/?style=baseline">
+      <mat-list-item role="listitem">
+        <a target="_blank" rel="noopener" href="https://material.io/tools/icons/?style=baseline">
           Material Icons
         </a></mat-list-item>
     </mat-list>

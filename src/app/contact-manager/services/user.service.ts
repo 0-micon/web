@@ -33,7 +33,8 @@ export class UserService {
     this._loadAll().subscribe(
       data => {
         this._store.users = data;
-        this._users.next(Object.assign({}, data));
+        // this._users.next(Object.assign({}, this._store).users);
+        this._users.next(data.map(entry => Object.assign({}, entry)));
       },
       error => {
         console.error("Failed to fetch users!", error);

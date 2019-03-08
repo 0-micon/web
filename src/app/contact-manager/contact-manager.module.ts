@@ -18,7 +18,10 @@ const routes: Routes = [
   {
     path: "",
     component: ContactManagerAppComponent,
-    children: [{ path: "", component: MainContentComponent }]
+    children: [
+      { path: ":id", component: MainContentComponent },
+      { path: "", component: MainContentComponent }
+    ]
   },
   { path: "**", redirectTo: "" }
 ];
