@@ -9,7 +9,8 @@ import {
   MatSidenavModule,
   MatToolbarModule,
   MatTabsModule,
-  MatTableModule
+  MatTableModule,
+  MatPaginatorModule
 } from "@angular/material";
 
 @NgModule({
@@ -19,6 +20,7 @@ import {
     MatCheckboxModule,
     MatIconModule,
     MatListModule,
+    MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
     MatTableModule,
@@ -31,6 +33,7 @@ import {
     MatCheckboxModule,
     MatIconModule,
     MatListModule,
+    MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
     MatTableModule,
