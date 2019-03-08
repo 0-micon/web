@@ -10,15 +10,21 @@ import {
   MatToolbarModule,
   MatTabsModule,
   MatTableModule,
-  MatPaginatorModule
+  MatPaginatorModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatBadgeModule
 } from "@angular/material";
 
 @NgModule({
   imports: [
+    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
     MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatListModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
@@ -28,10 +34,13 @@ import {
     MatToolbarModule
   ],
   exports: [
+    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,
     MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
     MatListModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,

@@ -17,10 +17,19 @@ export class NotesComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 5;
 
+  filter: string = "";
+
   get filteredNotes(): NoteModel[] {
+    let notes = this.notes;
+    if (this.filter) {
+      notes = notes.filter(
+        entry => entry.title.toLowerCase().indexOf(this.filter) >= 0
+      );
+    }
+
     const start = this.pageSize * this.pageIndex;
     const end = start + this.pageSize;
-    return this.notes.slice(start, end);
+    return notes.slice(start, end);
   }
 
   constructor() {}
@@ -31,5 +40,9 @@ export class NotesComponent implements OnInit {
     // console.log("Page Event:", $event);
     this.pageIndex = $event.pageIndex;
     this.pageSize = $event.pageSize;
+  }
+
+  applyFilter(filter: string) {
+    this.filter = filter.trim().toLowerCase();
   }
 }

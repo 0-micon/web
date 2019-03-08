@@ -1,4 +1,9 @@
 <div class="mat-elevation-z2">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    <span *ngIf="filter" [matBadge]="filteredNotes.length" matBadgeOverlap="false"></span>
+  </mat-form-field>
+
   <table mat-table [dataSource]="filteredNotes">
 
     <!--- Note that these columns can be defined in any order.
@@ -26,6 +31,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <mat-paginator [length]="notes.length" [pageSize]="pageSize" [pageSizeOptions]="[2,3,4,5]" (page)="onPageEvent($event)">
+  <mat-paginator *ngIf="notes && notes.length" [length]="notes.length" [pageSize]="pageSize" [pageSizeOptions]="[2,3,4,5]"
+    (page)="onPageEvent($event)">
   </mat-paginator>
 </div>
