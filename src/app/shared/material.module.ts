@@ -13,7 +13,8 @@ import {
   MatPaginatorModule,
   MatFormFieldModule,
   MatInputModule,
-  MatBadgeModule
+  MatBadgeModule,
+  MatSortModule
 } from "@angular/material";
 
 @NgModule({
@@ -29,6 +30,7 @@ import {
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
+    MatSortModule,
     MatTableModule,
     MatTabsModule,
     MatToolbarModule
@@ -45,6 +47,7 @@ import {
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
+    MatSortModule,
     MatTableModule,
     MatTabsModule,
     MatToolbarModule

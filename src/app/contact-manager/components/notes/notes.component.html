@@ -4,31 +4,17 @@
     <span *ngIf="filter" [matBadge]="filteredNotes.length" matBadgeOverlap="false"></span>
   </mat-form-field>
 
-  <table mat-table [dataSource]="filteredNotes">
-
-    <!--- Note that these columns can be defined in any order.
-                The actual rendered columns are set as a property on the row definition" -->
-
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef> No. </th>
-      <td mat-cell *matCellDef="let note"> {{ note.id }} </td>
-    </ng-container>
-
-    <!-- Title Column -->
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef> Title </th>
-      <td mat-cell *matCellDef="let note"> {{ note.title }} </td>
-    </ng-container>
-
-    <!-- Date Column -->
-    <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef> Date </th>
-      <td mat-cell *matCellDef="let note"> {{ note.date | date:'yyyy-MM-dd'}} </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <table matSort (matSortChange)="sortData($event)">
+    <tr>
+      <th mat-sort-header="id">No.</th>
+      <th mat-sort-header="title">Title</th>
+      <th mat-sort-header="date">Date</th>
+    </tr>
+    <tr *ngFor="let note of filteredNotes">
+      <td>{{ note.id }}</td>
+      <td>{{ note.title }}</td>
+      <td>{{ note.date | date:'yyyy-MM-dd'}}</td>
+    </tr>
   </table>
 
   <mat-paginator *ngIf="notes && notes.length" [length]="notes.length" [pageSize]="pageSize" [pageSizeOptions]="[2,3,4,5]"
