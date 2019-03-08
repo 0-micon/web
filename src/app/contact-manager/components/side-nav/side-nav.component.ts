@@ -1,8 +1,10 @@
-import { Component, OnInit, NgZone } from "@angular/core";
+import { Component, OnInit, NgZone, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 
 import { UserService } from "../../services/user.service";
 import { UserModel } from "../../models/user-model";
+import { MatDrawer } from "@angular/material";
 
 const SMALL_SCREEN_WIDTH_QUERY = "(max-width: 720px)";
 
@@ -17,7 +19,13 @@ export class SideNavComponent implements OnInit {
   isSmallScreen: boolean;
   users: Observable<UserModel[]>;
 
-  constructor(private zone: NgZone, private userService: UserService) {}
+  @ViewChild(MatDrawer) drawer: MatDrawer;
+
+  constructor(
+    private zone: NgZone,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.mediaMatcher = matchMedia(SMALL_SCREEN_WIDTH_QUERY);
@@ -31,7 +39,16 @@ export class SideNavComponent implements OnInit {
     this.userService.load();
 
     this.users.subscribe(data => {
-      console.log("Users:", data);
+      if (data.length) {
+        this.router.navigate(["/contactmanager", data[0].id]);
+      }
+      // console.log("Users:", data);
+    });
+
+    this.router.events.subscribe(() => {
+      if (this.isSmallScreen) {
+        this.drawer.close();
+      }
     });
   }
 }

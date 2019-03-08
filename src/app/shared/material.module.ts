@@ -4,11 +4,11 @@ import {
   MatCheckboxModule,
   MatIconModule,
   MatListModule,
-  MatCardModule
+  MatCardModule,
+  MatProgressSpinnerModule,
+  MatSidenavModule,
+  MatToolbarModule
 } from "@angular/material";
-
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatToolbarModule } from "@angular/material/toolbar";
 
 @NgModule({
   imports: [
@@ -17,6 +17,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
     MatCheckboxModule,
     MatIconModule,
     MatListModule,
+    MatProgressSpinnerModule,
     MatSidenavModule,
     MatToolbarModule
   ],
@@ -26,6 +27,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
     MatCheckboxModule,
     MatIconModule,
     MatListModule,
+    MatProgressSpinnerModule,
     MatSidenavModule,
     MatToolbarModule
   ]

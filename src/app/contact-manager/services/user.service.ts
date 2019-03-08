@@ -24,6 +24,11 @@ export class UserService {
     return this._users.asObservable();
   }
 
+  userById(id: number): UserModel {
+    const user: UserModel = this._store.users.find(x => x.id == id);
+    return user ? Object.assign({}, user) : null;
+  }
+
   protected _loadAll(): Observable<UserModel[]> {
     const url = "https://angular-material-api.azurewebsites.net/users";
     return this.http.get<UserModel[]>(url);
