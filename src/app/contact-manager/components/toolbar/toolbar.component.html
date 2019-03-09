@@ -5,4 +5,14 @@
   <span>
     Contacts Manager
   </span>
+  <span class="menu-spacer"></span>
+  <button mat-button [matMenuTriggerFor]="menu" title="Menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="addContact.emit()">
+      <mat-icon>add_circle</mat-icon>
+      New Contact
+    </button>
+  </mat-menu>
 </mat-toolbar>

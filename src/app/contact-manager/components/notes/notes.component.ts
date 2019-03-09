@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { PageEvent, Sort, SortDirection } from "@angular/material";
-//import { MatTableDataSource } from "@angular/material";
+// import { MatTableDataSource } from "@angular/material";
 
 import { NoteModel } from "../../models/note-model";
 
@@ -76,7 +76,7 @@ export class NotesComponent implements OnInit {
   }
 
   sortData($event: Sort) {
-    //console.log("Sort Event:", $event);
+    // console.log("Sort Event:", $event);
     this.sortActive = $event.active;
     this.sortDirection = $event.direction;
   }

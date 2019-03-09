@@ -9,6 +9,9 @@ export class ToolbarComponent implements OnInit {
   @Output()
   toggleMenu: EventEmitter<void> = new EventEmitter();
 
+  @Output()
+  addContact: EventEmitter<void> = new EventEmitter();
+
   constructor() {}
 
   ngOnInit() {}

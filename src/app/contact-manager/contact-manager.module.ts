@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Routes, RouterModule } from "@angular/router";
 
@@ -13,7 +13,8 @@ import { SideNavComponent } from "./components/side-nav/side-nav.component";
 
 import { UserService } from "./services/user.service";
 import { HttpClientModule } from "@angular/common/http";
-import { NotesComponent } from './components/notes/notes.component';
+import { NotesComponent } from "./components/notes/notes.component";
+import { NewContactDialogComponent } from "./components/new-contact-dialog/new-contact-dialog.component";
 
 const routes: Routes = [
   {
@@ -33,16 +34,19 @@ const routes: Routes = [
     ToolbarComponent,
     MainContentComponent,
     SideNavComponent,
-    NotesComponent
+    NotesComponent,
+    NewContactDialogComponent
   ],
   imports: [
     CommonModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     FlexLayoutModule,
     MaterialModule,
     RouterModule.forChild(routes)
   ],
-  providers: [UserService]
+  providers: [UserService],
+  entryComponents: [NewContactDialogComponent]
 })
 export class ContactManagerModule {}

@@ -4,7 +4,8 @@ import { Observable } from "rxjs";
 
 import { UserService } from "../../services/user.service";
 import { UserModel } from "../../models/user-model";
-import { MatDrawer } from "@angular/material";
+import { MatDrawer, MatDialog } from "@angular/material";
+import { NewContactDialogComponent } from "../new-contact-dialog/new-contact-dialog.component";
 
 const SMALL_SCREEN_WIDTH_QUERY = "(max-width: 720px)";
 
@@ -24,13 +25,15 @@ export class SideNavComponent implements OnInit {
   constructor(
     private zone: NgZone,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
     this.mediaMatcher = matchMedia(SMALL_SCREEN_WIDTH_QUERY);
     this.isSmallScreen = this.mediaMatcher.matches;
 
+    // tslint:disable-next-line: deprecation
     this.mediaMatcher.addListener(mql =>
       this.zone.run(() => (this.isSmallScreen = mql.matches))
     );
@@ -49,6 +52,19 @@ export class SideNavComponent implements OnInit {
       if (this.isSmallScreen) {
         this.drawer.close();
       }
+    });
+  }
+
+  openAddContactDialog(): void {
+    const dialogRef = this.dialog.open(NewContactDialogComponent, {
+      width: "50%",
+      height: "75%",
+      minWidth: "240px",
+      minHeight: "320px"
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("Dialog Result:", result);
     });
   }
 }
