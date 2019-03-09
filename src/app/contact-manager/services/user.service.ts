@@ -1,12 +1,12 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-import { Observable, BehaviorSubject } from "rxjs";
+import { Observable, BehaviorSubject } from 'rxjs';
 
-import { UserModel } from "../models/user-model";
+import { UserModel } from '../models/user-model';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class UserService {
   private _store: {
@@ -30,7 +30,7 @@ export class UserService {
   }
 
   protected _loadAll(): Observable<UserModel[]> {
-    const url = "https://angular-material-api.azurewebsites.net/users";
+    const url = 'https://angular-material-api.azurewebsites.net/users';
     return this.http.get<UserModel[]>(url);
   }
 
@@ -42,8 +42,23 @@ export class UserService {
         this._users.next(data.map(entry => Object.assign({}, entry)));
       },
       error => {
-        console.error("Failed to fetch users!", error);
+        console.error('Failed to fetch users!', error);
       }
     );
+  }
+
+  next(): void {
+    const data = this._store.users;
+    this._users.next(data.map(entry => Object.assign({}, entry)));
+  }
+
+  addUser(user: UserModel): Promise<UserModel> {
+    return new Promise((resolve, reject) => {
+      const newUser = { ...user };
+      newUser.id = this._store.users.length + 1;
+      this._store.users.push(newUser);
+      this.next();
+      resolve(newUser);
+    });
   }
 }

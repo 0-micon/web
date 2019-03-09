@@ -1,13 +1,19 @@
 {
   "extends": "../tslint.json",
   "rules": {
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore"
+    ],
     "no-inferrable-types": [
       false,
       "ignore-params"
     ],
     "quotemark": [
       true,
-      "double"
+      "single"
     ],
     "directive-selector": [
       true,

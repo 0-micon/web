@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule } from '@angular/core';
 import {
   MatButtonModule,
   MatCheckboxModule,
@@ -19,8 +19,9 @@ import {
   MatDialogModule,
   MatSelectModule,
   MatDatepickerModule,
-  MatNativeDateModule
-} from "@angular/material";
+  MatNativeDateModule,
+  MatSnackBarModule
+} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import {
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSidenavModule,
+    MatSnackBarModule,
     MatSortModule,
     MatTableModule,
     MatTabsModule,
@@ -62,6 +64,7 @@ import {
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSidenavModule,
+    MatSnackBarModule,
     MatSortModule,
     MatTableModule,
     MatTabsModule,
