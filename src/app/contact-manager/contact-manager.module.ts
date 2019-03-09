@@ -1,31 +1,33 @@
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { FlexLayoutModule } from "@angular/flex-layout";
-import { Routes, RouterModule } from "@angular/router";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { Routes, RouterModule } from '@angular/router';
 
-import { MaterialModule } from "../shared/material.module";
+import { MaterialModule } from '../shared/material.module';
 
-import { ContactManagerAppComponent } from "./contact-manager-app.component";
-import { ToolbarComponent } from "./components/toolbar/toolbar.component";
-import { MainContentComponent } from "./components/main-content/main-content.component";
-import { SideNavComponent } from "./components/side-nav/side-nav.component";
+import { ContactManagerAppComponent } from './contact-manager-app.component';
 
-import { UserService } from "./services/user.service";
-import { HttpClientModule } from "@angular/common/http";
-import { NotesComponent } from "./components/notes/notes.component";
-import { NewContactDialogComponent } from "./components/new-contact-dialog/new-contact-dialog.component";
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { MainContentComponent } from './components/main-content/main-content.component';
+import { SideNavComponent } from './components/side-nav/side-nav.component';
+import { NotesComponent } from './components/notes/notes.component';
+import { NewContactDialogComponent } from './components/new-contact-dialog/new-contact-dialog.component';
+
+import { UserService } from './services/user.service';
+import { NavigationService } from './services/navigation.service';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: ContactManagerAppComponent,
     children: [
-      { path: ":id", component: MainContentComponent },
-      { path: "", component: MainContentComponent }
+      { path: ':id', component: MainContentComponent },
+      { path: '', component: MainContentComponent }
     ]
   },
-  { path: "**", redirectTo: "" }
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
@@ -46,7 +48,7 @@ const routes: Routes = [
     MaterialModule,
     RouterModule.forChild(routes)
   ],
-  providers: [UserService],
+  providers: [UserService, NavigationService],
   entryComponents: [NewContactDialogComponent]
 })
 export class ContactManagerModule {}

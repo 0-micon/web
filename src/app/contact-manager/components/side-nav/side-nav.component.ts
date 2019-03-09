@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+// import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { UserService } from '../../services/user.service';
@@ -11,7 +11,9 @@ import {
   MatSnackBarRef,
   SimpleSnackBar
 } from '@angular/material';
+
 import { NewContactDialogComponent } from '../new-contact-dialog/new-contact-dialog.component';
+import { NavigationService } from '../../services/navigation.service';
 
 const SMALL_SCREEN_WIDTH_QUERY = '(max-width: 720px)';
 
@@ -31,10 +33,15 @@ export class SideNavComponent implements OnInit {
   constructor(
     private zone: NgZone,
     private userService: UserService,
-    private router: Router,
+    private navigationService: NavigationService,
+    // private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
+
+  selectUser(userId: number): void {
+    this.navigationService.goToUser(userId);
+  }
 
   ngOnInit() {
     this.mediaMatcher = matchMedia(SMALL_SCREEN_WIDTH_QUERY);
@@ -48,14 +55,15 @@ export class SideNavComponent implements OnInit {
     this.users = this.userService.users;
     this.userService.load();
 
-    this.users.subscribe(data => {
+    const sub = this.users.subscribe(data => {
       if (data.length) {
-        this.router.navigate(['/contactmanager', data[0].id]);
+        this.selectUser(data[0].id);
+        sub.unsubscribe();
       }
       // console.log("Users:", data);
     });
 
-    this.router.events.subscribe(() => {
+    this.navigationService.events.subscribe(() => {
       if (this.isSmallScreen) {
         this.drawer.close();
       }
@@ -80,7 +88,7 @@ export class SideNavComponent implements OnInit {
           this.openSnackBar('Contact added', 'Navigate', 5000)
             .onAction()
             .subscribe(() => {
-              this.router.navigate(['/contactmanager', user.id]);
+              this.selectUser(user.id);
             });
         });
       }
