@@ -1,0 +1,5 @@
+<span *ngFor="let i of items()">
+  <mark *ngIf="i.highlighted; else textBlock">{{i.text}}</mark>
+  <!-- <span *ngIf="!i.highlighted">{{i.text}}</span> -->
+  <ng-template #textBlock>{{i.text}}</ng-template>
+</span>

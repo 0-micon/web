@@ -17,6 +17,7 @@ import { NewContactDialogComponent } from './components/new-contact-dialog/new-c
 
 import { UserService } from './services/user.service';
 import { NavigationService } from './services/navigation.service';
+import { HighlighterComponent } from './components/highlighter/highlighter.component';
 
 const routes: Routes = [
   {
@@ -37,7 +38,8 @@ const routes: Routes = [
     MainContentComponent,
     SideNavComponent,
     NotesComponent,
-    NewContactDialogComponent
+    NewContactDialogComponent,
+    HighlighterComponent
   ],
   imports: [
     CommonModule,

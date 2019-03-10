@@ -12,7 +12,10 @@
     </tr>
     <tr *ngFor="let note of filteredNotes">
       <td>{{ note.id }}</td>
-      <td>{{ note.title }}</td>
+      <td>
+        <app-highlighter [text]="note.title" [filter]="filter">
+        </app-highlighter>
+      </td>
       <td>{{ note.date | date:'yyyy-MM-dd'}}</td>
     </tr>
   </table>
