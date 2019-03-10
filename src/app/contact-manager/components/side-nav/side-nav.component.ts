@@ -1,4 +1,11 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  NgZone,
+  ViewChild,
+  Output,
+  EventEmitter
+} from '@angular/core';
 // import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -23,6 +30,9 @@ const SMALL_SCREEN_WIDTH_QUERY = '(max-width: 720px)';
   styleUrls: ['./side-nav.component.scss']
 })
 export class SideNavComponent implements OnInit {
+  @Output()
+  nextTheme: EventEmitter<void> = new EventEmitter();
+
   private mediaMatcher: MediaQueryList;
 
   isSmallScreen: boolean;

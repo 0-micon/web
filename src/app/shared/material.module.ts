@@ -22,6 +22,7 @@ import {
   MatNativeDateModule,
   MatSnackBarModule
 } from '@angular/material';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
   imports: [
@@ -45,7 +46,8 @@ import {
     MatSortModule,
     MatTableModule,
     MatTabsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    OverlayModule
   ],
   exports: [
     MatBadgeModule,
@@ -68,7 +70,8 @@ import {
     MatSortModule,
     MatTableModule,
     MatTabsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    OverlayModule
   ]
 })
 export class MaterialModule {}

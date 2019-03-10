@@ -25,6 +25,7 @@ export class UserService {
   }
 
   userById(id: number): UserModel {
+// tslint:disable-next-line: triple-equals
     const user: UserModel = this._store.users.find(x => x.id == id);
     return user ? Object.assign({}, user) : null;
   }

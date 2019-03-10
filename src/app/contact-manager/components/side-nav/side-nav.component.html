@@ -22,7 +22,7 @@
   </mat-drawer>
 
   <div class="app-sidenav-content">
-    <app-toolbar (toggleMenu)="drawer.toggle()" (addContact)="openAddContactDialog()"></app-toolbar>
+    <app-toolbar (toggleMenu)="drawer.toggle()" (addContact)="openAddContactDialog()" (nextTheme)="nextTheme.emit()"></app-toolbar>
     <div class="router-wrapper">
       <router-outlet></router-outlet>
     </div>

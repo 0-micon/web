@@ -11,8 +11,12 @@
   </button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="addContact.emit()">
-      <mat-icon>add_circle</mat-icon>
+      <mat-icon color="accent">add_circle</mat-icon>
       New Contact
+    </button>
+    <button mat-menu-item (click)="nextTheme.emit()">
+      <mat-icon>palette</mat-icon>
+      Next Theme
     </button>
   </mat-menu>
 </mat-toolbar>
