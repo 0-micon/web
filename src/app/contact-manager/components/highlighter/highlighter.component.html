@@ -1,5 +1,11 @@
-<span *ngFor="let i of items()">
+<!-- <span *ngFor="let i of items()">
   <mark *ngIf="i.highlighted; else textBlock">{{i.text}}</mark>
-  <!-- <span *ngIf="!i.highlighted">{{i.text}}</span> -->
   <ng-template #textBlock>{{i.text}}</ng-template>
-</span>
+</span> -->
+
+<!-- <ng-template ngFor let-i [ngForOf]="items()">
+  <mark *ngIf="i.highlighted">{{i.text}}</mark>
+  <span *ngIf="!i.highlighted">{{i.text}}</span>
+</ng-template> -->
+
+<span *ngFor="let it of items()" [class.mark]="it.highlighted">{{it.text}}</span>
