@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* https://getbootstrap.com/docs/4.0/getting-started/theming/ */
+
+// Option A: Include all of Bootstrap
+
+@import "node_modules/bootstrap/scss/bootstrap";
+
+// Option B: Include parts of Bootstrap
+
+// Required
+// @import "node_modules/bootstrap/scss/functions";
+// @import "node_modules/bootstrap/scss/variables";
+// @import "node_modules/bootstrap/scss/mixins";
+
+// Optional
+// @import "node_modules/bootstrap/scss/reboot";
+// @import "node_modules/bootstrap/scss/type";
+// @import "node_modules/bootstrap/scss/images";
+// @import "node_modules/bootstrap/scss/code";
+// @import "node_modules/bootstrap/scss/grid";
+
+// Theming
+/* https://bootswatch.com/materia/ */
+@import 'styles/materia/variables';
+@import 'styles/materia/bootswatch';
