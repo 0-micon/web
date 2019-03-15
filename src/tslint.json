@@ -1,6 +1,7 @@
 {
   "extends": "../tslint.json",
   "rules": {
+    "variable-name": false,
     "no-inferrable-types": [
       false,
       "ignore-params"

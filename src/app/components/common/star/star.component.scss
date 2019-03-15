@@ -1,0 +1,12 @@
+.star-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.star-container>.star-over {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: darkgoldenrod;
+}

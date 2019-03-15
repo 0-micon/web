@@ -88,4 +88,9 @@ export class ProductListComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  onNotyfy($event: string, rating: number): void {
+    // console.log('Notified:', $event);
+    this.pageTitle = 'Product Rating ' + rating + ' ' + $event;
+  }
 }
