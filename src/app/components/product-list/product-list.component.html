@@ -1,21 +1,25 @@
 <div class="card">
   <div class="card-header">
-    {{pageTitle}}
+    {{ pageTitle }}
   </div>
   <div class="card-body">
     <div class="row">
       <div class="col-md-2">
         Filter by:
       </div>
-      <div class="col-md-4">
-        <input type="text" />
+      <div class="col-md-2">
+        <input type="text" [(ngModel)]="listFilter" />
+      </div>
+      <div class="col-md-2">
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="m_marker" [(ngModel)]="markerOn">
+          <label class="custom-control-label" for="m_marker">Highlight is {{markerOn ? 'On' : 'Off'}}</label>
+        </div>
       </div>
     </div>
     <div class="row">
       <div class="col-md-6">
-        <h4>
-          Filterd by:
-        </h4>
+        <h4>Filterd by: {{ listFilter }}</h4>
       </div>
     </div>
     <div class="table-responsive">
@@ -23,8 +27,8 @@
         <thead>
           <tr>
             <th>
-              <button class="btn btn-primary">
-                Show Image
+              <button class="btn btn-primary" (click)="showImage = !showImage">
+                {{ showImage ? 'Hide' : 'Show' }} Image
               </button>
             </th>
             <th>Product</th>
@@ -35,17 +39,28 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of products; let odd=odd;" [class.table-primary]="!odd">
-            <td></td>
-            <td>{{product.productName}}</td>
-            <td>{{product.productCode}}</td>
-            <td>{{product.releaseDate}}</td>
-            <td>{{product.price}}</td>
-            <td>{{product.starRating}}</td>
+          <tr *ngFor="
+              let product of filteredProducts;
+              let even = even;
+              trackBy: trackByProductId
+            "
+            [class.table-primary]="even">
+            <td>
+              <img *ngIf="showImage" [src]="product.imageUrl" [alt]="product.productName" [title]="product.productName | uppercase"
+                [style.width.px]="imageWidth" [style.margin.px]="imageMargin" />
+            </td>
+            <td>
+              <app-marker *ngIf="markerOn" [text]="product.productName" [filter]="listFilter">
+              </app-marker>
+              <span *ngIf="!markerOn">{{ product.productName }}</span>
+            </td>
+            <td>{{ product.productCode | lowercase | replace: '-':' ' }}</td>
+            <td>{{ product.releaseDate }}</td>
+            <td>{{ product.price | currency: 'USD':'symbol':'1.2-2' }}</td>
+            <td>{{ product.starRating }}</td>
           </tr>
         </tbody>
       </table>
-
     </div>
   </div>
 </div>

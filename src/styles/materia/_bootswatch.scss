@@ -368,7 +368,9 @@ select.form-control {
 .custom-switch {
 
   .custom-control-label::before {
-    top: 0.125rem;
+    // top: 0.125rem;
+    /* alignment fix */
+    top: 0.25rem;
     height: 0.875rem;
     background: $gray-500;
     border: none;
@@ -385,6 +387,8 @@ select.form-control {
   .custom-control-label::after {
     background-color: #fff;
     box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    /* alignment fix */
+    top: calc(0.25rem + 1px);
   }
 
   .custom-control-input:checked ~ .custom-control-label::before {
