@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, map } from 'rxjs/operators';
 
 import { IProduct } from '../models/product';
 
@@ -19,6 +19,15 @@ export class ProductService {
         console.log('Data:', data);
       }),
       catchError(this.handleError)
+    );
+  }
+
+  getProduct(id: number): Observable<IProduct> {
+    return this.getProducts().pipe(
+      map<IProduct[], IProduct>(data =>
+// tslint:disable-next-line: triple-equals
+        data.find(product => product.productId == id)
+      )
     );
   }
 

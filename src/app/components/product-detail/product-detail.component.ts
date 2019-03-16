@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IProduct } from 'src/app/models/product';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ProductService } from 'src/app/services/product.service';
 
 @Component({
   // selector: 'app-product-detail',
@@ -11,7 +13,22 @@ export class ProductDetailComponent implements OnInit {
   @Input()
   product: IProduct;
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private productService: ProductService
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    const id = +this.route.snapshot.paramMap.get('id');
+    if (id > 0) {
+      this.productService
+        .getProduct(id)
+        .subscribe(data => (this.product = data));
+    }
+  }
+
+  goBack(): void {
+    this.router.navigate(['/products']);
+  }
 }

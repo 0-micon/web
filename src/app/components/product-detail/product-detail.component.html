@@ -1,5 +1,16 @@
-<div class="card" *ngIf="product">
+<div class="card" *ngIf="product" style="min-width: 20rem;">
   <div class="card-header">
-
+    Product Details: {{product.productCode}}
+  </div>
+  <div class="card-body">
+    <h4 class="card-title">{{product.productName}}</h4>
+    <p class="card-text">{{product.description}}</p>
+    <p class="card-text">Only for: {{product.price | currency: 'USD':'symbol':'1.2-2'}}</p>
+    <img [src]="product.imageUrl" [alt]="product.productName" [title]="product.productName | uppercase">
+  </div>
+  <div class='card-footer'>
+    <button class='btn btn-outline-primary' (click)='goBack()' style='width:80px'>
+      <i class='fa fa-chevron-left'></i> Back
+    </button>
   </div>
 </div>

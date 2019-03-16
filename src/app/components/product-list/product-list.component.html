@@ -50,9 +50,11 @@
                 [style.width.px]="imageWidth" [style.margin.px]="imageMargin" />
             </td>
             <td>
-              <app-marker *ngIf="markerOn" [text]="product.productName" [filter]="listFilter">
-              </app-marker>
-              <span *ngIf="!markerOn">{{ product.productName }}</span>
+              <a [routerLink]="['/products', product.productId]">
+                <app-marker *ngIf="markerOn" [text]="product.productName" [filter]="listFilter">
+                </app-marker>
+                <span *ngIf="!markerOn">{{ product.productName }}</span>
+              </a>
             </td>
             <td>{{ product.productCode | lowercase | replace: '-':' ' }}</td>
             <td>{{ product.releaseDate }}</td>
