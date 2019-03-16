@@ -1,18 +1,13 @@
 <div class="star-container" [title]="rating" (click)="onClick()">
-  <div class="star-base" style="width: 75px">
-    <span class="fa fa-star-o"></span>
-    <span class="fa fa-star-o"></span>
-    <span class="fa fa-star-o"></span>
-    <span class="fa fa-star-o"></span>
-    <span class="fa fa-star-o"></span>
+  <div class="star-base" [style.width.rem]="starNum">
+    <span class="star-item fa fa-star-o" *ngFor="let i of starNum | xrange"></span>
   </div>
-  <div class="star-over" [style.width.px]="starWidth">
-    <div style="width: 75px">
-      <span class="fa fa-star"></span>
-      <span class="fa fa-star"></span>
-      <span class="fa fa-star"></span>
-      <span class="fa fa-star"></span>
-      <span class="fa fa-star"></span>
+  <div class="star-over" [style.width.rem]="rating">
+    <div [style.width.rem]="starNum">
+      <span class="star-item fa fa-star" *ngFor="let i of starNum | xrange"></span>
     </div>
   </div>
+  <!-- <div class="star-user" [style.width.rem]="starNum">
+    <span class="star-item fa fa-star" *ngFor="let i of starNum | xrange"></span>
+  </div> -->
 </div>

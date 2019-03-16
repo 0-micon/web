@@ -1,12 +1,39 @@
-.star-container {
-  position: relative;
-  cursor: pointer;
+$item-width: 1rem;
+$base-color: darkred;
+$over-color: darkgoldenrod;
+$user-color: #e83e8c;
+
+.star-item {
+  text-align: center;
+  display: inline-block;
+  min-width: $item-width;
+  width: $item-width;
+  max-width: $item-width;
 }
 
-.star-container>.star-over {
+.star-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: $base-color;
+}
+
+.star-over {
   position: absolute;
   top: 0;
   left: 0;
   overflow: hidden;
-  color: darkgoldenrod;
+  color: $over-color;
+}
+
+.star-user {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: $user-color;
+}
+
+.star-container {
+  position: relative;
+  cursor: pointer;
 }

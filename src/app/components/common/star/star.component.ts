@@ -16,7 +16,8 @@ import {
 export class StarComponent implements OnInit, OnChanges {
   @Input()
   rating: number = 0;
-  starWidth: number = 0;
+  @Input()
+  starNum: number = 5;
 
   @Output()
   notify: EventEmitter<string> = new EventEmitter();
@@ -24,9 +25,7 @@ export class StarComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit(): void {}
-  ngOnChanges(_changes: SimpleChanges): void {
-    this.starWidth = (this.rating * 75) / 5;
-  }
+  ngOnChanges(_changes: SimpleChanges): void {}
 
   onClick(): void {
     this.notify.emit('click');
