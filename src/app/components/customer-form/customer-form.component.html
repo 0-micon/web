@@ -4,18 +4,18 @@
   </div>
 
   <div class="card-body">
-    <form #signupForm="ngForm" novalidate (ngSubmit)="save(signupForm)">
+    <form novalidate [formGroup]="customerForm" (ngSubmit)="save()">
 
       <div class="form-group row mb-2">
         <label for="firstNameId" class="col-md-2 col-form-label">First Name</label>
         <div class="col-md-8">
-          <input #firstNameRef="ngModel" class="form-control" type="text" id="firstNameId" placeholder="First Name (required)"
-            required minlength="3" name="firstName" [(ngModel)]="customer.firstName" [ngClass]="{'is-invalid': (firstNameRef.touched || firstNameRef.dirty) && !firstNameRef.valid}">
+          <input class="form-control" type="text" id="firstNameId" placeholder="First Name (required)" required
+            minlength="3" formControlName="firstName" [ngClass]="{'is-invalid': (firstName.touched || firstName.dirty) && !firstName.valid}">
           <span class="invalid-feedback">
-            <span *ngIf="firstNameRef.errors?.required">
+            <span *ngIf="firstName.errors?.required">
               Please enter your first name.
             </span>
-            <span *ngIf="firstNameRef.errors?.minlength">
+            <span *ngIf="firstName.errors?.minlength">
               The first name must be longer than 2 characters.
             </span>
           </span>
@@ -26,12 +26,12 @@
         <label class="col-md-2 col-form-label" for="lastNameId">Last Name</label>
         <div class="col-md-8">
           <input class="form-control" id="lastNameId" type="text" placeholder="Last Name (required)" required maxlength="50"
-            [(ngModel)]="customer.lastName" name="lastName" #lastNameRef="ngModel" [ngClass]="{'is-invalid': (lastNameRef.touched || lastNameRef.dirty) && !lastNameRef.valid }" />
+            formControlName="lastName" [ngClass]="{'is-invalid': (lastName.touched || lastName.dirty) && !lastName.valid }" />
           <span class="invalid-feedback">
-            <span *ngIf="lastNameRef.errors?.required">
+            <span *ngIf="lastName.errors?.required">
               Please enter your last name.
             </span>
-            <span *ngIf="lastNameRef.errors?.maxlength">
+            <span *ngIf="lastName.errors?.maxlength">
               The last name must be less than 50 characters.
             </span>
           </span>
@@ -42,12 +42,12 @@
         <label class="col-md-2 col-form-label" for="emailId">Email</label>
         <div class="col-md-8">
           <input class="form-control" id="emailId" type="email" placeholder="Email (required)" required email
-            [(ngModel)]="customer.email" name="email" #emailVar="ngModel" [ngClass]="{'is-invalid': (emailVar.touched || emailVar.dirty) && !emailVar.valid }" />
+            formControlName="email" [ngClass]="{'is-invalid': (email.touched || email.dirty) && !email.valid }" />
           <span class="invalid-feedback">
-            <span *ngIf="emailVar.errors?.required">
+            <span *ngIf="email.errors?.required">
               Please enter your email address.
             </span>
-            <span *ngIf="emailVar.errors?.email">
+            <span *ngIf="email.errors?.email">
               Please enter a valid email address.
             </span>
           </span>
@@ -58,8 +58,8 @@
         <div class="col-md-8">
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" id="sendCatalogId" type="checkbox" [(ngModel)]="customer.sendCatalog"
-                name="sendCatalog"> Send me your catalog
+              <input class="form-check-input" id="sendCatalogId" type="checkbox" formControlName="sendCatalog"> Send me
+              your catalog
             </label>
           </div>
         </div>
@@ -132,9 +132,12 @@
 
       <div class="form-group row mb-2">
         <div class="offset-md-2 col-md-4">
-          <button class="btn btn-primary mr-3" type="submit" style="width:80px" [title]="signupForm.valid ? 'Save your entered data' : 'Disabled until the form data is valid'"
-            [disabled]="!signupForm.valid">
+          <button class="btn btn-primary mr-3" type="submit" style="width:80px" [title]="formValid ? 'Save your entered data' : 'Disabled until the form data is valid'"
+            [disabled]="!formValid">
             Save
+          </button>
+          <button class="btn btn-outline-secondary" type="button" (click)="populateTestData()">
+            Test Data
           </button>
         </div>
       </div>
@@ -144,7 +147,7 @@
 </div>
 
 
-<br>Dirty: {{ signupForm.dirty }}
-<br>Touched: {{ signupForm.touched }}
-<br>Valid: {{ signupForm.valid }}
-<br>Value: {{ signupForm.value | json }}
+<br>Dirty: {{ customerForm.dirty }}
+<br>Touched: {{ customerForm.touched }}
+<br>Valid: {{ customerForm.valid }}
+<br>Value: {{ customerForm.value | json }}

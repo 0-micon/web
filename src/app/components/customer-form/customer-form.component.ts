@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Customer } from 'src/app/models/customer';
-import { NgForm } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  AbstractControl,
+  FormBuilder
+} from '@angular/forms';
 
 @Component({
   selector: 'app-customer-form',
@@ -8,14 +13,54 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./customer-form.component.scss']
 })
 export class CustomerFormComponent implements OnInit {
+  customerForm: FormGroup;
   customer = new Customer();
 
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.customerForm = this.fb.group({
+      firstName: '',
+      lastName: '',
+      email: '',
+      sendCatalog: true
+    });
 
-  save(customerForm: NgForm) {
-    console.log('Form:', customerForm);
-    console.log('Saved:' + JSON.stringify(customerForm.value));
+    // this.customerForm = new FormGroup({
+    //   firstName: new FormControl(),
+    //   lastName: new FormControl(),
+    //   email: new FormControl(),
+    //   sendCatalog: new FormControl(true)
+    // });
+  }
+
+  get formValid(): boolean {
+    return this.customerForm && this.customerForm.valid;
+  }
+
+  get firstName(): AbstractControl {
+    return this.customerForm.get('firstName');
+  }
+
+  get lastName(): AbstractControl {
+    return this.customerForm.get('lastName');
+  }
+
+  get email(): AbstractControl {
+    return this.customerForm.get('email');
+  }
+
+  save() {
+    console.log('Form:', this.customerForm);
+    console.log('Saved:' + JSON.stringify(this.customerForm.value));
+  }
+
+  populateTestData(): void {
+    this.customerForm.patchValue({
+      firstName: 'Fame',
+      lastName: 'Lame',
+      email: 'fame@lame.com',
+      sendCatalog: false
+    });
   }
 }
