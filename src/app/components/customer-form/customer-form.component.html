@@ -4,18 +4,18 @@
   </div>
 
   <div class="card-body">
-    <form novalidate [formGroup]="customerForm" (ngSubmit)="save()">
+    <form novalidate [formGroup]="mainForm" (ngSubmit)="save()">
 
       <div class="form-group row mb-2">
         <label for="firstNameId" class="col-md-2 col-form-label">First Name</label>
         <div class="col-md-8">
-          <input class="form-control" type="text" id="firstNameId" placeholder="First Name (required)" required
-            minlength="3" formControlName="firstName" [ngClass]="{'is-invalid': (firstName.touched || firstName.dirty) && !firstName.valid}">
+          <input class="form-control" type="text" id="firstNameId" placeholder="First Name (required)" formControlName="firstName"
+            [ngClass]="{'is-invalid': !isControlValid('firstName')}">
           <span class="invalid-feedback">
-            <span *ngIf="firstName.errors?.required">
+            <span *ngIf="getErrors('firstName')?.required">
               Please enter your first name.
             </span>
-            <span *ngIf="firstName.errors?.minlength">
+            <span *ngIf="getErrors('firstName')?.minlength">
               The first name must be longer than 2 characters.
             </span>
           </span>
@@ -25,13 +25,13 @@
       <div class="form-group row mb-2">
         <label class="col-md-2 col-form-label" for="lastNameId">Last Name</label>
         <div class="col-md-8">
-          <input class="form-control" id="lastNameId" type="text" placeholder="Last Name (required)" required maxlength="50"
-            formControlName="lastName" [ngClass]="{'is-invalid': (lastName.touched || lastName.dirty) && !lastName.valid }" />
+          <input class="form-control" id="lastNameId" type="text" placeholder="Last Name (required)" formControlName="lastName"
+            [ngClass]="{'is-invalid': !isControlValid('lastName') }" />
           <span class="invalid-feedback">
-            <span *ngIf="lastName.errors?.required">
+            <span *ngIf="getErrors('lastName')?.required">
               Please enter your last name.
             </span>
-            <span *ngIf="lastName.errors?.maxlength">
+            <span *ngIf="getErrors('lastName')?.maxlength">
               The last name must be less than 50 characters.
             </span>
           </span>
@@ -41,13 +41,13 @@
       <div class="form-group row mb-2">
         <label class="col-md-2 col-form-label" for="emailId">Email</label>
         <div class="col-md-8">
-          <input class="form-control" id="emailId" type="email" placeholder="Email (required)" required email
-            formControlName="email" [ngClass]="{'is-invalid': (email.touched || email.dirty) && !email.valid }" />
+          <input class="form-control" id="emailId" type="email" placeholder="Email (required)" formControlName="email"
+            [ngClass]="{'is-invalid': !isControlValid('email') }" />
           <span class="invalid-feedback">
-            <span *ngIf="email.errors?.required">
+            <span *ngIf="getErrors('email')?.required">
               Please enter your email address.
             </span>
-            <span *ngIf="email.errors?.email">
+            <span *ngIf="getErrors('email')?.email">
               Please enter a valid email address.
             </span>
           </span>
@@ -147,7 +147,7 @@
 </div>
 
 
-<br>Dirty: {{ customerForm.dirty }}
-<br>Touched: {{ customerForm.touched }}
-<br>Valid: {{ customerForm.valid }}
-<br>Value: {{ customerForm.value | json }}
+<br>Dirty: {{ mainForm.dirty }}
+<br>Touched: {{ mainForm.touched }}
+<br>Valid: {{ mainForm.valid }}
+<br>Value: {{ mainForm.value | json }}
