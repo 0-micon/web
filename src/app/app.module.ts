@@ -15,6 +15,7 @@ import { MarkerComponent } from './components/common/marker/marker.component';
 import { StarComponent } from './components/common/star/star.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
+import { CustomerFormComponent } from './components/customer-form/customer-form.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
     MarkerComponent,
     StarComponent,
     ProductDetailComponent,
-    WelcomeComponent
+    WelcomeComponent,
+    CustomerFormComponent
   ],
   imports: [
     BrowserModule,

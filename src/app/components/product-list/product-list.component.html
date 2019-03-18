@@ -8,7 +8,14 @@
         Filter by:
       </div>
       <div class="col-md-3">
-        <input class="width-inherit" type="text" [(ngModel)]="listFilter" />
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <input class="form-control" type="text" [(ngModel)]="listFilter" />
+            <div class="input-group-append" *ngIf="listFilter">
+              <button class="btn btn-outline-secondary" (click)="listFilter = ''" title="Clear filter">&times;</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="col-md-2">
         <div class="custom-control custom-switch">
