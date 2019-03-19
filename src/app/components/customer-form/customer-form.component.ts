@@ -9,6 +9,7 @@ import {
   Validators,
   ValidatorFn
 } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 // class FormBase {
 //   mainForm: FormGroup;
@@ -92,6 +93,8 @@ export class CustomerFormComponent implements OnInit {
   mainForm: FormGroup;
   customer = new Customer();
 
+  emailErrorMsg: string = '';
+
   isControlValid(controlName: string): boolean {
     const control = this.mainForm.get(controlName);
     return control.valid || !(control.touched || control.dirty);
@@ -123,6 +126,27 @@ export class CustomerFormComponent implements OnInit {
       rating: [null, [validateRange(1, 5)]],
       sendCatalog: true
     });
+
+    this.mainForm
+      .get('notification')
+      .valueChanges.subscribe(value => this.setNotification(value));
+
+    // this.mainForm.valueChanges.subscribe(value => {
+    //   console.log('Change:', value);
+    // });
+
+    const email = this.mainForm.get('emailGroup.email');
+    email.valueChanges.pipe(debounceTime(2000)).subscribe(value => {
+      console.log('Email:', value);
+      if (value && email.errors && email.errors.email) {
+        this.emailErrorMsg = 'Please enter a valid email address.';
+      } else {
+        this.emailErrorMsg = '';
+      }
+    });
+    // email.statusChanges.subscribe(value => {
+    //   console.log('Email Status:', value);
+    // });
 
     // Object.defineProperty(this, 'isEmailValid', {
     //   get(): boolean {
