@@ -6,7 +6,8 @@ import {
   AbstractControl,
   FormBuilder,
   ValidationErrors,
-  Validators
+  Validators,
+  ValidatorFn
 } from '@angular/forms';
 
 // class FormBase {
@@ -49,6 +50,38 @@ import {
 //     });
 //   }
 // }
+function validateRange(minValue: number, maxValue: number): ValidatorFn {
+  return (c: AbstractControl): ValidationErrors | null => {
+    if (
+      c.value !== null &&
+      (isNaN(c.value) || c.value < minValue || c.value > maxValue)
+    ) {
+      return { range: true };
+    }
+    return null;
+  };
+}
+
+// function matchWith(getControl: () => AbstractControl | null): ValidatorFn {
+//   return (c: AbstractControl): ValidationErrors | null => {
+//     const o = getControl();
+//     if (o && o.value !== c.value) {
+//       return { match: true };
+//     }
+//     return null;
+//   };
+// }
+
+function matchControls(a: string, b: string): ValidatorFn {
+  return (c: AbstractControl): ValidationErrors | null => {
+    const ac = c.get(a);
+    const bc = c.get(b);
+    if (ac && bc && ac.value !== bc.value) {
+      return { match: true };
+    }
+    return null;
+  };
+}
 
 @Component({
   selector: 'app-customer-form',
@@ -72,11 +105,22 @@ export class CustomerFormComponent implements OnInit {
     // super(['firstName', 'lastName', 'email', 'sendCatalog']);
   }
 
+  // matchWith(() => (this.mainForm ? this.mainForm.get('email') : null))
+
   ngOnInit() {
     this.mainForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email]],
+      emailGroup: this.fb.group(
+        {
+          email: ['', [Validators.required, Validators.email]],
+          confirmEmail: ['', [Validators.required, Validators.email]]
+        },
+        { validators: [matchControls('email', 'confirmEmail')] }
+      ),
+      phone: '',
+      notification: 'email',
+      rating: [null, [validateRange(1, 5)]],
       sendCatalog: true
     });
 
@@ -134,11 +178,23 @@ export class CustomerFormComponent implements OnInit {
     console.log('Saved:' + JSON.stringify(this.mainForm.value));
   }
 
+  setNotification(notifyVia: string): void {
+    const control = this.mainForm.get('phone');
+    if (notifyVia === 'text') {
+      control.setValidators(Validators.required);
+    } else {
+      control.clearValidators();
+    }
+    control.updateValueAndValidity();
+  }
+
   populateTestData(): void {
     this.mainForm.patchValue({
       firstName: 'Fame',
       lastName: 'Lame',
-      email: 'fame@lame.com',
+      emailGroup: {
+        email: 'fame@lame.com'
+      },
       sendCatalog: false
     });
   }
