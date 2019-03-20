@@ -7,7 +7,8 @@ import {
   FormBuilder,
   ValidationErrors,
   Validators,
-  ValidatorFn
+  ValidatorFn,
+  FormArray
 } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
@@ -90,10 +91,86 @@ function matchControls(a: string, b: string): ValidatorFn {
   styleUrls: ['./customer-form.component.scss']
 })
 export class CustomerFormComponent implements OnInit {
+  // US states in JSON form [https://gist.github.com/mshafrir/2646763]
+  states = {
+    AL: 'Alabama',
+    AK: 'Alaska',
+    AS: 'American Samoa',
+    AZ: 'Arizona',
+    AR: 'Arkansas',
+    CA: 'California',
+    CO: 'Colorado',
+    CT: 'Connecticut',
+    DE: 'Delaware',
+    DC: 'District Of Columbia',
+    FM: 'Federated States Of Micronesia',
+    FL: 'Florida',
+    GA: 'Georgia',
+    GU: 'Guam',
+    HI: 'Hawaii',
+    ID: 'Idaho',
+    IL: 'Illinois',
+    IN: 'Indiana',
+    IA: 'Iowa',
+    KS: 'Kansas',
+    KY: 'Kentucky',
+    LA: 'Louisiana',
+    ME: 'Maine',
+    MH: 'Marshall Islands',
+    MD: 'Maryland',
+    MA: 'Massachusetts',
+    MI: 'Michigan',
+    MN: 'Minnesota',
+    MS: 'Mississippi',
+    MO: 'Missouri',
+    MT: 'Montana',
+    NE: 'Nebraska',
+    NV: 'Nevada',
+    NH: 'New Hampshire',
+    NJ: 'New Jersey',
+    NM: 'New Mexico',
+    NY: 'New York',
+    NC: 'North Carolina',
+    ND: 'North Dakota',
+    MP: 'Northern Mariana Islands',
+    OH: 'Ohio',
+    OK: 'Oklahoma',
+    OR: 'Oregon',
+    PW: 'Palau',
+    PA: 'Pennsylvania',
+    PR: 'Puerto Rico',
+    RI: 'Rhode Island',
+    SC: 'South Carolina',
+    SD: 'South Dakota',
+    TN: 'Tennessee',
+    TX: 'Texas',
+    UT: 'Utah',
+    VT: 'Vermont',
+    VI: 'Virgin Islands',
+    VA: 'Virginia',
+    WA: 'Washington',
+    WV: 'West Virginia',
+    WI: 'Wisconsin',
+    WY: 'Wyoming'
+  };
+
+  get stateAbbreviations(): string[] {
+    return Object.keys(this.states);
+  }
+
   mainForm: FormGroup;
   customer = new Customer();
 
   emailErrorMsg: string = '';
+
+  // Retrieves a child control given the control's name or path.
+  get(path: string): AbstractControl {
+    return this.mainForm.get(path);
+  }
+
+  get addresses(): FormArray {
+    return this.mainForm.get('addresses') as FormArray;
+  }
 
   isControlValid(controlName: string): boolean {
     const control = this.mainForm.get(controlName);
@@ -110,6 +187,21 @@ export class CustomerFormComponent implements OnInit {
 
   // matchWith(() => (this.mainForm ? this.mainForm.get('email') : null))
 
+  createAddressGroup(): FormGroup {
+    return this.fb.group({
+      addressType: 'home',
+      street1: '',
+      street2: '',
+      city: '',
+      state: '',
+      zip: null
+    });
+  }
+
+  addAddressGroup(): void {
+    this.addresses.push(this.createAddressGroup());
+  }
+
   ngOnInit() {
     this.mainForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(3)]],
@@ -124,7 +216,8 @@ export class CustomerFormComponent implements OnInit {
       phone: '',
       notification: 'email',
       rating: [null, [validateRange(1, 5)]],
-      sendCatalog: true
+      sendCatalog: true,
+      addresses: this.fb.array([this.createAddressGroup()])
     });
 
     this.mainForm

@@ -1,17 +1,33 @@
-<nav class="navbar navbar-expand navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand">{{title}}</a>
-  <ul class="nav nav-pills">
-    <li>
-      <a class="nav-link" [routerLink]="['/welcome']" routerLinkActive="router-link-active">Home</a>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/welcome']" routerLinkActive="active">Home</a>
     </li>
-    <li>
-      <a class="nav-link" [routerLink]="['/products']">Product List</a>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/products']" routerLinkActive="active">Product List</a>
     </li>
-    <li>
-      <a class="nav-link" [routerLink]="['/customer']">Customer Form</a>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/customer']" routerLinkActive="active">Customer Form</a>
     </li>
   </ul>
 </nav>
-<div class="container">
-  <router-outlet></router-outlet>
+<!-- <nav class="navbar navbar-expand navbar-light bg-light">
+  <a class="navbar-brand">{{title}}</a>
+  <ul class="nav nav-pills">
+    <li>
+      <a class="nav-link" [routerLink]="['/welcome']" routerLinkActive="active">Home</a>
+    </li>
+    <li>
+      <a class="nav-link" [routerLink]="['/products']" routerLinkActive="active">Product List</a>
+    </li>
+    <li>
+      <a class="nav-link" [routerLink]="['/customer']" routerLinkActive="active">Customer Form</a>
+    </li>
+  </ul>
+</nav> -->
+<div class="tab-pane">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
 </div>
