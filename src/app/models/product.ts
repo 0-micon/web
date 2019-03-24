@@ -1,5 +1,5 @@
 export interface IProduct {
-  productId: number;
+  id: number;
   productName: string;
   productCode: string;
   releaseDate: string;
@@ -7,30 +7,33 @@ export interface IProduct {
   price: number;
   starRating: number;
   imageUrl: string;
+  tags?: string[];
 }
 
 export class Product implements IProduct {
   constructor(
-    public productId: number,
+    public id: number,
     public productName: string,
     public productCode: string,
     public releaseDate: string,
     public description: string,
     public price: number,
     public starRating: number,
-    public imageUrl: string
+    public imageUrl: string,
+    public tags?: string[]
   ) {}
 
   static of(product: IProduct): Product {
     return new Product(
-      product.productId,
+      product.id,
       product.productName,
       product.productCode,
       product.releaseDate,
       product.description,
       product.price,
       product.starRating,
-      product.imageUrl
+      product.imageUrl,
+      product.tags
     );
   }
 

@@ -43,6 +43,7 @@
             <th>Available</th>
             <th>Price</th>
             <th>5 Star Rating</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -50,14 +51,14 @@
               let product of filteredProducts;
               let even = even;
               trackBy: trackByProductId
-            "
-            [class.table-primary]="even">
+            " [class.table-primary]="even">
             <td>
-              <img *ngIf="showImage" [src]="product.imageUrl" [alt]="product.productName" [title]="product.productName | uppercase"
-                [style.width.px]="imageWidth" [style.margin.px]="imageMargin" />
+              <img *ngIf="showImage" [src]="product.imageUrl" [alt]="product.productName"
+                [title]="product.productName | uppercase" [style.width.px]="imageWidth"
+                [style.margin.px]="imageMargin" />
             </td>
             <td>
-              <a [routerLink]="['/products', product.productId]">
+              <a [routerLink]="['/products', product.id]">
                 <app-marker *ngIf="markerOn" [text]="product.productName" [filter]="listFilter">
                 </app-marker>
                 <span *ngIf="!markerOn">{{ product.productName }}</span>
@@ -70,6 +71,11 @@
               <!-- <fa name="cog" animation="spin"></fa> -->
               <app-star [rating]="product.starRating" (notify)="onNotyfy($event, product.starRating)"></app-star>
               <!-- {{ product.starRating }} -->
+            </td>
+            <td>
+              <button class="btn btn-outline-primary btn-sm" [routerLink]="['/products', product.id, 'edit']">
+                Edit
+              </button>
             </td>
           </tr>
         </tbody>

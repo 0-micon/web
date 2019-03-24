@@ -29,3 +29,14 @@
 .width-inherit {
   width: inherit;
 }
+
+.f-row {
+  @extend .row;
+  @extend .form-group;
+  @extend .mb-2;
+}
+
+.f-label {
+  @extend .col-md-2;
+  @extend .col-form-label;
+}

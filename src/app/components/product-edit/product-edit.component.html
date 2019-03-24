@@ -1,0 +1,159 @@
+<div class="card">
+  <div class="card-header">
+    {{ pageTitle }}
+  </div>
+
+  <div class="card-body">
+    <form novalidate [formGroup]="form" (ngSubmit)="save()">
+      <!-- productName -->
+      <div class="f-row">
+        <label class="f-label" for="productNameId">Product Name</label>
+        <div class="col-md-8">
+          <input
+            class="form-control"
+            id="productNameId"
+            type="text"
+            placeholder="Name (required)"
+            required
+            formControlName="productName"
+            [ngClass]="{ 'is-invalid': !isControlValid('productName') }"
+          />
+          <span class="invalid-feedback" *ngIf="hasError('productName', 'required')"
+            >Product name is required.</span
+          >
+          <span class="invalid-feedback" *ngIf="hasError('productName', 'minlength')"
+            >Product name is too short.</span
+          >
+          <span class="invalid-feedback" *ngIf="hasError('productName', 'maxlength')"
+            >Product name is too long.</span
+          >
+        </div>
+      </div>
+      <!-- productCode -->
+      <div class="f-row">
+        <label class="f-label" for="productCodeId">Product Code</label>
+        <div class="col-md-8">
+          <input
+            class="form-control"
+            id="productCodeId"
+            type="text"
+            placeholder="Code (required)"
+            required
+            formControlName="productCode"
+            [ngClass]="{ 'is-invalid': !isControlValid('productCode') }"
+          />
+          <span class="invalid-feedback" *ngIf="hasError('productCode', 'required')"
+            >Product code is required.</span
+          >
+          <span class="invalid-feedback" *ngIf="hasError('productCode', 'minlength')"
+            >Product code is too short.</span
+          >
+          <span class="invalid-feedback" *ngIf="hasError('productCode', 'maxlength')"
+            >Product code is too long.</span
+          >
+        </div>
+      </div>
+      <!-- starRating -->
+      <div class="f-row">
+        <label class="f-label" for="starRatingId">Star Rating (1-5)</label>
+        <div class="col-md-8">
+          <input
+            class="form-control"
+            id="starRatingId"
+            type="text"
+            placeholder="Rating (1-5)"
+            formControlName="starRating"
+            [ngClass]="{ 'is-invalid': !isControlValid('starRating') }"
+          />
+          <span class="invalid-feedback" *ngIf="hasError('starRating', 'range')">
+            Rate the product between 1 (lowest) and 5 (highest).
+          </span>
+        </div>
+      </div>
+      <!-- tags -->
+      <div formArrayName="tags">
+        <div class="f-row" *ngFor="let tag of tags.controls; let i = index">
+          <label class="f-label" [attr.for]="'tag_' + i">Tag # {{ i + 1 }}</label>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              [id]="'tag_' + i"
+              type="text"
+              placeholder="Tag"
+              [formControlName]="i"
+            />
+          </div>
+          <div class="col-md-2">
+            <button
+              class="btn btn-outline-warning btn-sm mt-1"
+              type="button"
+              title="Delete this search tag"
+              (click)="deleteTag(i)"
+            >
+              Delete Tag
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="col-md-2">
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            type="button"
+            title="Add a search tag"
+            (click)="addTag()"
+          >
+            Add Tag
+          </button>
+        </div>
+      </div>
+      <!-- description -->
+      <div class="f-row">
+        <label class="f-label" for="descriptionId">Description</label>
+        <div class="col-md-8">
+          <textarea
+            class="form-control"
+            id="descriptionId"
+            placeholder="Description"
+            rows="3"
+            formControlName="description"
+          ></textarea>
+        </div>
+      </div>
+      <!-- buttons -->
+      <div class="f-row">
+        <div class="offset-md-2 col-md-8">
+          <button
+            class="btn btn-primary mr-3 mw80"
+            type="submit"
+            [title]="
+              form.valid ? 'Save your entered data' : 'Disabled until the form data is valid'
+            "
+            [disabled]="!form.valid"
+          >
+            Save
+          </button>
+          <button
+            class="btn btn-outline-secondary mr-3 mw80"
+            type="button"
+            title="Cancel your edits"
+            [routerLink]="['/products']"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-outline-warning mw80"
+            type="button"
+            title="Delete this product"
+            (click)="deleteProduct()"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>

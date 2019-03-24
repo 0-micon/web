@@ -5,7 +5,12 @@
       <a class="nav-link" [routerLink]="['/welcome']" routerLinkActive="active">Home</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/products']" routerLinkActive="active">Product List</a>
+      <a class="nav-link" [routerLink]="['/products']" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">Product List</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/products', '0', 'edit']" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">Add Product</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['/customer']" routerLinkActive="active">Customer Form</a>

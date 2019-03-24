@@ -27,7 +27,7 @@ export class ProductListComponent implements OnInit {
   }
 
   trackByProductId(index: number, product: IProduct): number {
-    return product.productId;
+    return product.id;
   }
 
   constructor(private productService: ProductService) {}

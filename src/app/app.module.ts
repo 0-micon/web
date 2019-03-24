@@ -16,6 +16,7 @@ import { StarComponent } from './components/common/star/star.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { CustomerFormComponent } from './components/customer-form/customer-form.component';
+import { ProductEditComponent } from './components/product-edit/product-edit.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { CustomerFormComponent } from './components/customer-form/customer-form.
     StarComponent,
     ProductDetailComponent,
     WelcomeComponent,
-    CustomerFormComponent
+    CustomerFormComponent,
+    ProductEditComponent
   ],
   imports: [
     BrowserModule,
