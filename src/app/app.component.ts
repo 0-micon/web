@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'demo-app';
+  isLoggedIn: boolean = false;
+  userName: string;
+
+  logOut() {
+    this.isLoggedIn = false;
+    this.userName = '';
+  }
 }

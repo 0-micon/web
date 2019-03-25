@@ -17,9 +17,9 @@ import {
   IErrorMessages,
   GenericValidator
 } from 'src/app/share/validators/generic-validator';
-import { ProductService } from 'src/app/services/product.service';
+import { ProductService } from 'src/app/product/product.service';
 
-import { Product, IProduct } from 'src/app/models/product';
+import { Product, IProduct } from 'src/app/product/product';
 
 // const validationMessages: IValidationMessages = {
 //   productName: {
@@ -58,7 +58,6 @@ class FormBase {
 }
 
 @Component({
-  selector: 'app-product-edit',
   templateUrl: './product-edit.component.html',
   styleUrls: ['./product-edit.component.scss']
 })

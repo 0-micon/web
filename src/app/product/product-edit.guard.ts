@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
-import { ProductEditComponent } from '../components/product-edit/product-edit.component';
+import { ProductEditComponent } from './product-edit/product-edit.component';
 
 @Injectable({
   providedIn: 'root'

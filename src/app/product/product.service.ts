@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError, of } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 
-import { IProduct } from '../models/product';
+import { IProduct } from './product';
 
 const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 const productUrl = 'http://localhost:3000/products';
