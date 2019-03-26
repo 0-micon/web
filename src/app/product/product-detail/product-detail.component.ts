@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IProduct } from 'src/app/product/product';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ProductService } from 'src/app/product/product.service';
+
+import { IProduct } from 'src/app/product/product';
+import { IResolvedProduct } from '../product-resolver.service';
 
 @Component({
   // selector: 'app-product-detail',
@@ -10,22 +11,24 @@ import { ProductService } from 'src/app/product/product.service';
 })
 export class ProductDetailComponent implements OnInit {
   pageTitle: string = 'Product Detail';
+  errorMessage: string;
+
   @Input()
   product: IProduct;
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private productService: ProductService
-  ) {}
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    const id = +this.route.snapshot.paramMap.get('id');
-    if (id > 0) {
-      this.productService
-        .getProduct(id)
-        .subscribe(data => (this.product = data));
-    }
+    const data: IResolvedProduct = this.route.snapshot.data.product;
+    this.product = data.product;
+    this.errorMessage = data.error;
+
+    // const id = +this.route.snapshot.paramMap.get('id');
+    // if (id > 0) {
+    //   this.productService
+    //     .getProduct(id)
+    //     .subscribe(data => (this.product = data));
+    // }
   }
 
   goBack(): void {

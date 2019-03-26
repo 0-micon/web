@@ -11,30 +11,40 @@ export interface IProduct {
 }
 
 export class Product implements IProduct {
-  constructor(
-    public id: number,
-    public productName: string,
-    public productCode: string,
-    public releaseDate: string,
-    public description: string,
-    public price: number,
-    public starRating: number,
-    public imageUrl: string,
-    public tags?: string[]
-  ) {}
+  id: number;
+  productName: string;
+  productCode: string;
+  releaseDate: string;
+  description: string;
+  price: number;
+  starRating: number;
+  imageUrl: string;
+  tags?: string[];
+
+  constructor(options: {
+    id?: number;
+    productName?: string;
+    productCode?: string;
+    releaseDate?: string;
+    description?: string;
+    price?: number;
+    starRating?: number;
+    imageUrl?: string;
+    tags?: string[];
+  }) {
+    this.id = options.id || null;
+    this.productName = options.productName || '';
+    this.productCode = options.productCode || '';
+    this.releaseDate = options.releaseDate || '';
+    this.description = options.description || '';
+    this.price = options.price || null;
+    this.starRating = options.starRating || 0;
+    this.imageUrl = options.imageUrl || '';
+    this.tags = options.tags || [];
+  }
 
   static of(product: IProduct): Product {
-    return new Product(
-      product.id,
-      product.productName,
-      product.productCode,
-      product.releaseDate,
-      product.description,
-      product.price,
-      product.starRating,
-      product.imageUrl,
-      product.tags
-    );
+    return new Product({ ...product });
   }
 
   discountPrice(percent: number): number {

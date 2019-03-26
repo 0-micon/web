@@ -14,6 +14,7 @@ import { ProductEditGuard } from './product-edit.guard';
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { ProductEditComponent } from './product-edit/product-edit.component';
+import { ProductResolverService } from './product-resolver.service';
 
 @NgModule({
   declarations: [ProductListComponent, ProductDetailComponent, ProductEditComponent],
@@ -31,11 +32,13 @@ import { ProductEditComponent } from './product-edit/product-edit.component';
       {
         path: 'products/:id',
         component: ProductDetailComponent,
+        resolve: { product: ProductResolverService },
         canActivate: [ProductGuard]
       },
       {
         path: 'products/:id/edit',
         component: ProductEditComponent,
+        resolve: { product: ProductResolverService },
         canDeactivate: [ProductEditGuard]
       }
     ])

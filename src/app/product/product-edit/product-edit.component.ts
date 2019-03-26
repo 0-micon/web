@@ -20,6 +20,7 @@ import {
 import { ProductService } from 'src/app/product/product.service';
 
 import { Product, IProduct } from 'src/app/product/product';
+import { IResolvedProduct } from '../product-resolver.service';
 
 // const validationMessages: IValidationMessages = {
 //   productName: {
@@ -99,10 +100,17 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
       description: ''
     });
 
-    this.subscription = this.route.params.subscribe(params => {
-      console.log('Product Route:', params);
-      this.getProduct(+params.id);
+    this.subscription = this.route.data.subscribe(params => {
+      const data: IResolvedProduct = this.route.snapshot.data.product;
+      this.errorMessage = data.error;
+      this.product = data.product;
+      this.displayProduct();
     });
+
+    // this.route.params.subscribe(params => {
+    //   console.log('Product Route:', params);
+    //   this.getProduct(+params.id);
+    // });
   }
 
   ngAfterViewInit(): void {
@@ -118,18 +126,18 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
     }
   }
 
-  getProduct(id: number): void {
-    this.productService.getProduct(id).subscribe(
-      product => {
-        this.errorMessage = null;
-        this.product = product;
-        this.displayProduct();
-      },
-      error => {
-        this.errorMessage = error;
-      }
-    );
-  }
+  // getProduct(id: number): void {
+  //   this.productService.getProduct(id).subscribe(
+  //     product => {
+  //       this.errorMessage = null;
+  //       this.product = product;
+  //       this.displayProduct();
+  //     },
+  //     error => {
+  //       this.errorMessage = error;
+  //     }
+  //   );
+  // }
 
   displayProduct(): void {
     const product: IProduct = this.product;
@@ -152,7 +160,12 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
         starRating: product.starRating,
         description: product.description
       });
-      this.tags.reset();
+      const tags = this.tags;
+      while (tags.length > 0) {
+        tags.removeAt(tags.length - 1);
+      }
+      tags.reset();
+      console.log('Tag Length:', this.tags.length);
       if (product.tags) {
         for (const tag of product.tags) {
           this.addTag(tag);
