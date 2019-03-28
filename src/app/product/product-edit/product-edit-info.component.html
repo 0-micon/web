@@ -1,0 +1,47 @@
+<div *ngIf="form">
+  <form novalidate [formGroup]="form">
+    <!-- Product Name -->
+    <div class="f-row">
+      <label class="f-label" for="productNameId">Product Name</label>
+      <div class="col-md-8">
+        <input class="form-control" id="productNameId" type="text" placeholder="Name (required)" required
+          formControlName="productName" [ngClass]="{ 'is-invalid': !isControlValid('productName') }" />
+        <span class="invalid-feedback" *ngIf="hasError('productName', 'required')">
+          Product name is required.
+        </span>
+        <span class="invalid-feedback" *ngIf="hasError('productName', 'minlength')">Product name is too short.</span>
+        <span class="invalid-feedback" *ngIf="hasError('productName', 'maxlength')">Product name is too long.</span>
+      </div>
+    </div>
+    <!-- Product Code -->
+    <div class="f-row">
+      <label class="f-label" for="productCodeId">Product Code</label>
+      <div class="col-md-8">
+        <input class="form-control" id="productCodeId" type="text" placeholder="Code (required)" required
+          formControlName="productCode" [ngClass]="{ 'is-invalid': !isControlValid('productCode') }" />
+        <span class="invalid-feedback" *ngIf="hasError('productCode', 'required')">Product code is required.</span>
+        <span class="invalid-feedback" *ngIf="hasError('productCode', 'minlength')">Product code is too short.</span>
+        <span class="invalid-feedback" *ngIf="hasError('productCode', 'maxlength')">Product code is too long.</span>
+      </div>
+    </div>
+    <!-- Star Rating -->
+    <div class="f-row">
+      <label class="f-label" for="starRatingId">Star Rating (1-5)</label>
+      <div class="col-md-8">
+        <input class="form-control" id="starRatingId" type="text" placeholder="Rating (1-5)"
+          formControlName="starRating" [ngClass]="{ 'is-invalid': !isControlValid('starRating') }" />
+        <span class="invalid-feedback" *ngIf="hasError('starRating', 'range')">
+          Rate the product between 1 (lowest) and 5 (highest).
+        </span>
+      </div>
+    </div>
+    <!-- Description -->
+    <div class="f-row">
+      <label class="f-label" for="descriptionId">Description</label>
+      <div class="col-md-8">
+        <textarea class="form-control" id="descriptionId" placeholder="Description" rows="3"
+          formControlName="description"></textarea>
+      </div>
+    </div>
+  </form>
+</div>

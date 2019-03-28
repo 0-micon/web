@@ -12,15 +12,13 @@ import { Subscription } from 'rxjs';
 import { NumericValidator } from 'src/app/share/validators/numeric-validator';
 import { debounceTime } from 'rxjs/operators';
 
-import {
-  IValidationMessages,
-  IErrorMessages,
-  GenericValidator
-} from 'src/app/share/validators/generic-validator';
 import { ProductService } from 'src/app/product/product.service';
 
-import { Product, IProduct } from 'src/app/product/product';
+import { IProduct } from 'src/app/product/product';
 import { IResolvedProduct } from '../product-resolver.service';
+import { FormBase } from 'src/app/share/classes/form-base';
+import { ProductEditInfoComponent } from './product-edit-info.component';
+import { ProductEditTagsComponent } from './product-edit-tags.component';
 
 // const validationMessages: IValidationMessages = {
 //   productName: {
@@ -36,28 +34,6 @@ import { IResolvedProduct } from '../product-resolver.service';
 //   }
 // };
 
-class FormBase {
-  form: FormGroup;
-
-  // Retrieves a child control given the control's name or path.
-  get(path: string): AbstractControl {
-    return this.form.get(path);
-  }
-
-  isControlValid(path: string): boolean {
-    const control = this.get(path);
-    return control.valid || !(control.touched || control.dirty);
-  }
-
-  hasError(path: string, errorCode: string): boolean {
-    return this.get(path).hasError(errorCode);
-  }
-
-  errors(path: string): any {
-    return this.form.get(path).errors;
-  }
-}
-
 @Component({
   templateUrl: './product-edit.component.html',
   styleUrls: ['./product-edit.component.scss']
@@ -68,22 +44,8 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
   product: IProduct;
   errorMessage: string;
 
-  get tags(): FormArray {
-    return this.get('tags') as FormArray;
-  }
-
-  addTag(tag: string = ''): void {
-    this.tags.push(new FormControl(tag));
-  }
-
-  deleteTag(i: number): void {
-    const tags = this.tags;
-    tags.removeAt(i);
-    tags.markAsDirty();
-  }
-
   constructor(
-    private fb: FormBuilder,
+    private _fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService
@@ -91,17 +53,30 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
     super();
   }
 
+  get info(): FormGroup {
+    return this.get('info') as FormGroup;
+  }
+
+  get tags(): FormArray {
+    return this.get('tags') as FormArray;
+  }
+
   ngOnInit() {
-    this.form = this.fb.group({
-      productName: ['', [Validators.minLength(3), Validators.maxLength(50)]],
-      productCode: ['', [Validators.minLength(3), Validators.maxLength(32)]],
-      starRating: [null, [NumericValidator.range(1, 5)]],
-      tags: this.fb.array([]),
-      description: ''
+    const fb = this._fb;
+    this.form = fb.group({
+      info: fb.group({
+        productName: ['', [Validators.minLength(3), Validators.maxLength(50)]],
+        productCode: ['', [Validators.minLength(3), Validators.maxLength(32)]],
+        starRating: [null, [NumericValidator.range(1, 5)]],
+        description: ''
+      }),
+      tags: fb.array([])
     });
 
     this.subscription = this.route.data.subscribe(params => {
-      const data: IResolvedProduct = this.route.snapshot.data.product;
+      const data: IResolvedProduct = params.product; // this.route.snapshot.data.product;
+      // console.log('Data 1:', data);
+      // console.log('Data 2:', params);
       this.errorMessage = data.error;
       this.product = data.product;
       this.displayProduct();
@@ -154,21 +129,22 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
     // Update the data on the form
     if (this.form) {
       this.form.reset();
-      this.form.patchValue({
+
+      this.info.patchValue({
         productName: product.productName,
         productCode: product.productCode,
         starRating: product.starRating,
         description: product.description
       });
-      const tags = this.tags;
+
+      const tags: FormArray = this.tags;
       while (tags.length > 0) {
         tags.removeAt(tags.length - 1);
       }
       tags.reset();
-      console.log('Tag Length:', this.tags.length);
       if (product.tags) {
-        for (const tag of product.tags) {
-          this.addTag(tag);
+        for (const name of product.tags) {
+          tags.push(new FormControl(name));
         }
       }
     }
@@ -177,7 +153,11 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
   save(): void {
     if (this.form.valid) {
       if (this.form.dirty) {
-        const product = { ...this.product, ...this.form.value };
+        const product = {
+          ...this.product,
+          ...this.info.value,
+          tags: this.tags.controls.map(c => c.value)
+        };
         this.productService
           .updateProduct(product)
           .subscribe(() => this.onSaveComplete(), error => (this.errorMessage = error));
@@ -196,4 +176,24 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
   }
 
   deleteProduct(): void {}
+
+  onActivate($event): void {
+    // console.log('On Activate:', $event);
+
+    if ($event instanceof FormBase) {
+      if ($event instanceof ProductEditInfoComponent) {
+        $event.form = this.info;
+      } else if ($event instanceof ProductEditTagsComponent) {
+        $event.form = this.form;
+      }
+    }
+  }
+
+  onDeactivate($event): void {
+    // console.log('On Deactivate:', $event);
+
+    if ($event instanceof FormBase) {
+      $event.markInvalidAsTouched();
+    }
+  }
 }

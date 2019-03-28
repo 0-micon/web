@@ -1,11 +1,11 @@
-<div class="card">
+<!-- <div class="card">
   <div class="card-header">
     {{ pageTitle }}
   </div>
 
   <div class="card-body">
     <form novalidate [formGroup]="form" (ngSubmit)="save()">
-      <!-- productName -->
+
       <div class="f-row">
         <label class="f-label" for="productNameId">Product Name</label>
         <div class="col-md-8">
@@ -18,7 +18,7 @@
           <span class="invalid-feedback" *ngIf="hasError('productName', 'maxlength')">Product name is too long.</span>
         </div>
       </div>
-      <!-- productCode -->
+
       <div class="f-row">
         <label class="f-label" for="productCodeId">Product Code</label>
         <div class="col-md-8">
@@ -29,7 +29,7 @@
           <span class="invalid-feedback" *ngIf="hasError('productCode', 'maxlength')">Product code is too long.</span>
         </div>
       </div>
-      <!-- starRating -->
+
       <div class="f-row">
         <label class="f-label" for="starRatingId">Star Rating (1-5)</label>
         <div class="col-md-8">
@@ -40,7 +40,7 @@
           </span>
         </div>
       </div>
-      <!-- tags -->
+
       <div formArrayName="tags">
         <div class="f-row" *ngFor="let tag of tags.controls; let i = index">
           <label class="f-label" [attr.for]="'tag_' + i">Tag # {{ i + 1 }}</label>
@@ -62,7 +62,7 @@
           </button>
         </div>
       </div>
-      <!-- description -->
+
       <div class="f-row">
         <label class="f-label" for="descriptionId">Description</label>
         <div class="col-md-8">
@@ -70,7 +70,7 @@
             formControlName="description"></textarea>
         </div>
       </div>
-      <!-- buttons -->
+
       <div class="f-row">
         <div class="offset-md-2 col-md-8">
           <button class="btn btn-primary mr-3 mw80" type="submit" [title]="
@@ -93,4 +93,50 @@
   <div class="alert alert-danger" *ngIf="errorMessage">
     {{ errorMessage }}
   </div>
+</div> -->
+
+<div class="card">
+  <div class="card-header">
+    {{pageTitle}}
+  </div>
+
+  <div class="card-body" *ngIf="product">
+    <div class="row mb-2">
+      <div class="wizard">
+        <a routerLink="info" routerLinkActive="active" #rlaInfo="routerLinkActive">
+          Basic Information
+          <span *ngIf="!rlaInfo.isActive" [ngClass]="{'fa fa-exclamation': !isControlValid('info')}"></span>
+        </a>
+        <a routerLink="tags" routerLinkActive="active" #rlaTags="routerLinkActive">
+          Search Tags
+          <span *ngIf="!rlaTags.isActive" [ngClass]="{'fa fa-exclamation': !isControlValid('tags')}"></span>
+        </a>
+      </div>
+    </div>
+
+    <router-outlet (activate)='onActivate($event)' (deactivate)='onDeactivate($event)'></router-outlet>
+  </div>
+
+  <div class='card-footer'>
+    <div class="row mb-2">
+      <div class="offset-md-2 col-md-8">
+        <button class="btn btn-primary mw80 mr-3" type="button"
+          [title]="form.valid ? 'Save your entered data' : 'Disabled until the form data is valid'"
+          [disabled]="!form.valid" (click)="save()">
+          Save
+        </button>
+        <button class="btn btn-outline-secondary mw80 mr-3" type="button" title="Cancel your edits"
+          routerLink="/products">
+          Cancel
+        </button>
+        <button class="btn btn-outline-warning mw80" type="button" title="Delete this product">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-danger" *ngIf="errorMessage">
+  {{errorMessage}}
 </div>

@@ -14,7 +14,7 @@ export class ProductEditGuard implements CanDeactivate<ProductEditComponent> {
     nextState?: RouterStateSnapshot
   ): boolean {
     if (component.form.dirty) {
-      const productName = component.get('productName').value || 'New Product';
+      const productName = component.info.get('productName').value || 'New Product';
       return confirm(`Navigate away and lose all changes to ${productName}?`);
     }
     return true;
