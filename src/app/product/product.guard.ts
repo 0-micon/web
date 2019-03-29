@@ -13,11 +13,9 @@ import { Observable } from 'rxjs';
 })
 export class ProductGuard implements CanActivate {
   constructor(private router: Router) {}
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean {
-    const id = +next.url[1].path;
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    // console.log('Product Guard:', next);
+    const id = +next.params.id;
     if (id > 0) {
       return true;
     }
