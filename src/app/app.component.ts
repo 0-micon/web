@@ -7,6 +7,7 @@ import {
   NavigationCancel,
   NavigationError
 } from '@angular/router';
+import { AuthService } from './user/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -15,17 +16,26 @@ import {
   animations: [AppAnimation.slideInAnimation]
 })
 export class AppComponent {
-  title = 'demo-app';
-  isLoggedIn: boolean = false;
-  userName: string;
+  title = 'Acme Product Management';
   loading: boolean = true;
 
-  logOut() {
-    this.isLoggedIn = false;
-    this.userName = '';
+  get isLoggedIn(): boolean {
+    return this._authService.isLoggedIn;
   }
 
-  constructor(private _router: Router) {
+  get username(): string {
+    if (this._authService.currentUser) {
+      return this._authService.currentUser.username;
+    }
+    return '';
+  }
+
+  logOut() {
+    this._authService.logout();
+    this._router.navigateByUrl('welcome');
+  }
+
+  constructor(private _router: Router, private _authService: AuthService) {
     _router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.loading = true;

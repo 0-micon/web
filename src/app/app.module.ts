@@ -6,12 +6,15 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
+import { ProductModule } from './product/product.module';
+import { UserModule } from './user/user.module';
+import { MessagesModule } from './messages/messages.module';
 import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { CustomerFormComponent } from './components/customer-form/customer-form.component';
 import { PageNotFoundComponent } from './components/page-not-found.component';
-import { ProductModule } from './product/product.module';
 
 @NgModule({
   declarations: [AppComponent, WelcomeComponent, CustomerFormComponent, PageNotFoundComponent],
@@ -21,7 +24,9 @@ import { ProductModule } from './product/product.module';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    MessagesModule,
     ProductModule,
+    UserModule,
     AppRoutingModule,
     AngularFontAwesomeModule
   ],
