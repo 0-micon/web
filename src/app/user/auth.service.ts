@@ -9,6 +9,7 @@ import { IUser } from './user';
 })
 export class AuthService {
   currentUser: IUser;
+  redirectUrl: string;
 
   get isLoggedIn(): boolean {
     return !!this.currentUser;
