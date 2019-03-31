@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class MessageService {
   private _messages: string[] = [];
+  isDisplayed: boolean;
 
   get messages(): string[] {
     return this._messages;
@@ -12,7 +13,7 @@ export class MessageService {
 
   add(message: string): void {
     const date = new Date();
-    this.messages.push(`${message} at ${date.toLocaleString()}`);
+    this.messages.push(`[${date.toLocaleString()}] ${message}`);
   }
 
   constructor() {

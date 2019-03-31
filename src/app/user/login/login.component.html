@@ -11,7 +11,7 @@
           <label class="col-md-2 col-form-label" for="userNameId">User Name</label>
           <div class="col-md-8">
             <input class="form-control" id="userNameId" type="text" placeholder="User Name (required)" required ngModel
-              name="userName" #userNameVar="ngModel"
+              name="username" #userNameVar="ngModel"
               [ngClass]="{'is-invalid': (userNameVar.touched || userNameVar.dirty) && !userNameVar.valid }" />
             <span class="invalid-feedback">
               <span *ngIf="userNameVar.errors && userNameVar.errors['required']">

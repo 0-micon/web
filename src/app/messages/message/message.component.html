@@ -7,9 +7,9 @@
   </div>
 
   <div class="card-body">
-    <div *ngFor="let m of messages; let i=index">
-      <div class="message-row">
-        {{m}}
+    <div class="container">
+      <div *ngFor="let m of messages; let i=index" class="row">
+        <div class="col-12">{{m}}</div>
       </div>
     </div>
   </div>

@@ -8,6 +8,7 @@ import {
   NavigationError
 } from '@angular/router';
 import { AuthService } from './user/auth.service';
+import { MessageService } from './messages/message.service';
 
 @Component({
   selector: 'app-root',
@@ -30,21 +31,37 @@ export class AppComponent {
     return '';
   }
 
+  get isMessagesDisplayed(): boolean {
+    return !!this._messageService.isDisplayed;
+  }
+
   logOut() {
     this._authService.logout();
     this._router.navigateByUrl('welcome');
   }
 
-  constructor(private _router: Router, private _authService: AuthService) {
+  displayMessages(): void {
+    this._router.navigate([{ outlets: { popup: ['messages'] } }]);
+  }
+
+  hideMessages(): void {
+    this._router.navigate([{ outlets: { popup: null } }]);
+  }
+
+  constructor(
+    private _router: Router,
+    private _authService: AuthService,
+    private _messageService: MessageService
+  ) {
     _router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.loading = true;
       }
-      if (
-        event instanceof NavigationEnd ||
-        event instanceof NavigationError ||
-        event instanceof NavigationCancel
-      ) {
+      if (event instanceof NavigationEnd) {
+        this.loading = false;
+        this._messageService.isDisplayed = event.urlAfterRedirects.indexOf('(popup:messages)') >= 0;
+      }
+      if (event instanceof NavigationError || event instanceof NavigationCancel) {
         this.loading = false;
       }
     });

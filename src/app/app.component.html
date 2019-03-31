@@ -1,18 +1,18 @@
 <span class="fa fa-spinner spinner" *ngIf="loading"></span>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand">{{title}}</a>
+  <a class="navbar-brand">{{ title }}</a>
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link" routerLink="/welcome" routerLinkActive="active">Home</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" routerLink="/products" routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">Product List</a>
+        [routerLinkActiveOptions]="{ exact: true }">Product List</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['/products', '0', 'edit']" routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact: true}">Add Product</a>
+        [routerLinkActiveOptions]="{ exact: true }">Add Product</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" routerLink="/customer" routerLinkActive="active">Customer Form</a>
@@ -24,7 +24,12 @@
       <a class="nav-link">Welcome {{ username }}</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link">Show Messages</a>
+      <a *ngIf="!isMessagesDisplayed" class="nav-link" (click)="displayMessages()">
+        Show Messages
+      </a>
+      <a *ngIf="isMessagesDisplayed" class="nav-link" (click)="hideMessages()">
+        Hide Messages
+      </a>
     </li>
     <li class="nav-item" *ngIf="!isLoggedIn">
       <a class="nav-link" routerLink="/login">Log In</a>
@@ -49,7 +54,15 @@
   </ul>
 </nav> -->
 <div class="tab-pane">
-  <div class="container" [@slideInAnimation]="o.isActivated ? o.activatedRoute : ''">
-    <router-outlet #o="outlet"></router-outlet>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- <div class="col-md-10" [@slideInAnimation]="o.isActivated ? o.activatedRoute : ''"> -->
+      <div class="col-md-10">
+        <router-outlet #o="outlet"></router-outlet>
+      </div>
+      <div class="col-md-2">
+        <router-outlet name="popup"></router-outlet>
+      </div>
+    </div>
   </div>
 </div>

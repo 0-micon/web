@@ -19,5 +19,6 @@ export class MessageComponent implements OnInit {
 
   close(): void {
     // Close the pop-up.
+    this._router.navigate([{ outlets: { popup: null } }]);
   }
 }

@@ -40,6 +40,9 @@ export class AuthService {
   }
 
   logout(): void {
-    this.currentUser = null;
+    if (this.currentUser) {
+      this._messageService.add(`User: ${this.currentUser.username} logged out`);
+      this.currentUser = null;
+    }
   }
 }
