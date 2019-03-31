@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
@@ -17,7 +16,6 @@ import { ProductEditComponent } from './product-edit/product-edit.component';
 import { ProductResolverService } from './product-resolver.service';
 import { ProductEditInfoComponent } from './product-edit/product-edit-info.component';
 import { ProductEditTagsComponent } from './product-edit/product-edit-tags.component';
-import { AuthGuard } from '../user/auth.guard';
 
 @NgModule({
   declarations: [
@@ -29,7 +27,6 @@ import { AuthGuard } from '../user/auth.guard';
   ],
   imports: [
     CommonModule,
-    BrowserModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
@@ -37,28 +34,22 @@ import { AuthGuard } from '../user/auth.guard';
 
     ShareModule,
     RouterModule.forChild([
+      { path: '', component: ProductListComponent },
       {
-        path: 'products',
-        canActivate: [AuthGuard],
+        path: ':id',
+        component: ProductDetailComponent,
+        resolve: { product: ProductResolverService },
+        canActivate: [ProductGuard]
+      },
+      {
+        path: ':id/edit',
+        component: ProductEditComponent,
+        resolve: { product: ProductResolverService },
+        canDeactivate: [ProductEditGuard],
         children: [
-          { path: '', component: ProductListComponent },
-          {
-            path: ':id',
-            component: ProductDetailComponent,
-            resolve: { product: ProductResolverService },
-            canActivate: [ProductGuard]
-          },
-          {
-            path: ':id/edit',
-            component: ProductEditComponent,
-            resolve: { product: ProductResolverService },
-            canDeactivate: [ProductEditGuard],
-            children: [
-              { path: '', redirectTo: 'info', pathMatch: 'full' },
-              { path: 'info', component: ProductEditInfoComponent },
-              { path: 'tags', component: ProductEditTagsComponent }
-            ]
-          }
+          { path: '', redirectTo: 'info', pathMatch: 'full' },
+          { path: 'info', component: ProductEditInfoComponent },
+          { path: 'tags', component: ProductEditTagsComponent }
         ]
       }
     ])

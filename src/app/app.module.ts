@@ -6,7 +6,6 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
-import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
 import { MessagesModule } from './messages/messages.module';
 import { AppRoutingModule } from './app-routing.module';
@@ -25,7 +24,6 @@ import { PageNotFoundComponent } from './components/page-not-found.component';
     FormsModule,
     ReactiveFormsModule,
     MessagesModule,
-    ProductModule,
     UserModule,
     AppRoutingModule,
     AngularFontAwesomeModule
