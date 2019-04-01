@@ -10,14 +10,17 @@ import { ShareModule } from '../share/share.module';
 import { ProductGuard } from './product.guard';
 import { ProductEditGuard } from './product-edit.guard';
 
+import { ProductResolverService } from './product-resolver.service';
+import { ProductParamsService } from './product-params.service';
+
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { ProductEditComponent } from './product-edit/product-edit.component';
-import { ProductResolverService } from './product-resolver.service';
 import { ProductEditInfoComponent } from './product-edit/product-edit-info.component';
 import { ProductEditTagsComponent } from './product-edit/product-edit-tags.component';
 
 @NgModule({
+  providers: [ProductResolverService, ProductEditGuard, ProductGuard, ProductParamsService],
   declarations: [
     ProductListComponent,
     ProductDetailComponent,

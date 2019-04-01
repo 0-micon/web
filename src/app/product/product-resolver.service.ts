@@ -12,9 +12,7 @@ export interface IResolvedProduct {
   error?: any;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ProductResolverService implements Resolve<IResolvedProduct> {
   constructor(private _productService: ProductService) {}
 

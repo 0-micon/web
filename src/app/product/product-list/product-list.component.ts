@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IProduct } from 'src/app/product/product';
 import { ProductService } from 'src/app/product/product.service';
+import { ProductParamsService } from '../product-params.service';
 
 @Component({
   selector: 'app-product-list',
@@ -9,20 +10,33 @@ import { ProductService } from 'src/app/product/product.service';
 })
 export class ProductListComponent implements OnInit {
   markerOn: boolean = false;
-  showImage: boolean = false;
+
   imageWidth: number = 50;
   imageMargin: number = 2;
-  listFilter: string = '';
   pageTitle: string = 'Product List';
   products: IProduct[];
+
+  get showImage(): boolean {
+    return this._paramsService.showImage;
+  }
+
+  set showImage(value: boolean) {
+    this._paramsService.showImage = !!value;
+  }
+
+  get listFilter(): string {
+    return this._paramsService.filterBy;
+  }
+
+  set listFilter(value: string) {
+    this._paramsService.filterBy = value;
+  }
 
   get filteredProducts(): IProduct[] {
     const products = this.products || [];
     const filter = this.listFilter ? this.listFilter.toLowerCase() : '';
     return filter
-      ? products.filter(
-          item => item.productName.toLowerCase().indexOf(filter) >= 0
-        )
+      ? products.filter(item => item.productName.toLowerCase().indexOf(filter) >= 0)
       : products;
   }
 
@@ -30,10 +44,13 @@ export class ProductListComponent implements OnInit {
     return product.id;
   }
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private _productService: ProductService,
+    private _paramsService: ProductParamsService
+  ) {}
 
   ngOnInit() {
-    this.productService.getProducts().subscribe(data => {
+    this._productService.getProducts().subscribe(data => {
       this.products = data;
     });
   }

@@ -3,9 +3,7 @@ import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@ang
 
 import { ProductEditComponent } from './product-edit/product-edit.component';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ProductEditGuard implements CanDeactivate<ProductEditComponent> {
   canDeactivate(
     component: ProductEditComponent,
