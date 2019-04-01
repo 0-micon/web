@@ -3,27 +3,28 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand">{{ title }}</a>
   <ul class="nav nav-tabs">
-    <li class="nav-item">
+    <li class="n-item">
       <a class="nav-link" routerLink="/welcome" routerLinkActive="active">Home</a>
     </li>
-    <li class="nav-item">
+    <li class="n-item">
       <a class="nav-link" routerLink="/products" routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }">Product List</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/products', '0', 'edit']" routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }">Add Product</a>
+    <li class="n-item">
+      <a class="nav-link" [routerLink]="['/products', '0', 'edit']" routerLinkActive="active">
+        Add Product
+      </a>
     </li>
-    <li class="nav-item">
+    <li class="n-item">
       <a class="nav-link" routerLink="/customer" routerLinkActive="active">Customer Form</a>
     </li>
   </ul>
 
   <ul class="navbar-nav ml-auto">
-    <li class="nav-item" *ngIf="isLoggedIn">
+    <li class="n-item" *ngIf="isLoggedIn">
       <a class="nav-link">Welcome {{ username }}</a>
     </li>
-    <li class="nav-item">
+    <li class="n-item">
       <a *ngIf="!isMessagesDisplayed" class="nav-link" (click)="displayMessages()">
         Show Messages
       </a>
@@ -31,10 +32,10 @@
         Hide Messages
       </a>
     </li>
-    <li class="nav-item" *ngIf="!isLoggedIn">
+    <li class="n-item" *ngIf="!isLoggedIn">
       <a class="nav-link" routerLink="/login">Log In</a>
     </li>
-    <li class="nav-item" *ngIf="isLoggedIn">
+    <li class="n-item" *ngIf="isLoggedIn">
       <a class="nav-link" (click)="logOut()">Log Out</a>
     </li>
   </ul>

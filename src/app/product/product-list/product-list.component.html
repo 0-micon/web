@@ -10,7 +10,7 @@
       <div class="col-md-3">
         <div class="form-group">
           <div class="input-group mb-3">
-            <input class="form-control" type="text" [(ngModel)]="listFilter" />
+            <input appSetFocus="100" class="form-control" type="text" [(ngModel)]="listFilter" />
             <div class="input-group-append" *ngIf="listFilter">
               <button class="btn btn-outline-secondary" (click)="listFilter = ''" title="Clear filter">&times;</button>
             </div>
@@ -26,7 +26,7 @@
     </div>
     <div class="row">
       <div class="col-md-6">
-        <h4>Filterd by: {{ listFilter }}</h4>
+        <h4>Filtered by: {{ listFilter }}</h4>
       </div>
     </div>
     <div class="table-responsive">

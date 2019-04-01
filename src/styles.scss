@@ -40,3 +40,8 @@
   @extend .col-md-2;
   @extend .col-form-label;
 }
+
+.n-item {
+  @extend .nav-item;
+  cursor: pointer;
+}
