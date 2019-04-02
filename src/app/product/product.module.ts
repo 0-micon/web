@@ -18,6 +18,9 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { ProductEditComponent } from './product-edit/product-edit.component';
 import { ProductEditInfoComponent } from './product-edit/product-edit-info.component';
 import { ProductEditTagsComponent } from './product-edit/product-edit-tags.component';
+import { ProductShellComponent } from './product-shell/product-shell.component';
+import { ProductShellListComponent } from './product-shell/product-shell-list.component';
+import { ProductShellInfoComponent } from './product-shell/product-shell-info.component';
 
 @NgModule({
   providers: [ProductResolverService, ProductEditGuard, ProductGuard, ProductParamsService],
@@ -26,7 +29,10 @@ import { ProductEditTagsComponent } from './product-edit/product-edit-tags.compo
     ProductDetailComponent,
     ProductEditComponent,
     ProductEditInfoComponent,
-    ProductEditTagsComponent
+    ProductEditTagsComponent,
+    ProductShellComponent,
+    ProductShellListComponent,
+    ProductShellInfoComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +43,8 @@ import { ProductEditTagsComponent } from './product-edit/product-edit-tags.compo
 
     ShareModule,
     RouterModule.forChild([
-      { path: '', component: ProductListComponent },
+      // { path: '', component: ProductListComponent },
+      { path: '', component: ProductShellComponent },
       {
         path: ':id',
         component: ProductDetailComponent,
