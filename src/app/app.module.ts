@@ -4,6 +4,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
+import { StoreModule } from '@ngrx/store';
+
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
 import { UserModule } from './user/user.module';
@@ -26,7 +28,8 @@ import { PageNotFoundComponent } from './components/page-not-found.component';
     MessagesModule,
     UserModule,
     AppRoutingModule,
-    AngularFontAwesomeModule
+    AngularFontAwesomeModule,
+    StoreModule.forRoot({})
   ],
   providers: [],
   bootstrap: [AppComponent]

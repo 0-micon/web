@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError, of, BehaviorSubject } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 
 import { IProduct } from './product';
@@ -12,7 +12,14 @@ const productUrl = 'http://localhost:3000/products';
   providedIn: 'root'
 })
 export class ProductService {
+  private _selectedProductSource = new BehaviorSubject<IProduct | null>(null);
+  readonly selectedProduct$ = this._selectedProductSource.asObservable();
+
   constructor(private http: HttpClient) {}
+
+  selectProduct(product: IProduct): void {
+    this._selectedProductSource.next(product);
+  }
 
   getProducts(): Observable<IProduct[]> {
     return this.http.get<IProduct[]>(productUrl).pipe(

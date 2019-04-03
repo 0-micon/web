@@ -1,17 +1,38 @@
-<div class='panel panel-primary' *ngIf='products?.length'>
-  <div class='panel-heading'>
+<div class="card">
+
+  <div class="card-header">
     {{pageTitle}}
   </div>
 
-  <div class='panel-body'>
-    <div class='list-group'>
-      <button type='button' class='list-group-item' *ngFor='let product of products'
-        (click)="selectedProduct.emit(product)">
-        {{ product.productName }} ({{ product.productCode }})
+  <div class="card-body" *ngIf="products?.length">
+    <div class="list-group">
+      <button class="list-group-item list-group-item-action rounded-0" *ngFor="let product of products"
+        [ngClass]="{'active': product?.id === selectedProduct?.id}"
+        (click)="selectedProduct.emit(product)">{{ product.productName }}
+        <ng-container *ngIf="displayCode">
+          ({{ product.productCode }})
+        </ng-container>
       </button>
     </div>
   </div>
+
+  <div class="card-footer">
+    <div class="row">
+      <div class="form-check col-md-7">
+        <label>
+          <input class="form-check-input" type="checkbox" (change)="checkChange($event.target.checked)"
+            [checked]="displayCode" />
+          Display Product Code
+        </label>
+      </div>
+      <div class="col-md-4 text-right">
+        <button class="btn btn-primary">
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
-<div *ngIf='errorMessage' class='alert alert-danger'>
+<div *ngIf="errorMessage" class="alert alert-danger">
   Error: {{ errorMessage }}
 </div>

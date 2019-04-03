@@ -5,6 +5,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
+import { StoreModule } from '@ngrx/store';
+
 import { ShareModule } from '../share/share.module';
 
 import { ProductGuard } from './product.guard';
@@ -21,6 +23,8 @@ import { ProductEditTagsComponent } from './product-edit/product-edit-tags.compo
 import { ProductShellComponent } from './product-shell/product-shell.component';
 import { ProductShellListComponent } from './product-shell/product-shell-list.component';
 import { ProductShellInfoComponent } from './product-shell/product-shell-info.component';
+
+import { reducer } from './state/product.reducer';
 
 @NgModule({
   providers: [ProductResolverService, ProductEditGuard, ProductGuard, ProductParamsService],
@@ -40,6 +44,8 @@ import { ProductShellInfoComponent } from './product-shell/product-shell-info.co
     FormsModule,
     ReactiveFormsModule,
     AngularFontAwesomeModule,
+
+    StoreModule.forFeature('product', reducer),
 
     ShareModule,
     RouterModule.forChild([
