@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ProductStateService } from '../state/product-state.service';
 
 @Component({
   selector: 'app-product-shell',
@@ -9,7 +10,9 @@ export class ProductShellComponent implements OnInit {
   pageTitle: string = 'Product';
   monthCount: number;
 
-  constructor() {}
+  constructor(public state: ProductStateService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.state.loadProducts();
+  }
 }

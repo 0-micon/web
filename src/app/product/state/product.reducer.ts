@@ -23,8 +23,13 @@ export function reducer(state: ProductState = initialState, action: ProductActio
   console.log('Action:', action);
   switch (action.type) {
     case ActionTypes.products:
-    case ActionTypes.LoadProductsSuccess:
-      return { ...state, products: action.payload, currentProduct: null, loadError: null };
+    case ActionTypes.LoadProductsSuccess: {
+      let currentProduct = state.currentProduct;
+      if (currentProduct) {
+        currentProduct = action.payload.find(product => currentProduct.id === product.id);
+      }
+      return { ...state, products: action.payload, currentProduct, loadError: null };
+    }
     case ActionTypes.LoadProductsFail:
       return { ...state, products: [], currentProduct: null, loadError: action.payload };
     case ActionTypes.ShowProductCode:
