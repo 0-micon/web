@@ -1,7 +1,12 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { IProduct } from '../product';
-import { ProductService } from '../product.service';
 import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
+
+import { IProduct } from '../product';
+
+import { ProductState } from '../state/product.reducer';
+import * as StoreActions from '../state/product.actions';
+import * as StoreSelectors from '../state/product.selectors';
 
 @Component({
   selector: 'app-product-shell-list',
@@ -10,34 +15,32 @@ import { Store, select } from '@ngrx/store';
 })
 export class ProductShellListComponent implements OnInit {
   pageTitle: string = 'Products';
-  errorMessage: string;
-  products: IProduct[];
-  displayCode: boolean = false;
+  products$: Observable<IProduct[]>;
+  selected$: Observable<IProduct>;
+
+  displayCode$: Observable<boolean>;
+  errorMessage$: Observable<string>;
 
   @Output()
   selectedProduct: EventEmitter<IProduct> = new EventEmitter();
 
-  constructor(private _productService: ProductService, private _store: Store<any>) {}
+  constructor(private _store: Store<ProductState>) {}
 
   ngOnInit() {
-    this._productService
-      .getProducts()
-      .subscribe(data => (this.products = data), error => (this.errorMessage = error));
+    this.products$ = this._store.pipe(select(StoreSelectors.products));
+    this.selected$ = this._store.pipe(select(StoreSelectors.currentProduct));
+    this.displayCode$ = this._store.pipe(select(StoreSelectors.showProductCode));
+    this.errorMessage$ = this._store.pipe(select(StoreSelectors.loadError));
 
-    this._store.pipe(select('product')).subscribe(state => {
-      console.log('Receiving', state);
-      if (state) {
-        this.displayCode = state.showProductCode;
-      }
-    });
+    this._store.dispatch(new StoreActions.LoadProducts());
   }
 
   checkChange(value: boolean): void {
-    console.log('Dispatching', value);
+    this._store.dispatch(new StoreActions.ShowProductCode(value));
+  }
 
-    this._store.dispatch({
-      type: 'TOGGLE_PRODUCT_CODE',
-      payload: value
-    });
+  selectProduct(product: IProduct): void {
+    this._store.dispatch(new StoreActions.CurrentProduct(product));
+    this.selectedProduct.emit(product);
   }
 }

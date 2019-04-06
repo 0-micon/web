@@ -25,6 +25,8 @@ import { ProductShellListComponent } from './product-shell/product-shell-list.co
 import { ProductShellInfoComponent } from './product-shell/product-shell-info.component';
 
 import { reducer } from './state/product.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { ProductEffects } from './state/product.effects';
 
 @NgModule({
   providers: [ProductResolverService, ProductEditGuard, ProductGuard, ProductParamsService],
@@ -46,6 +48,7 @@ import { reducer } from './state/product.reducer';
     AngularFontAwesomeModule,
 
     StoreModule.forFeature('product', reducer),
+    EffectsModule.forFeature([ProductEffects]),
 
     ShareModule,
     RouterModule.forChild([

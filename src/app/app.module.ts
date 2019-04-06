@@ -16,6 +16,7 @@ import { AppComponent } from './app.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { CustomerFormComponent } from './components/customer-form/customer-form.component';
 import { PageNotFoundComponent } from './components/page-not-found.component';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [AppComponent, WelcomeComponent, CustomerFormComponent, PageNotFoundComponent],
@@ -29,7 +30,8 @@ import { PageNotFoundComponent } from './components/page-not-found.component';
     UserModule,
     AppRoutingModule,
     AngularFontAwesomeModule,
-    StoreModule.forRoot({})
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([])
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,18 +1,19 @@
-<div class="card">
+<ng-template #productList let-p="products" let-s="selection" let-d=displayCode>
+  <div class="card">
 
-  <div class="card-header">
-    {{pageTitle}}
-  </div>
+    <div class="card-header">
+      {{pageTitle}}
+    </div>
 
-  <div class="card-body" *ngIf="products?.length">
-    <div class="list-group">
-      <button class="list-group-item list-group-item-action rounded-0" *ngFor="let product of products"
-        [ngClass]="{'active': product?.id === selectedProduct?.id}"
-        (click)="selectedProduct.emit(product)">{{ product.productName }}
-        <ng-container *ngIf="displayCode">
-          ({{ product.productCode }})
-        </ng-container>
-      </button>
+    <div class="card-body" *ngIf="p">
+      <div class="list-group">
+        <button class="list-group-item list-group-item-action rounded-0" *ngFor="let product of p"
+          [ngClass]="{'active': product.id === s?.id }" (click)="selectProduct(product)">{{ product.productName }}
+          <ng-container *ngIf="d">
+            ({{ product.productCode }})
+          </ng-container>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -20,8 +21,7 @@
     <div class="row">
       <div class="form-check col-md-7">
         <label>
-          <input class="form-check-input" type="checkbox" (change)="checkChange($event.target.checked)"
-            [checked]="displayCode" />
+          <input class="form-check-input" type="checkbox" (change)="checkChange($event.target.checked)" [checked]="d" />
           Display Product Code
         </label>
       </div>
@@ -31,8 +31,14 @@
         </button>
       </div>
     </div>
+
   </div>
-</div>
-<div *ngIf="errorMessage" class="alert alert-danger">
+</ng-template>
+
+<ng-container
+  *ngTemplateOutlet="productList; context: {products:products$ | async, selection: selected$ | async, displayCode: displayCode$ | async}">
+</ng-container>
+
+<div *ngIf="errorMessage$ | async as errorMessage" class="alert alert-danger">
   Error: {{ errorMessage }}
 </div>
