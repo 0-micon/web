@@ -7,7 +7,7 @@
     <div class="list-group">
       <button class="list-group-item list-group-item-action rounded-0" *ngFor="let product of products"
         [ngClass]="{'active': product.id === currentProduct?.id }"
-        (click)="selectProduct(product)">{{ product.productName }}
+        (click)="currentProductChange.emit(product)">{{ product.productName }}
         <ng-container *ngIf="displayCode">
           ({{ product.productCode }})
         </ng-container>
@@ -20,7 +20,7 @@
   <div class="row">
     <div class="form-check col-md-7">
       <label>
-        <input class="form-check-input" type="checkbox" (change)="checkChange($event.target.checked)"
+        <input class="form-check-input" type="checkbox" (change)="displayCodeChange.emit($event.target.checked)"
           [checked]="displayCode" />
         Display Product Code
       </label>
@@ -32,7 +32,4 @@
     </div>
   </div>
 
-</div>
-<div *ngIf="errorMessage" class="alert alert-danger">
-  Error: {{ errorMessage }}
 </div>

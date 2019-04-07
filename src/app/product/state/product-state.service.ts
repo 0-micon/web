@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable } from 'rxjs';
 
 import { IProduct } from '../product';
 import { ProductState } from './product.reducer';
 import * as Selectors from './product.selectors';
-import * as Actions from './product.actions';
+import { Actions } from './product.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -25,14 +25,14 @@ export class ProductStateService {
   }
 
   loadProducts(): void {
-    this._store.dispatch(new Actions.LoadProducts());
+    this._store.dispatch(Actions.loadProducts());
   }
 
   selectProduct(product: IProduct): void {
-    this._store.dispatch(new Actions.CurrentProduct(product));
+    this._store.dispatch(Actions.setCurrentProduct(product));
   }
 
   showProductCode(value: boolean): void {
-    this._store.dispatch(new Actions.ShowProductCode(value));
+    this._store.dispatch(Actions.showProductCode(value));
   }
 }

@@ -1,61 +1,30 @@
-import { Action } from '@ngrx/store';
 import { IProduct } from '../product';
+import { createAction, ActionsUnion, OfType } from 'src/app/share/utils/redux.utils';
 
 export enum ActionTypes {
-  ShowProductCode = '[Product] Show product code',
-  SetCurrentProduct = '[Product] Select current product',
-  LoadProducts = '[Product] Load products',
-  LoadProductsSuccess = '[Product] Load products success',
-  LoadProductsFail = '[Product] Load products fail',
+  SHOW_PRODUCT_CODE = '[Product] Show product code',
+  SET_CURRENT_PRODUCT = '[Product] Select current product',
 
-  products = '[Product] Set product list'
+  LOAD_PRODUCTS = '[Product] Load products',
+  LOAD_PRODUCTS_SUCCESS = '[Product] Load products success',
+  LOAD_PRODUCTS_FAIL = '[Product] Load products fail',
+
+  UpdateProduct = '[Product] Update product',
+  UpdateProductSuccess = '[Product] Update product success',
+  UpdateProductFail = '[Product] Update product fail'
 }
 
-export class ShowProductCode implements Action {
-  readonly type = ActionTypes.ShowProductCode;
-  constructor(public payload: boolean = false) {}
-}
+export const Actions = {
+  showProductCode: (value: boolean) => createAction(ActionTypes.SHOW_PRODUCT_CODE, value),
+  setCurrentProduct: (product: IProduct) => createAction(ActionTypes.SET_CURRENT_PRODUCT, product),
 
-export class CurrentProduct implements Action {
-  readonly type = ActionTypes.SetCurrentProduct;
-  constructor(public payload: IProduct = null) {}
-}
+  loadProducts: () => createAction(ActionTypes.LOAD_PRODUCTS),
+  loadProductsSuccess: (products: IProduct[]) =>
+    createAction(ActionTypes.LOAD_PRODUCTS_SUCCESS, products),
+  loadProductsFail: (error: string) => createAction(ActionTypes.LOAD_PRODUCTS_FAIL, error)
+};
 
-export class LoadProducts implements Action {
-  readonly type = ActionTypes.LoadProducts;
-}
+export type Actions = ActionsUnion<typeof Actions>;
 
-export class LoadProductsSuccess implements Action {
-  readonly type = ActionTypes.LoadProductsSuccess;
-  constructor(public payload: IProduct[]) {}
-}
-
-export class LoadProductsFail implements Action {
-  readonly type = ActionTypes.LoadProductsFail;
-  constructor(public payload: string) {}
-}
-
-export class Products implements Action {
-  readonly type = ActionTypes.products;
-  constructor(public payload: IProduct[] = []) {}
-}
-
-export type ProductAction =
-  | ShowProductCode
-  | CurrentProduct
-  | LoadProducts
-  | LoadProductsSuccess
-  | LoadProductsFail
-  | Products;
-
-// export function isToggleProductCode(action: ProductAction): action is ShowProductCode {
-//   return action.type === ActionTypes.ShowProductCode;
-// }
-
-// export function isCurrentProduct(action: ProductAction): action is CurrentProduct {
-//   return action.type === ActionTypes.SetCurrentProduct;
-// }
-
-// export function isProducts(action: ProductAction): action is Products {
-//   return action.type === ActionTypes.products;
-// }
+type Atype = OfType<Actions, ActionTypes.LOAD_PRODUCTS_SUCCESS>;
+type Btype = OfType<Actions, ActionTypes.LOAD_PRODUCTS>;

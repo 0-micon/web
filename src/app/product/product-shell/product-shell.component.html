@@ -9,11 +9,15 @@
 <div class="row">
   <div class="col-md-4">
     <app-product-shell-list [products]="state.products$ | async" [currentProduct]="state.selectedProduct$ | async"
-      [displayCode]="state.displayCode$ | async" [errorMessage]="state.errorMessage$ | async"
-      (setCurrentProduct)="state.selectProduct($event)" (setDisplayCode)="state.showProductCode($event)">
+      [displayCode]="state.displayCode$ | async" (currentProductChange)="state.selectProduct($event)"
+      (displayCodeChange)="state.showProductCode($event)">
     </app-product-shell-list>
   </div>
   <div class="col-md-8">
     <app-product-shell-info [product]="state.selectedProduct$ | async"></app-product-shell-info>
   </div>
+</div>
+
+<div *ngIf="state.errorMessage$ | async as errorMessage" class="alert alert-danger">
+  Error: {{ errorMessage }}
 </div>

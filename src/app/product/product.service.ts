@@ -4,6 +4,7 @@ import { Observable, throwError, of, BehaviorSubject } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 
 import { IProduct } from './product';
+import { MessageService } from '../messages/message.service';
 
 const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 const productUrl = 'http://localhost:3000/products';
@@ -15,13 +16,14 @@ export class ProductService {
   private _selectedProductSource = new BehaviorSubject<IProduct | null>(null);
   readonly selectedProduct$ = this._selectedProductSource.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private _messageService: MessageService) {}
 
   selectProduct(product: IProduct): void {
     this._selectedProductSource.next(product);
   }
 
   getProducts(): Observable<IProduct[]> {
+    this._messageService.add('Loading products');
     return this.http.get<IProduct[]>(productUrl).pipe(
       tap(data => {
         console.log('Get All Products:', data);
@@ -80,7 +82,7 @@ export class ProductService {
     };
   }
 
-  protected handleError(errorResponse: HttpErrorResponse) {
+  protected handleError = (errorResponse: HttpErrorResponse) => {
     let message = '';
     if (errorResponse.error instanceof ErrorEvent) {
       message = `An error occurred: ${errorResponse.error.message}`;
@@ -89,7 +91,7 @@ export class ProductService {
         errorResponse.message
       }`;
     }
-    console.error(message);
+    this._messageService.add(message);
     return throwError(message);
   }
 }

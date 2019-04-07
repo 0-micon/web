@@ -1,5 +1,5 @@
 // import { Action } from '@ngrx/store';
-import { ActionTypes, ProductAction } from './product.actions';
+import { ActionTypes, Actions } from './product.actions';
 import { IProduct } from '../product';
 
 // States:
@@ -18,23 +18,25 @@ const initialState: ProductState = {
 };
 
 // Reducers:
-export function reducer(state: ProductState = initialState, action: ProductAction): ProductState {
+export function reducer(
+  state: Readonly<ProductState> = initialState,
+  action: Actions
+): ProductState {
   console.log('State:', state);
   console.log('Action:', action);
   switch (action.type) {
-    case ActionTypes.products:
-    case ActionTypes.LoadProductsSuccess: {
+    case ActionTypes.LOAD_PRODUCTS_SUCCESS: {
       let currentProduct = state.currentProduct;
       if (currentProduct) {
         currentProduct = action.payload.find(product => currentProduct.id === product.id);
       }
       return { ...state, products: action.payload, currentProduct, loadError: null };
     }
-    case ActionTypes.LoadProductsFail:
+    case ActionTypes.LOAD_PRODUCTS_FAIL:
       return { ...state, products: [], currentProduct: null, loadError: action.payload };
-    case ActionTypes.ShowProductCode:
+    case ActionTypes.SHOW_PRODUCT_CODE:
       return { ...state, showProductCode: action.payload };
-    case ActionTypes.SetCurrentProduct:
+    case ActionTypes.SET_CURRENT_PRODUCT:
       return { ...state, currentProduct: action.payload };
 
     default:
