@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { Routes, RouterModule } from '@angular/router';
 
-import { MaterialModule } from '../shared/material.module';
+import { MaterialModule } from '../shared/material/material.module';
 
 import { ContactManagerAppComponent } from './contact-manager-app.component';
 

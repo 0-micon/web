@@ -1,0 +1,11 @@
+<ng-container *ngIf="items">
+  <button mat-button [matMenuTriggerFor]="menu">{{name}}</button>
+
+  <mat-menu mat-menu #menu="matMenu">
+    <app-menu-item *ngFor="let item of items" [item]="item" (itemClicked)="itemClicked.emit($event)"></app-menu-item>
+  </mat-menu>
+</ng-container>
+
+<ng-container *ngIf="!items">
+  <button mat-button disabled>{{name}}</button>
+</ng-container>

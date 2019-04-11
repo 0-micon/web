@@ -1,6 +1,4 @@
-export interface IUpdateCallback {
-  (time: number): number;
-}
+export type IUpdateCallback = (time: number) => number;
 
 export interface IUpdatable {
   update: IUpdateCallback;

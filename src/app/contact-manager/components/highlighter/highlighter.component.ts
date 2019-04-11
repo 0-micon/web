@@ -27,10 +27,10 @@ export class HighlighterComponent implements OnInit {
         filter = filter.toLowerCase();
       }
       let text = this.text;
-      if (this.lowerCaseFilter) {
-        text = text.toLowerCase();
-      }
       if (text) {
+        if (this.lowerCaseFilter) {
+          text = text.toLowerCase();
+        }
         const arr: IHighlightedItem[] = [];
         const fl = filter.length;
         const tl = text.length;
@@ -52,6 +52,7 @@ export class HighlighterComponent implements OnInit {
     }
     return [{ text: this.text }];
   }
+
   constructor() {}
 
   ngOnInit() {}

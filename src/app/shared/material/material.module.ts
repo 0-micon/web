@@ -1,31 +1,36 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
-  MatButtonModule,
-  MatCheckboxModule,
-  MatIconModule,
-  MatListModule,
-  MatCardModule,
-  MatProgressSpinnerModule,
-  MatSidenavModule,
-  MatToolbarModule,
-  MatTabsModule,
-  MatTableModule,
-  MatPaginatorModule,
-  MatFormFieldModule,
-  MatInputModule,
   MatBadgeModule,
-  MatSortModule,
-  MatMenuModule,
-  MatDialogModule,
-  MatSelectModule,
+  MatButtonModule,
+  MatCardModule,
+  MatCheckboxModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatSnackBarModule
+  MatDialogModule,
+  MatIconModule,
+  MatInputModule,
+  MatFormFieldModule,
+  MatListModule,
+  MatMenuModule,
+  MatPaginatorModule,
+  MatProgressSpinnerModule,
+  MatSelectModule,
+  MatSidenavModule,
+  MatSnackBarModule,
+  MatSortModule,
+  MatTableModule,
+  MatTabsModule,
+  MatToolbarModule
 } from '@angular/material';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { MenuItemComponent } from './menu-item.component';
+import { MenuButtonComponent } from './menu-button.component';
 
 @NgModule({
+  declarations: [MenuItemComponent, MenuButtonComponent],
   imports: [
+    CommonModule,
     MatBadgeModule,
     MatButtonModule,
     MatCardModule,
@@ -71,7 +76,10 @@ import { OverlayModule } from '@angular/cdk/overlay';
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    OverlayModule
+    OverlayModule,
+
+    MenuItemComponent,
+    MenuButtonComponent
   ]
 })
 export class MaterialModule {}

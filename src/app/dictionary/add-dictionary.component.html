@@ -1,0 +1,8 @@
+<app-menu-button [name]="menu.name + ': ' + encoding" (itemClicked)="selectEncoding($event)" [items]="menu.children">
+</app-menu-button>
+
+<label for="upload-dictionary" class="upload-file">
+  Upload a dictionary<mat-icon>library_add</mat-icon>
+</label>
+<input type="file" id="upload-dictionary" class="hidden-input" accept="text/plain, .txt, text/csv, .csv"
+  (change)="selectFile($event.target.files[0])" />
