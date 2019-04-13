@@ -1,0 +1,24 @@
+.text-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-container > * {
+  width: 100%;
+}
+
+.example-viewport {
+  height: 200px;
+  width: 200px;
+  border: 1px solid black;
+}
+
+.example-item {
+  height: 30px;
+  min-width: 100%;
+  display: inline-block;
+}
+
+.selection {
+  background-color: darkgray;
+}

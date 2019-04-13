@@ -11,7 +11,8 @@
 </ng-container>
 
 <ng-container *ngIf="!item.children">
-  <button mat-menu-item (click)="itemClicked.emit(item.data)">
+  <button mat-menu-item [matTooltip]="item.tooltip" matTooltipPosition="below" matTooltipShowDelay="1000"
+    (click)="itemClicked.emit(item.data)">
     {{item.name}}
     <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
   </button>

@@ -21,9 +21,13 @@ import {
   MatSortModule,
   MatTableModule,
   MatTabsModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatTooltipModule,
+  MatButtonToggleModule
 } from '@angular/material';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+
 import { MenuItemComponent } from './menu-item.component';
 import { MenuButtonComponent } from './menu-button.component';
 
@@ -33,6 +37,7 @@ import { MenuButtonComponent } from './menu-button.component';
     CommonModule,
     MatBadgeModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,
     MatDatepickerModule,
@@ -52,11 +57,15 @@ import { MenuButtonComponent } from './menu-button.component';
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    OverlayModule
+    MatTooltipModule,
+
+    OverlayModule,
+    ScrollingModule
   ],
   exports: [
     MatBadgeModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,
     MatDatepickerModule,
@@ -76,7 +85,9 @@ import { MenuButtonComponent } from './menu-button.component';
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
+    MatTooltipModule,
     OverlayModule,
+    ScrollingModule,
 
     MenuItemComponent,
     MenuButtonComponent

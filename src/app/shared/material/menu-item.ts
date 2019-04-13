@@ -5,6 +5,7 @@ export interface MenuItem {
   disabled?: boolean;
   icon?: string;
   data?: string;
+  tooltip?: string;
   children?: MenuItem[];
 }
 

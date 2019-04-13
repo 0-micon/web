@@ -1,8 +1,20 @@
-<app-menu-button [name]="menu.name + ': ' + encoding" (itemClicked)="selectEncoding($event)" [items]="menu.children">
+<app-menu-button [name]="menu.name + ': ' + encoding" (itemClicked)="encoding = $event" [items]="menu.children">
 </app-menu-button>
 
 <label for="upload-dictionary" class="upload-file">
   Upload a dictionary<mat-icon>library_add</mat-icon>
 </label>
 <input type="file" id="upload-dictionary" class="hidden-input" accept="text/plain, .txt, text/csv, .csv"
-  (change)="selectFile($event.target.files[0])" />
+  (change)="file = $event.target.files[0]" />
+
+<cdk-virtual-scroll-viewport itemSize="50" class="example-viewport" itemSize="30">
+  <a mat-button class="example-item" *cdkVirtualFor="let word of words; index as i" (click)="selectWord(i)"
+    [ngClass]="{'selection': selection === i}">
+    {{word}}
+  </a>
+</cdk-virtual-scroll-viewport>
+
+
+<div class="text-container">
+  <textarea placeholder="Textarea" [rows]="selection >= 0 ? lines[selection].length : 1">{{area}}</textarea>
+</div>
