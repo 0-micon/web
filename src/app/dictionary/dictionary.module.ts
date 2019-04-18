@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { MaterialModule } from '../shared/material/material.module';
 
 import { AddDictionaryComponent } from './add-dictionary.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -16,7 +17,13 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [AddDictionaryComponent],
-  imports: [CommonModule, MaterialModule, RouterModule.forChild(routes)],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    RouterModule.forChild(routes)
+  ],
   exports: [AddDictionaryComponent]
 })
 export class DictionaryModule {}

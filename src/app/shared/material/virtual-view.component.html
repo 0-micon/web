@@ -1,0 +1,10 @@
+<cdk-virtual-scroll-viewport [itemSize]="itemSize" [style.height.px]="itemSize * numberOfRows"
+  (scrolledIndexChange)="scrolledIndexChange($event)">
+  <div *cdkVirtualFor="let item of items; index as i" class="example-item" [style.height.px]="itemSize"
+    [style.line-height.px]="itemSize" (click)="selectionChange.emit(selection = i)"
+    [ngClass]="{'example-selection': selection === i, 'example-item-hover':selection !== i}">
+    <div class="example-item-content">
+      {{item}}
+    </div>
+  </div>
+</cdk-virtual-scroll-viewport>

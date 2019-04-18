@@ -1,0 +1,21 @@
+.example-item {
+  display: block;
+  cursor: pointer;
+  margin: auto;
+  overflow: hidden;
+}
+
+.example-item-hover:hover {
+  background-color: lightgray;
+}
+
+.example-selection {
+  background-color: darkgray;
+}
+
+.example-item-content {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 0.5em;
+  text-align: left;
+}

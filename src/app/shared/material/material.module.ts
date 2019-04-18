@@ -23,16 +23,20 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatButtonToggleModule
+  MatButtonToggleModule,
+  MatStepperModule
 } from '@angular/material';
+
 import { OverlayModule } from '@angular/cdk/overlay';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { LayoutModule } from '@angular/cdk/layout';
 
 import { MenuItemComponent } from './menu-item.component';
 import { MenuButtonComponent } from './menu-button.component';
+import { VirtualViewComponent } from './virtual-view.component';
 
 @NgModule({
-  declarations: [MenuItemComponent, MenuButtonComponent],
+  declarations: [MenuItemComponent, MenuButtonComponent, VirtualViewComponent],
   imports: [
     CommonModule,
     MatBadgeModule,
@@ -54,11 +58,13 @@ import { MenuButtonComponent } from './menu-button.component';
     MatSidenavModule,
     MatSnackBarModule,
     MatSortModule,
+    MatStepperModule,
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
 
+    LayoutModule,
     OverlayModule,
     ScrollingModule
   ],
@@ -82,15 +88,19 @@ import { MenuButtonComponent } from './menu-button.component';
     MatSidenavModule,
     MatSnackBarModule,
     MatSortModule,
+    MatStepperModule,
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
+
+    LayoutModule,
     OverlayModule,
     ScrollingModule,
 
     MenuItemComponent,
-    MenuButtonComponent
+    MenuButtonComponent,
+    VirtualViewComponent
   ]
 })
 export class MaterialModule {}

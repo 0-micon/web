@@ -1,20 +1,126 @@
-<app-menu-button [name]="menu.name + ': ' + encoding" (itemClicked)="encoding = $event" [items]="menu.children">
-</app-menu-button>
+<mat-menu #appMenu="matMenu">
+  <app-virtual-view [items]="words" [selection]="selection" [itemSize]="24" [numberOfRows]="10" class="example-viewport"
+    (selectionChange)="selectWord($event)" (indexChange)="scrolledIndex = $event">
+  </app-virtual-view>
+</mat-menu>
 
-<label for="upload-dictionary" class="upload-file">
+<mat-vertical-stepper [linear]="false" #stepper>
+  <mat-step class="flex-container">
+    <ng-template matStepLabel>Select a file to upload</ng-template>
+    <label for="m_upload" class="flex-item">
+      Please select the dictionary file to upload:
+    </label>
+    <div class="flex-item">
+      <input type="file" id="m_upload" accept="text/plain, .txt, text/csv, .csv"
+        (change)="file = $event.target.files[0]" />
+      <app-menu-button [name]="'encoding: ' + encoding" (itemClicked)="encoding = $event" [items]="menu.children">
+      </app-menu-button>
+    </div>
+    <div class="flex-item">
+      <input type="text" matMenuTrigger [matMenuTriggerFor]="appMenu" (menuOpened)="menuOpened()"
+        (menuClosed)="menuClosed()" (keydown)="onKeydown($event)" (keyup)="onKeyup($event)" [value]="selectedWord" />
+    </div>
+    <div class="flex-item">
+      <textarea placeholder="Textarea" [rows]="10">{{area}}</textarea>
+    </div>
+
+
+    <!-- <cdk-virtual-scroll-viewport itemSize="24" class="virtual-list">
+      <a mat-button class="virtual-list-item" *cdkVirtualFor="let word of words; index as i" (click)="selectWord(i)"
+        [ngClass]="{'selection': selection === i}">
+        {{word}}
+      </a>
+    </cdk-virtual-scroll-viewport> -->
+    <div>
+      <button mat-button matStepperNext>Next</button>
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Fill out your name</ng-template>
+      <mat-form-field>
+        <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Fill out your address</ng-template>
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="secondCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>
+
+<mat-card class="example-card">
+  <mat-card-header>
+    <!-- <div mat-card-avatar class="example-header-image"></div> -->
+    <mat-card-title>Add Book:</mat-card-title>
+    <!-- <mat-card-subtitle>Dog Breed</mat-card-subtitle> -->
+  </mat-card-header>
+  <!-- <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu"> -->
+  <mat-card-content>
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Key">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Title">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput [matDatepicker]="dp" placeholder="Release date">
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp disabled="false"></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <textarea matInput placeholder="Summary"></textarea>
+      </mat-form-field>
+      <div class="example-full-width">
+
+
+      </div>
+    </form>
+
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button>LIKE</button>
+    <button mat-button>SHARE</button>
+  </mat-card-actions>
+</mat-card>
+
+
+
+
+<!-- <label for="upload-dictionary" class="upload-file">
   Upload a dictionary<mat-icon>library_add</mat-icon>
 </label>
 <input type="file" id="upload-dictionary" class="hidden-input" accept="text/plain, .txt, text/csv, .csv"
-  (change)="file = $event.target.files[0]" />
+  (change)="file = $event.target.files[0]" /> -->
 
-<cdk-virtual-scroll-viewport itemSize="50" class="example-viewport" itemSize="30">
-  <a mat-button class="example-item" *cdkVirtualFor="let word of words; index as i" (click)="selectWord(i)"
-    [ngClass]="{'selection': selection === i}">
-    {{word}}
-  </a>
-</cdk-virtual-scroll-viewport>
+<button mat-button color="primary" (click)="addToLibrary()">Add to Library</button>
 
 
-<div class="text-container">
-  <textarea placeholder="Textarea" [rows]="selection >= 0 ? lines[selection].length : 1">{{area}}</textarea>
+
+
+
+<div *ngIf="(smallScreen$ | async)?.matches">
+  <h2>
+    The screen is small!
+  </h2>
 </div>
