@@ -19,6 +19,29 @@ import { VirtualViewComponent } from '../shared/material/virtual-view.component'
 //   return c;
 // }
 
+function lowerBound(
+  items: string[],
+  value: string,
+  locales?: string | string[],
+  options?: Intl.CollatorOptions
+): number {
+  let first = 0;
+  let last = items.length - 1;
+
+  while (first <= last) {
+    const i = Math.floor((last + first) / 2);
+    const n = value.localeCompare(items[i], locales, options);
+    if (n < 0) {
+      last = i - 1;
+    } else if (n > 0) {
+      first = i + 1;
+    } else {
+      return i;
+    }
+  }
+  return last + 1;
+}
+
 const regexCard = /(^[^\t\r\n]+)\r?((?:\n\t[^\r\n]*\r?)+)/gm;
 const regexText = /\r?\n\t([^\r\n]*)/gm;
 
@@ -86,15 +109,12 @@ export class AddDictionaryComponent implements OnInit {
 
   rows: number = 4;
 
-  words: string[] = [];
-  lines: string[][] = [];
-  selection: number = -1;
+  words: string[][] = [];
+  items: string[] = [];
 
-  get selectedWord(): string {
-    return this.words && this.selection >= 0 && this.selection < this.words.length
-      ? this.words[this.selection]
-      : '';
-  }
+  // lines: string[][] = [];
+  selection: number = -1;
+  selectedWord: string = '';
 
   smallScreen$: Observable<BreakpointState>;
 
@@ -160,6 +180,7 @@ export class AddDictionaryComponent implements OnInit {
       this.virtualView.scrollTo({
         top: this.scrollTopOffset
       });
+      this.adjustView();
     }
   }
 
@@ -185,20 +206,24 @@ export class AddDictionaryComponent implements OnInit {
     switch (event.key) {
       // Scroll the content by one line at a time.
       case 'ArrowDown':
-        if (this.trigger.menuOpen && this.selection < maxIndex) {
-          if (event.ctrlKey) {
-            this.selectWord(maxIndex);
-          } else {
-            this.selectWord(this.selection + 1);
+        if (this.selection < maxIndex) {
+          if (this.trigger.menuOpen) {
+            if (event.ctrlKey) {
+              this.selectWord(maxIndex);
+            } else {
+              this.selectWord(this.selection + 1);
+            }
           }
         }
         break;
       case 'ArrowUp':
-        if (this.trigger.menuOpen && this.selection > minIndex) {
-          if (event.ctrlKey) {
-            this.selectWord(minIndex);
-          } else {
-            this.selectWord(this.selection - 1);
+        if (this.selection > minIndex) {
+          if (this.trigger.menuOpen) {
+            if (event.ctrlKey) {
+              this.selectWord(minIndex);
+            } else {
+              this.selectWord(this.selection - 1);
+            }
           }
         }
         break;
@@ -217,10 +242,9 @@ export class AddDictionaryComponent implements OnInit {
   }
 
   onKeyup(event: KeyboardEvent): void {
-    // console.log('Virtual View:', this.virtualView);
-    // console.log('Menu Trigger:', this.trigger);
     switch (event.key) {
       case 'Escape':
+      case 'Enter':
         if (this.trigger.menuOpen) {
           this.trigger.closeMenu();
         }
@@ -242,7 +266,7 @@ export class AddDictionaryComponent implements OnInit {
         this.text = reader.result;
         // this.area = this.text.substring(0, 1024);
         this.words = [];
-        this.lines = [];
+        // this.lines = [];
 
         // tslint:disable-next-line: no-conditional-assignment
         for (let m: RegExpExecArray; (m = regexCard.exec(this.text)) !== null; ) {
@@ -250,19 +274,20 @@ export class AddDictionaryComponent implements OnInit {
           if (m.index === regexCard.lastIndex) {
             regexCard.lastIndex++;
           } else {
-            this.words.push(m[1]);
+            const lines: string[] = [m[1]];
+            this.words.push(lines);
 
-            const lines: string[] = [];
             // tslint:disable-next-line: no-conditional-assignment
             for (let n: RegExpExecArray; (n = regexText.exec(m[2])) !== null; ) {
               lines.push(n[1]);
             }
-
-            this.lines.push(lines);
           }
-
-          this.selectWord(0);
         }
+
+        this.words.sort((a, b) => a[0].localeCompare(b[0]));
+        this.items = this.words.map(i => i[0].toLowerCase());
+
+        this.selectWord(0);
         // this.words = this.text.match(regex);
         // this.rows = count(this.area, '\n') + 1;
       }
@@ -277,12 +302,23 @@ export class AddDictionaryComponent implements OnInit {
 
   selectWord(index: number) {
     this.selection = index;
-    if (index >= 0 && index < this.lines.length) {
-      this.area = this.lines[index].join('\n');
+    if (index >= 0 && index < this.words.length) {
+      this.area = this.words[index].join('\n');
+      this.selectedWord = this.words[index][0];
     } else {
       this.area = '';
+      this.selectedWord = '';
     }
     this.adjustView();
+  }
+
+  valueChange(value: string) {
+    console.log('New Value:', value);
+    const index = lowerBound(this.items, value.toLowerCase());
+    console.log('Selection:', index);
+
+    this.selectWord(index);
+    this.selectedWord = value;
   }
 
   addToLibrary() {

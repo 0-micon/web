@@ -1,5 +1,5 @@
 <mat-menu #appMenu="matMenu">
-  <app-virtual-view [items]="words" [selection]="selection" [itemSize]="24" [numberOfRows]="10" class="example-viewport"
+  <app-virtual-view [items]="items" [selection]="selection" [itemSize]="24" [numberOfRows]="10" class="example-viewport"
     (selectionChange)="selectWord($event)" (indexChange)="scrolledIndex = $event">
   </app-virtual-view>
 </mat-menu>
@@ -17,8 +17,11 @@
       </app-menu-button>
     </div>
     <div class="flex-item">
-      <input type="text" matMenuTrigger [matMenuTriggerFor]="appMenu" (menuOpened)="menuOpened()"
-        (menuClosed)="menuClosed()" (keydown)="onKeydown($event)" (keyup)="onKeyup($event)" [value]="selectedWord" />
+      <mat-form-field>
+        <input type="text" placeholder="search" matInput matMenuTrigger [matMenuTriggerFor]="appMenu"
+          (menuOpened)="menuOpened()" (menuClosed)="menuClosed()" (keydown)="onKeydown($event)"
+          (keyup)="onKeyup($event)" [ngModel]="selectedWord" (ngModelChange)="valueChange($event)"/>
+      </mat-form-field>
     </div>
     <div class="flex-item">
       <textarea placeholder="Textarea" [rows]="10">{{area}}</textarea>

@@ -6,7 +6,8 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
-  ViewChild
+  ViewChild,
+  NgIterable
 } from '@angular/core';
 import { CdkVirtualScrollViewport, ExtendedScrollToOptions } from '@angular/cdk/scrolling';
 
@@ -18,7 +19,7 @@ import { CdkVirtualScrollViewport, ExtendedScrollToOptions } from '@angular/cdk/
 })
 export class VirtualViewComponent implements OnInit, OnDestroy {
   @Input()
-  items: Iterable<string> = [];
+  items: NgIterable<string> = [];
   @Input()
   itemSize: number = 32;
   @Input()
