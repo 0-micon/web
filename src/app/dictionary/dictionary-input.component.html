@@ -1,0 +1,11 @@
+<mat-menu #appMenu="matMenu" [class]="'dictionary-menu'">
+  <app-virtual-view [items]="items" [itemSize]="24" [numberOfRows]="numberOfRows" [selection]="selection"
+    (selectionChange)="select($event)" (indexChange)="scrolledIndex = $event">
+  </app-virtual-view>
+</mat-menu>
+
+<mat-form-field>
+  <input type="text" placeholder="search" matInput matMenuTrigger [matMenuTriggerFor]="appMenu"
+    (menuOpened)="menuOpened()" (menuClosed)="menuClosed()" (keydown)="onKeydown($event)" (keyup)="onKeyup($event)"
+    [ngModel]="inputValue" (ngModelChange)="select($event)" />
+</mat-form-field>

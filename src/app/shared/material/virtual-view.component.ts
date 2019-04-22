@@ -57,11 +57,14 @@ export class VirtualViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  scrollToIndex(index: number): void {
+    if (this.virtualScroll) {
+      this.virtualScroll.scrollToIndex(index);
+      this.repaint();
+    }
+  }
+
   scrolledIndexChange(index: number): void {
-    // console.log('[VirtualViewComponent] scrolledIndexChange event:', index);
-    // this.index = index;
-    // this.indexChange.emit(index);
-    // this.virtualScroll.checkViewportSize();
     if (index !== this.index) {
       this.index = index;
       this.indexChange.emit(index);
@@ -73,17 +76,5 @@ export class VirtualViewComponent implements OnInit, OnDestroy {
     if (this.virtualScroll) {
       this.virtualScroll.checkViewportSize();
     }
-  }
-
-  scrollToIndex(index: number): void {
-    if (this.virtualScroll) {
-      this.virtualScroll.scrollToIndex(index);
-    }
-    // this.index = index;
-    // this.indexChange.emit(index);
-    // if (this.virtualScroll) {
-    //   // this.virtualScroll.scrollToIndex(index);
-    //   this.virtualScroll.checkViewportSize();
-    // }
   }
 }

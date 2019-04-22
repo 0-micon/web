@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
-import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 
 import { MenuItem, forEach, createMenu } from '../shared/material/menu-item';
 import { encodings } from '../shared/encodings';
@@ -67,8 +67,8 @@ const regexText = /\r?\n\t([^\r\n]*)/gm;
   styleUrls: ['./add-dictionary.component.scss']
 })
 export class AddDictionaryComponent implements OnInit {
-  @ViewChild(MatMenuTrigger)
-  trigger: MatMenuTrigger;
+  // @ViewChild(MatMenuTrigger)
+  // trigger: MatMenuTrigger;
 
   // The IANA (Internet Assigned Numbers Authority) name for the encoding.
   // For more information about the IANA, see www.iana.org.
@@ -114,14 +114,14 @@ export class AddDictionaryComponent implements OnInit {
 
   // lines: string[][] = [];
   selection: number = -1;
-  selectedWord: string = '';
+  //  selectedWord: string = '';
 
   smallScreen$: Observable<BreakpointState>;
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
-  @ViewChild(VirtualViewComponent) virtualView: VirtualViewComponent;
+  // @ViewChild(VirtualViewComponent) virtualView: VirtualViewComponent;
 
   scrolledIndex: number = 0;
   scrollTopOffset: number = 0;
@@ -142,6 +142,8 @@ export class AddDictionaryComponent implements OnInit {
     private _fb: FormBuilder
   ) {
     this.smallScreen$ = this._breakpointObserver.observe('(max-width: 600px)');
+
+    console.log('Breakpoints', Breakpoints);
   }
 
   ngOnInit() {
@@ -173,89 +175,89 @@ export class AddDictionaryComponent implements OnInit {
     // console.log('MatMenu:', this.matMenu);
   }
 
-  menuOpened() {
-    // console.log('MatMenu Open event:', Date.now());
-    // this.virtualView.scrollToIndex(this.scrolledIndex);
-    if (this.virtualView) {
-      this.virtualView.scrollTo({
-        top: this.scrollTopOffset
-      });
-      this.adjustView();
-    }
-  }
+  // menuOpened() {
+  //   // console.log('MatMenu Open event:', Date.now());
+  //   // this.virtualView.scrollToIndex(this.scrolledIndex);
+  //   if (this.virtualView) {
+  //     this.virtualView.scrollTo({
+  //       top: this.scrollTopOffset
+  //     });
+  //     this.adjustView();
+  //   }
+  // }
 
-  menuClosed() {
-    // console.log('MatMenu Close event:', Date.now());
-    if (this.virtualView) {
-      this.scrollTopOffset = this.virtualView.measureScrollOffset('top');
-    }
-  }
+  // menuClosed() {
+  //   // console.log('MatMenu Close event:', Date.now());
+  //   if (this.virtualView) {
+  //     this.scrollTopOffset = this.virtualView.measureScrollOffset('top');
+  //   }
+  // }
 
-  adjustView() {
-    if (this.virtualView.index + 10 <= this.selection) {
-      this.virtualView.scrollToIndex(this.selection + 1 - 10);
-    }
-    if (this.virtualView.index > this.selection) {
-      this.virtualView.scrollToIndex(this.selection);
-    }
-  }
+  // adjustView() {
+  //   if (this.virtualView.index + 10 <= this.selection) {
+  //     this.virtualView.scrollToIndex(this.selection + 1 - 10);
+  //   }
+  //   if (this.virtualView.index > this.selection) {
+  //     this.virtualView.scrollToIndex(this.selection);
+  //   }
+  // }
 
-  onKeydown(event: KeyboardEvent): void {
-    const minIndex = 0;
-    const maxIndex = this.words.length - 1;
-    switch (event.key) {
-      // Scroll the content by one line at a time.
-      case 'ArrowDown':
-        if (this.selection < maxIndex) {
-          if (this.trigger.menuOpen) {
-            if (event.ctrlKey) {
-              this.selectWord(maxIndex);
-            } else {
-              this.selectWord(this.selection + 1);
-            }
-          }
-        }
-        break;
-      case 'ArrowUp':
-        if (this.selection > minIndex) {
-          if (this.trigger.menuOpen) {
-            if (event.ctrlKey) {
-              this.selectWord(minIndex);
-            } else {
-              this.selectWord(this.selection - 1);
-            }
-          }
-        }
-        break;
-      // Page by page scrolling.
-      case 'PageDown':
-        if (this.trigger.menuOpen && this.selection < maxIndex) {
-          this.selectWord(Math.min(this.selection + 10, maxIndex));
-        }
-        break;
-      case 'PageUp':
-        if (this.trigger.menuOpen && this.selection > minIndex) {
-          this.selectWord(Math.max(this.selection - 10, minIndex));
-        }
-        break;
-    }
-  }
+  // onKeydown(event: KeyboardEvent): void {
+  //   const minIndex = 0;
+  //   const maxIndex = this.words.length - 1;
+  //   switch (event.key) {
+  //     // Scroll the content by one line at a time.
+  //     case 'ArrowDown':
+  //       if (this.selection < maxIndex) {
+  //         if (this.trigger.menuOpen) {
+  //           if (event.ctrlKey) {
+  //             this.selectWord(maxIndex);
+  //           } else {
+  //             this.selectWord(this.selection + 1);
+  //           }
+  //         }
+  //       }
+  //       break;
+  //     case 'ArrowUp':
+  //       if (this.selection > minIndex) {
+  //         if (this.trigger.menuOpen) {
+  //           if (event.ctrlKey) {
+  //             this.selectWord(minIndex);
+  //           } else {
+  //             this.selectWord(this.selection - 1);
+  //           }
+  //         }
+  //       }
+  //       break;
+  //     // Page by page scrolling.
+  //     case 'PageDown':
+  //       if (this.trigger.menuOpen && this.selection < maxIndex) {
+  //         this.selectWord(Math.min(this.selection + 10, maxIndex));
+  //       }
+  //       break;
+  //     case 'PageUp':
+  //       if (this.trigger.menuOpen && this.selection > minIndex) {
+  //         this.selectWord(Math.max(this.selection - 10, minIndex));
+  //       }
+  //       break;
+  //   }
+  // }
 
-  onKeyup(event: KeyboardEvent): void {
-    switch (event.key) {
-      case 'Escape':
-      case 'Enter':
-        if (this.trigger.menuOpen) {
-          this.trigger.closeMenu();
-        }
-        break;
-      case 'ArrowDown':
-        if (!this.trigger.menuOpen) {
-          this.trigger.openMenu();
-        }
-        break;
-    }
-  }
+  // onKeyup(event: KeyboardEvent): void {
+  //   switch (event.key) {
+  //     case 'Escape':
+  //     case 'Enter':
+  //       if (this.trigger.menuOpen) {
+  //         this.trigger.closeMenu();
+  //       }
+  //       break;
+  //     case 'ArrowDown':
+  //       if (!this.trigger.menuOpen) {
+  //         this.trigger.openMenu();
+  //       }
+  //       break;
+  //   }
+  // }
 
   readTextFile(): void {
     this.errorMessage = '';
@@ -287,7 +289,7 @@ export class AddDictionaryComponent implements OnInit {
         this.words.sort((a, b) => a[0].localeCompare(b[0]));
         this.items = this.words.map(i => i[0].toLowerCase());
 
-        this.selectWord(0);
+        // this.selectWord(0);
         // this.words = this.text.match(regex);
         // this.rows = count(this.area, '\n') + 1;
       }
@@ -303,23 +305,27 @@ export class AddDictionaryComponent implements OnInit {
   selectWord(index: number) {
     this.selection = index;
     if (index >= 0 && index < this.words.length) {
-      this.area = this.words[index].join('\n');
-      this.selectedWord = this.words[index][0];
+      setTimeout(() => {
+        this.area = this.words[index].join('\n');
+      }, 0);
+      // this.selectedWord = this.words[index][0];
     } else {
-      this.area = '';
-      this.selectedWord = '';
+      setTimeout(() => {
+        this.area = '';
+      }, 0);
+      // this.selectedWord = '';
     }
-    this.adjustView();
+    // this.adjustView();
   }
 
-  valueChange(value: string) {
-    console.log('New Value:', value);
-    const index = lowerBound(this.items, value.toLowerCase());
-    console.log('Selection:', index);
+  // valueChange(value: string) {
+  //   console.log('New Value:', value);
+  //   const index = lowerBound(this.items, value.toLowerCase());
+  //   console.log('Selection:', index);
 
-    this.selectWord(index);
-    this.selectedWord = value;
-  }
+  //   this.selectWord(index);
+  //   this.selectedWord = value;
+  // }
 
   addToLibrary() {
     const book: IBook = {

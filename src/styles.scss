@@ -1,4 +1,61 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Breakpoints:
+// https://material-ui.com/layout/breakpoints/
+
+// xs, extra-small: 0px or larger
+// sm, small: 600px or larger
+// md, medium: 960px or larger
+// lg, large: 1280px or larger
+// xl, extra-large: 1920px or larger
+
+// Small tablets and large smartphones (landscape view)
+$screen-sm-min: 576px;
+
+// Small tablets (portrait view)
+$screen-md-min: 768px;
+
+// Tablets and small desktops
+$screen-lg-min: 992px;
+
+// Large tablets and desktops
+$screen-xl-min: 1200px;
+
+// Small devices
+@mixin sm {
+  @media (min-width: $screen-sm-min) {
+    @content;
+  }
+}
+
+// Medium devices
+@mixin md {
+  @media (min-width: $screen-md-min) {
+    @content;
+  }
+}
+
+// Large devices
+@mixin lg {
+  @media (min-width: $screen-lg-min) {
+    @content;
+  }
+}
+
+// Extra large devices
+@mixin xl {
+  @media (min-width: $screen-xl-min) {
+    @content;
+  }
+}
+
+// Custom devices
+@mixin rwd($screen) {
+  @media (min-width: $screen+'px') {
+    @content;
+  }
+}
+
 // @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 // @import '@angular/material/prebuilt-themes/indigo-pink.css';
@@ -45,4 +102,34 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
 body {
   margin: 0;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-container > * {
+  width: 100%;
+}
+
+.dictionary-menu {
+  width: 14em;
+  .mat-menu-content:not(:empty) {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  @include sm {
+    width: 16em;
+  }
+  @include md {
+    width: 17em;
+  }
+  @include lg {
+    width: 18em;
+  }
+  @include xl {
+    width: 19em;
+  }
 }

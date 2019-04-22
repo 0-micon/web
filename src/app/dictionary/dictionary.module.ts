@@ -6,6 +6,7 @@ import { MaterialModule } from '../shared/material/material.module';
 
 import { AddDictionaryComponent } from './add-dictionary.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DictionaryInputComponent } from './dictionary-input.component';
 
 const routes: Routes = [
   {
@@ -16,7 +17,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AddDictionaryComponent],
+  declarations: [AddDictionaryComponent, DictionaryInputComponent],
   imports: [
     CommonModule,
     FormsModule,

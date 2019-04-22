@@ -1,42 +1,40 @@
+<!--
 <mat-menu #appMenu="matMenu">
   <app-virtual-view [items]="items" [selection]="selection" [itemSize]="24" [numberOfRows]="10" class="example-viewport"
     (selectionChange)="selectWord($event)" (indexChange)="scrolledIndex = $event">
   </app-virtual-view>
 </mat-menu>
+-->
 
 <mat-vertical-stepper [linear]="false" #stepper>
-  <mat-step class="flex-container">
+  <mat-step>
     <ng-template matStepLabel>Select a file to upload</ng-template>
-    <label for="m_upload" class="flex-item">
-      Please select the dictionary file to upload:
-    </label>
-    <div class="flex-item">
-      <input type="file" id="m_upload" accept="text/plain, .txt, text/csv, .csv"
-        (change)="file = $event.target.files[0]" />
-      <app-menu-button [name]="'encoding: ' + encoding" (itemClicked)="encoding = $event" [items]="menu.children">
-      </app-menu-button>
-    </div>
-    <div class="flex-item">
-      <mat-form-field>
-        <input type="text" placeholder="search" matInput matMenuTrigger [matMenuTriggerFor]="appMenu"
-          (menuOpened)="menuOpened()" (menuClosed)="menuClosed()" (keydown)="onKeydown($event)"
-          (keyup)="onKeyup($event)" [ngModel]="selectedWord" (ngModelChange)="valueChange($event)"/>
-      </mat-form-field>
-    </div>
-    <div class="flex-item">
-      <textarea placeholder="Textarea" [rows]="10">{{area}}</textarea>
+
+    <div class="flex-container">
+      <label for="m_upload">
+        Please select the dictionary file to upload:
+      </label>
+      <div>
+        <input type="file" id="m_upload" accept="text/plain, .txt, text/csv, .csv"
+          (change)="file = $event.target.files[0]" />
+        <app-menu-button [name]="'encoding: ' + encoding" (itemClicked)="encoding = $event" [items]="menu.children">
+        </app-menu-button>
+      </div>
+      <ng-container *ngIf="items?.length > 0">
+        <app-dictionary-input class="flex-container" [numberOfRows]="7" [items]="items" [selection]="selection"
+          (selectionChange)="selectWord($event)">
+        </app-dictionary-input>
+        <textarea matInput [rows]="10" readonly>{{area}}</textarea>
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </ng-container>
     </div>
 
 
-    <!-- <cdk-virtual-scroll-viewport itemSize="24" class="virtual-list">
-      <a mat-button class="virtual-list-item" *cdkVirtualFor="let word of words; index as i" (click)="selectWord(i)"
-        [ngClass]="{'selection': selection === i}">
-        {{word}}
-      </a>
-    </cdk-virtual-scroll-viewport> -->
-    <div>
-      <button mat-button matStepperNext>Next</button>
-    </div>
+
+
+
   </mat-step>
   <mat-step [stepControl]="firstFormGroup">
     <form [formGroup]="firstFormGroup">
