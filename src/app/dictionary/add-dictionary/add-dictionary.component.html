@@ -1,3 +1,76 @@
+<p>Bootstrap split buttons and dropdowns on button groups are supported with the existing dropdown directives.</p>
+
+<div class="btn-group mr-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Upload</span>
+  </div>
+
+  <div class="custom-file">
+    <input type="file" class="custom-file-input" id="m_inputFile">
+    <label class="custom-file-label" for="m_inputFile">Choose file</label>
+  </div>
+
+  <button type="button" class="btn btn-outline-success">Plain ol' button</button>
+  <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+    <button class="btn btn-outline-primary" ngbDropdownToggle>Drop me</button>
+    <div class="dropdown-menu" ngbDropdownMenu>
+      <button ngbDropdownItem>One</button>
+      <button ngbDropdownItem>Two</button>
+      <button ngbDropdownItem>Four!</button>
+    </div>
+  </div>
+</div>
+
+<div class="btn-group mr-3">
+  <button type="button" class="btn btn-primary">Split me</button>
+  <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+    <button class="btn btn-primary dropdown-toggle-split" ngbDropdownToggle></button>
+    <div class="dropdown-menu" ngbDropdownMenu>
+      <button ngbDropdownItem>One</button>
+      <button ngbDropdownItem>Two</button>
+      <button ngbDropdownItem>Four!</button>
+    </div>
+  </div>
+</div>
+
+<div class="btn-group mr-3">
+  <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+    <button class="btn btn-outline-danger" ngbDropdownToggle>Select me</button>
+    <div class="dropdown-menu" ngbDropdownMenu>
+      <button ngbDropdownItem>One</button>
+      <button ngbDropdownItem>Two</button>
+      <button ngbDropdownItem>Four!</button>
+    </div>
+  </div>
+  <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+    <button class="btn btn-outline-success" ngbDropdownToggle>Or me</button>
+    <div class="dropdown-menu" ngbDropdownMenu>
+      <button ngbDropdownItem>One</button>
+      <button ngbDropdownItem>Two</button>
+      <button ngbDropdownItem>Four!</button>
+    </div>
+  </div>
+</div>
+Bootstrap split but
+
+<div class="input-group">
+  <input type="text" class="form-control" aria-label="Text input with segmented dropdown button">
+  <div class="input-group-append">
+    <button type="button" class="btn btn-outline-secondary">Action</button>
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
+      aria-haspopup="true" aria-expanded="false">
+      <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="#">Action</a>
+      <a class="dropdown-item" href="#">Another action</a>
+      <a class="dropdown-item" href="#">Something else here</a>
+      <div role="separator" class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#">Separated link</a>
+    </div>
+  </div>
+</div>
+
 <div class="input-group mb-3">
   <div class="input-group-prepend">
     <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
@@ -5,5 +78,30 @@
   <div class="custom-file">
     <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
     <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+  </div>
+  <div class="input-group-append">
+
+    <div ngbDropdown class="d-inline-block">
+      <button class="btn btn-outline-secondary" id="dropdownBasic1" ngbDropdownToggle>Toggle dropdown</button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button ngbDropdownItem>Action - 1</button>
+        <button ngbDropdownItem>Another Action</button>
+        <button ngbDropdownItem>Something else is here</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <div ngbDropdown class="d-inline-block">
+      <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>Toggle dropdown</button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button ngbDropdownItem>Action - 1</button>
+        <button ngbDropdownItem>Another Action</button>
+        <button ngbDropdownItem>Something else is here</button>
+      </div>
+    </div>
   </div>
 </div>

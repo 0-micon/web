@@ -1,0 +1,22 @@
+<button *ngIf="values?.length === 1" type="button" class="btn" (click)="select(0)" [title]="titles[0] || ''"
+  [ngClass]="values[0] === value ? classOn : classOff">
+  {{name}}
+</button>
+
+<div *ngIf="values?.length > 1" class="btn-group" ngbDropdown>
+  <button type="button" class="btn" (click)="select(selection)" [title]="titles[selection] || ''"
+    [ngClass]="values[selection] === value ? classOn : classOff">
+    {{name}}
+    <span class="badge badge-light">
+      {{values[selection]}}
+    </span>
+  </button>
+  <button class="btn dropdown-toggle-split" ngbDropdownToggle
+    [ngClass]="values[selection] === value ? classOn : classOff"></button>
+  <div class="dropdown-menu" ngbDropdownMenu>
+    <button ngbDropdownItem *ngFor="let v of values; index as i" [title]="titles[i] || ''" (click)="select(i)"
+      [class.active]="values[i] === value">
+      {{v}}
+    </button>
+  </div>
+</div>
