@@ -9,6 +9,9 @@ import { MultiButtonComponent } from './shared/components/multi-button/multi-but
 import { MultiButtonToolbarComponent } from './shared/components/multi-button-toolbar/multi-button-toolbar.component';
 import { SaveScrollTopDirective } from './shared/directives/save-scroll-top.directive';
 import { DropdownInputComponent } from './shared/components/dropdown-input/dropdown-input.component';
+import { SimpleVirtualListComponent } from './shared/components/simple-virtual-list/simple-virtual-list.component';
+import { XgangePipe } from './shared/pipes/xgange.pipe';
+import { XrangePipe } from './shared/pipes/xrange.pipe';
 
 @NgModule({
   declarations: [
@@ -16,7 +19,10 @@ import { DropdownInputComponent } from './shared/components/dropdown-input/dropd
     MultiButtonComponent,
     MultiButtonToolbarComponent,
     SaveScrollTopDirective,
-    DropdownInputComponent
+    DropdownInputComponent,
+    SimpleVirtualListComponent,
+    XgangePipe,
+    XrangePipe
   ],
   imports: [BrowserModule, AppRoutingModule, NgbModule],
   providers: [],
