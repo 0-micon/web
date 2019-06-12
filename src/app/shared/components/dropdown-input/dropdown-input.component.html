@@ -1,11 +1,24 @@
-<div class="input-group" ngbDropdown #drop="ngbDropdown" autoClose="outside">
-  <input type="text" />
-
+<div class="input-group" appDropdown #drop="appDropdown" autoClose="outside">
+  <input type="text" class="form-control" [(appDropdownInput)]="selection" [itemCount]="items.length"
+    (keyup.Enter)="onInputEnter()" (keydown.Enter)="$event.preventDefault()" [placeholder]="placeholder"
+    [(ngModel)]="model" />
   <div class="input-group-append">
-    <button class="btn btn-outline-primary" ngbDropdownToggle></button>
+    <button type="button" class="btn btn-outline-primary" appDropdownToggle></button>
   </div>
 
-  <div class="dropdown-menu" ngbDropdownMenu>
-
+  <div *ngIf="items.length < 100" class="dropdown-menu" appDropdownMenu #menu="appDropdownMenu" appDropdownItemSelector
+    [selectedItem]="selection" (selectedItemChange)="menu.scrollToItem = $event" [style.width.%]="100"
+    [class.menu-small]="items && items.length > 5">
+    <button type="button" appDropdownItem *ngFor="let item of items; index as i" (click)="onItemClick(i)"
+      [class.active]="i===selection" [title]="getHelpAt(i)">
+      {{getNameAt(i) || item}}
+    </button>
   </div>
+
+  <app-simple-virtual-list *ngIf="items.length >= 100" #list appDropdownMenuBase appDropdownItemSelector
+    [selectedItem]="selection" (selectedItemChange)="list.scrollToItem($event)" [style.width.%]="100" [items]="items"
+    [itemTitles]="helps" [itemNames]="names" [selection]="selection" (itemFocusRequest)="list.setFocus()"
+    (selectionChange)="onItemClick($event)">
+  </app-simple-virtual-list>
+
 </div>

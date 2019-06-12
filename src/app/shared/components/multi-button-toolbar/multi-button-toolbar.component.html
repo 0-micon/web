@@ -1,17 +1,16 @@
-<!-- <div class="col-sm-6" (window:resize)="onResize($event)"> -->
-
 <app-multi-button *ngFor="let b of buttons" [name]="b.name" [titles]="b.titles" [values]="b.values" [value]="value"
   (valueChange)="valueChange.emit(value = $event)" classOff="btn-outline-primary" classOn="btn-primary">
 </app-multi-button>
-<div ngbDropdown #drop="ngbDropdown" class="btn-group">
-  <button class="btn btn-outline-info hide-dropdown-toggle" ngbDropdownToggle [title]="drop.isOpen() ? 'Less' : 'More'">
+<div appDropdown #drop="appDropdown" class="btn-group" autoClose="outside">
+  <button type="button" class="btn btn-outline-info hide-dropdown-toggle" appDropdownToggle
+    [title]="drop.isOpen() ? 'Less' : 'More'">
     <i class="material-icons md-sm">
       {{drop.isOpen() ? 'expand_less' : 'expand_more'}}
     </i>
   </button>
-  <div ngbDropdownMenu>
+  <div appDropdownMenu>
     <div [class.menu-small]="buttons.length > 5">
-      <button *ngFor="let b of buttons; index as i" ngbDropdownItem (click)="removeButtonAt.emit(i)"
+      <button type="button" *ngFor="let b of buttons; index as i" appDropdownItem (click)="removeButtonAt.emit(i)"
         [title]="'Remove ' + b.name + ' from Toolbar'">
         <span class="text-danger">&#8722;</span>
         {{b.name}}
@@ -19,7 +18,8 @@
     </div>
     <div *ngIf="buttons.length > 0" class="dropdown-divider"></div>
     <div [class.menu-small]="tags.length > 5">
-      <button *ngFor="let t of tags" ngbDropdownItem (click)="addButton.emit(t)" [title]="'Add ' + t + ' to Toolbar'">
+      <button type="button" *ngFor="let t of tags" appDropdownItem (click)="addButton.emit(t)"
+        [title]="'Add ' + t + ' to Toolbar'">
         <span class="text-success">&#43;</span>
         {{t}}
       </button>
