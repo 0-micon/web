@@ -10,6 +10,7 @@ import { SimpleVirtualListComponent } from './components/simple-virtual-list/sim
 import { MultiButtonComponent } from './components/multi-button/multi-button.component';
 import { MultiButtonToolbarComponent } from './components/multi-button-toolbar/multi-button-toolbar.component';
 import { DropdownInputComponent } from './components/dropdown-input/dropdown-input.component';
+import { SqueezeBoxComponent } from './components/squeeze-box/squeeze-box.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { DropdownInputComponent } from './components/dropdown-input/dropdown-inp
     FormLabelComponent,
     SimpleVirtualListComponent,
     MultiButtonComponent,
-    MultiButtonToolbarComponent
+    MultiButtonToolbarComponent,
+    SqueezeBoxComponent
   ],
   imports: [CommonModule, FormsModule, NgbExtensionModule],
   exports: [
@@ -28,7 +30,8 @@ import { DropdownInputComponent } from './components/dropdown-input/dropdown-inp
     FormLabelComponent,
     SimpleVirtualListComponent,
     MultiButtonComponent,
-    MultiButtonToolbarComponent
+    MultiButtonToolbarComponent,
+    SqueezeBoxComponent
   ]
 })
 export class SharedModule {}

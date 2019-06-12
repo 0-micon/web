@@ -1,0 +1,18 @@
+<button type="button" class="list-group-item list-group-item-action" (click)="expanded = !expanded">
+  <i class="material-icons icon-position" [class.md-primary]="expanded" [class.md-secondary]="!expanded">
+    {{ iconName }}
+  </i>
+  {{items[0] + ' → ' + items[items.length - 1]}}
+  <span class="badge badge-pill badge-position" [class.badge-primary]="expanded" [class.badge-secondary]="!expanded">
+    {{items.length}}
+  </span>
+</button>
+<ng-container *ngIf="expanded">
+  <div *ngIf="groups" class="squeeze-box">
+    <app-squeeze-box *ngFor="let group of groups" [items]="group" [itemCountMax]="itemCountMax"
+      [groupCount]="groupCount">
+    </app-squeeze-box>
+  </div>
+  <app-simple-virtual-list *ngIf="!groups" [items]="items">
+  </app-simple-virtual-list>
+</ng-container>
