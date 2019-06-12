@@ -1,0 +1,15 @@
+<div class="col-form-label">
+  <a *ngIf="showHelp" href="#" class="badge badge-primary" [ngbPopover]="helpTopic" [popoverTitle]="helpTitle"
+    autoClose="outside">
+    &#63;
+  </a>
+  <ng-content>
+  </ng-content>
+  <i *ngIf="showSuccess" class="material-icons md-success md-align-bottom">check</i>
+  <ng-container *ngIf="!showSuccess && showError">
+    <i class="material-icons md-danger md-align-bottom">error</i>
+    <span *ngIf="errorMessage" class="text-danger">
+      {{errorMessage}}
+    </span>
+  </ng-container>
+</div>

@@ -1,0 +1,204 @@
+<ng-template #required>
+  <span class="badge badge-danger">Required</span>
+</ng-template>
+
+<ng-template #optional>
+  <span class="badge badge-info">Optional</span>
+</ng-template>
+
+<!-- Help Popovers -->
+<ng-template #dictionaryTitle>
+  Dictionary File
+  <ng-container *ngTemplateOutlet="required"></ng-container>
+</ng-template>
+
+<ng-template #dictionaryTopic>
+  Choose a local text file to upload as a dictionary.
+</ng-template>
+
+<ng-template #encodingTitle>
+  Dictionary Encoding
+  <ng-container *ngTemplateOutlet="optional"></ng-container>
+</ng-template>
+
+<ng-template #encodingTopic>
+  The encoding to use for the file.
+  By default, <strong>UTF-8</strong> is assumed.
+</ng-template>
+
+<ng-template #fileSplitTitle>
+  Dictionary File Separator
+  <ng-container *ngTemplateOutlet="required"></ng-container>
+</ng-template>
+
+<ng-template #fileSplitTopic>
+  A regular expression to split the dictionary file into cards.
+</ng-template>
+
+<ng-template #headTitle>
+  Card's Head
+  <ng-container *ngTemplateOutlet="required"></ng-container>
+</ng-template>
+
+<ng-template #headTopic>
+  Card's head regexp match group.
+</ng-template>
+
+<ng-template #bodyTitle>
+  Card's Body
+  <ng-container *ngTemplateOutlet="required"></ng-container>
+</ng-template>
+
+<ng-template #bodyTopic>
+  Card's body regexp match group.
+</ng-template>
+
+<ng-template #bodySplitTitle>
+  Card's Body Separator
+  <ng-container *ngTemplateOutlet="optional"></ng-container>
+</ng-template>
+
+<ng-template #bodySplitTopic>
+  A regular expression to split card's body into lines.
+</ng-template>
+
+<ng-template #lineTitle>
+  Card's Body Lines
+  <ng-container *ngIf="model.lineSeparator; then required else optional"></ng-container>
+</ng-template>
+
+<ng-template #lineTopic>
+  Card's body line regexp match group.
+  <span class="text-secondary">
+    Required only if the line separator regexp is provided.
+  </span>
+</ng-template>
+
+<form class="container-fluid" #form="ngForm" (ngSubmit)="upload(form)">
+  <div class="row">
+    <!-- Choose file -->
+    <!--
+      Note: It seems that data binding for file input is not supported by Angular.
+      Using (change) instead.
+    -->
+    <div class="col-md-6">
+      <app-form-label [helpTopic]="dictionaryTopic" [helpTitle]="dictionaryTitle" [showHelp]="showHelp"
+        [showSuccess]="model.isFileValid" [showError]="form.submitted" errorMessage="File is required.">
+        Dictionary
+      </app-form-label>
+
+      <div class="input-group">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="input-file" accept="text/plain, .txt, text/csv, .csv"
+            (change)="model.file = $event.target.files[0]">
+          <label class="custom-file-label" for="input-file">
+            {{model.file?.name || 'Choose file'}}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- File encoding -->
+    <div class="col-md-6">
+      <app-form-label [helpTopic]="encodingTopic" [helpTitle]="encodingTitle" [showHelp]="showHelp">
+        Encoding
+      </app-form-label>
+
+      <app-dropdown-input [items]="codes" [(model)]="model.encoding" placeholder="Choose encoding"
+        [helps]="codeDisplayNames">
+      </app-dropdown-input>
+
+      <app-multi-button-toolbar [buttons]="buttons" [tags]="tags" [(value)]="model.encoding"
+        (addButton)="addButton($event)" (removeButtonAt)="removeButton($event)">
+      </app-multi-button-toolbar>
+    </div>
+
+    <!-- Card separator -->
+    <div class="col-md-6">
+      <app-form-label [helpTopic]="fileSplitTopic" [helpTitle]="fileSplitTitle" [showHelp]="showHelp"
+        [showSuccess]="model.isCardSeparatorValid" [showError]="form.submitted" errorMessage="An invalid pattern.">
+        File Split
+      </app-form-label>
+
+      <app-dropdown-input [items]="['(?:^|\\n)([^\\r\\n\\t]+)((?:\\r?\\n\\t[^\\r\\n]*)+)']"
+        [names]="['Split by a tab character']" [helps]="['1st Capturing Group: head; 2nd Capturing Group: body']"
+        [(model)]="model.cardSeparator" placeholder="separator (regular expression)">
+      </app-dropdown-input>
+    </div>
+
+    <div class="col-md-6">
+      <app-form-label [helpTopic]="headTopic" [helpTitle]="headTitle" [showHelp]="showHelp">
+        <span [class.text-muted]="!model.isCardSeparatorValid">
+          Head At
+        </span>
+      </app-form-label>
+
+      <select class="custom-select" name="headSelection" [(ngModel)]="model.headSelection"
+        [disabled]="!model.isCardSeparatorValid">
+        <option *ngFor="let group of model.cardMatchGroups; index as i" [selected]="model.headSelection === i"
+          [value]="i">
+          {{group}}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-md-6 offset-md-6">
+      <app-form-label [helpTopic]="bodyTopic" [helpTitle]="bodyTitle" [showHelp]="showHelp">
+        <span [class.text-muted]="!model.isCardSeparatorValid">
+          Body At
+        </span>
+      </app-form-label>
+
+      <select class="custom-select" name="bodySelection" [(ngModel)]="model.bodySelection"
+        [disabled]="!model.isCardSeparatorValid">
+        <option *ngFor="let group of model.cardMatchGroups; index as i" [selected]="model.bodySelection === i"
+          [value]="i">
+          {{group}}
+        </option>
+      </select>
+    </div>
+
+    <!-- Line separator -->
+    <div class="col-md-6">
+      <app-form-label [helpTopic]="bodySplitTopic" [helpTitle]="bodySplitTitle" [showHelp]="showHelp"
+        [showSuccess]="model.isLineSeparatorValid" [showError]="(model.lineSeparator && form.submitted)"
+        errorMessage="An invalid pattern.">
+        Body Split
+      </app-form-label>
+
+      <app-dropdown-input [items]="['(?:\\n\\t)([^\\r\\n]+)']"
+        [names]="['Split by a line-feed (newline) and a tab character']" [helps]="['1st Capturing Group: line']"
+        [(model)]="model.lineSeparator" placeholder="separator (regular expression)">
+      </app-dropdown-input>
+    </div>
+
+    <div class="col-md-6">
+      <app-form-label [helpTopic]="lineTopic" [helpTitle]="lineTitle" [showHelp]="showHelp">
+        <span [class.text-muted]="!model.isLineSeparatorValid">
+          Line At
+        </span>
+      </app-form-label>
+
+      <select class="custom-select" name="lineSelection" [(ngModel)]="model.lineSelection"
+        [disabled]="!model.isLineSeparatorValid">
+        <option *ngFor="let group of model.lineMatchGroups; index as i" [selected]="model.lineSelection === i"
+          [value]="i">
+          {{group}}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col">
+      <button type="submit" class="btn btn-primary mb-2" [disabled]="!canUpload()">Upload</button>
+      <button type="button" class="btn btn-link" (click)="showHelp = !showHelp" [title]="showHelp ? 'Hide' : 'Show'">
+        <i class="material-icons">{{ showHelp ? 'help' : 'help_outline' }}</i>
+      </button>
+    </div>
+  </div>
+</form>
+
+<pre>
+  {{ form.value | json }}
+</pre>
