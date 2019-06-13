@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { NgbExtensionModule } from './ngb-extension/ngb-extension.module';
 
 import { XrangePipe } from './pipes/xrange.pipe';
+
 import { FormLabelComponent } from './components/form-label/form-label.component';
 import { SimpleVirtualListComponent } from './components/simple-virtual-list/simple-virtual-list.component';
 import { MultiButtonComponent } from './components/multi-button/multi-button.component';
@@ -13,24 +14,24 @@ import { DropdownInputComponent } from './components/dropdown-input/dropdown-inp
 import { SqueezeBoxComponent } from './components/squeeze-box/squeeze-box.component';
 
 @NgModule({
+  imports: [CommonModule, FormsModule, NgbExtensionModule],
   declarations: [
     XrangePipe,
     DropdownInputComponent,
     FormLabelComponent,
-    SimpleVirtualListComponent,
     MultiButtonComponent,
     MultiButtonToolbarComponent,
+    SimpleVirtualListComponent,
     SqueezeBoxComponent
   ],
-  imports: [CommonModule, FormsModule, NgbExtensionModule],
   exports: [
     NgbExtensionModule,
-    DropdownInputComponent,
     XrangePipe,
+    DropdownInputComponent,
     FormLabelComponent,
-    SimpleVirtualListComponent,
     MultiButtonComponent,
     MultiButtonToolbarComponent,
+    SimpleVirtualListComponent,
     SqueezeBoxComponent
   ]
 })

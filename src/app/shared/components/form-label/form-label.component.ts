@@ -3,7 +3,7 @@ import { Component, OnInit, Input, TemplateRef } from '@angular/core';
 @Component({
   selector: 'app-form-label',
   templateUrl: './form-label.component.html',
-  styleUrls: ['./form-label.component.sass']
+  styleUrls: ['./form-label.component.scss']
 })
 export class FormLabelComponent implements OnInit {
   @Input() showSuccess: boolean;

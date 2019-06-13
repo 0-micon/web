@@ -6,12 +6,12 @@ import {
   QueryList,
   ElementRef,
   Input,
-  HostListener
+  HostListener,
+  forwardRef
 } from '@angular/core';
 
 import { DropdownItemDirective } from './dropdown-item.directive';
 import { DropdownMenuBaseDirective } from './dropdown-menu-base.directive';
-import { DropdownDirective } from './dropdown.directive';
 
 /**
  * A directive that wraps dropdown menu content and dropdown items.
@@ -22,7 +22,9 @@ import { DropdownDirective } from './dropdown.directive';
   host: {
     '[class.dropdown-menu]': 'true'
   },
-  providers: [{ provide: DropdownMenuBaseDirective, useExisting: DropdownMenuDirective }]
+  providers: [
+    { provide: DropdownMenuBaseDirective, useExisting: forwardRef(() => DropdownMenuDirective) }
+  ]
 })
 export class DropdownMenuDirective extends DropdownMenuBaseDirective {
   @ContentChildren(DropdownItemDirective) menuItems: QueryList<DropdownItemDirective>;
@@ -41,28 +43,29 @@ export class DropdownMenuDirective extends DropdownMenuBaseDirective {
     }
   }
 
-  constructor(dropdown: DropdownDirective, elementRef: ElementRef<HTMLElement>) {
-    super(dropdown, elementRef);
+  constructor(elementRef: ElementRef<HTMLElement>) {
+    super(elementRef);
   }
 
-  setFocus(command: 'first' | 'last' | 'next' | 'prev') {
-    super.setFocus(command);
+  setFocus(commands: 'first' | 'last' | 'next' | 'prev') {
+    super.setFocus(commands);
 
     const itemElements = this.menuItems
       .filter(item => !item.disabled)
       .map(item => item.getNativeElement());
     if (itemElements) {
       let position = 0; // default to the first element.
-      if (command === 'last') {
+      if (commands === 'last') {
         position = itemElements.length - 1;
-      } else if (command === 'next' || command === 'prev') {
-        const activeElement = this.dropdown.getActiveElement();
+      } else if (commands === 'next' || commands === 'prev') {
+        const activeElement = document ? document.activeElement : null;
+        // const activeElement = this.dropdown.getActiveElement();
         for (position = itemElements.length; position-- > 0; ) {
           if (itemElements[position] === activeElement) {
             break;
           }
         }
-        if (command === 'next') {
+        if (commands === 'next') {
           position = Math.min(position + 1, itemElements.length - 1);
         } else {
           position = Math.max(position - 1, 0);

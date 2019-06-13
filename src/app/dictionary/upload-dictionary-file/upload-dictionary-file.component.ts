@@ -16,7 +16,7 @@ function create(name: string, codes: string[]): IMultiButton {
 @Component({
   selector: 'app-upload-dictionary-file',
   templateUrl: './upload-dictionary-file.component.html',
-  styleUrls: ['./upload-dictionary-file.component.sass']
+  styleUrls: ['./upload-dictionary-file.component.scss']
 })
 export class UploadDictionaryFileComponent implements OnInit {
   model = new UploadDictionaryFileModel();

@@ -3,7 +3,7 @@ import { Component, OnInit, OnChanges, Input, SimpleChanges } from '@angular/cor
 @Component({
   selector: 'app-squeeze-box',
   templateUrl: './squeeze-box.component.html',
-  styleUrls: ['./squeeze-box.component.sass']
+  styleUrls: ['./squeeze-box.component.scss']
 })
 export class SqueezeBoxComponent implements OnInit, OnChanges {
   @Input() items: string[] = [];

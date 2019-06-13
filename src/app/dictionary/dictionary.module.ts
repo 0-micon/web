@@ -3,9 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 
+import { SharedModule } from '../shared/shared.module';
+
 import { AddDictionaryComponent } from './add-dictionary/add-dictionary.component';
 import { UploadDictionaryFileComponent } from './upload-dictionary-file/upload-dictionary-file.component';
-import { SharedModule } from '../shared/shared.module';
 
 const routes: Routes = [
   {
@@ -16,7 +17,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
+  imports: [CommonModule, FormsModule, SharedModule, RouterModule.forChild(routes)],
   declarations: [AddDictionaryComponent, UploadDictionaryFileComponent],
-  imports: [CommonModule, FormsModule, SharedModule, RouterModule.forChild(routes)]
+  exports: [AddDictionaryComponent]
 })
 export class DictionaryModule {}

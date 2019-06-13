@@ -5,7 +5,7 @@ import { IMultiButton } from '../multi-button/multi-button.component';
 @Component({
   selector: 'app-multi-button-toolbar',
   templateUrl: './multi-button-toolbar.component.html',
-  styleUrls: ['./multi-button-toolbar.component.sass']
+  styleUrls: ['./multi-button-toolbar.component.scss']
 })
 export class MultiButtonToolbarComponent implements OnInit {
   @Input() buttons: IMultiButton[] = [];

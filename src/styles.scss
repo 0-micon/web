@@ -2,13 +2,16 @@
 @import 'scss/bootstrap-4.1.3/bootstrap.scss';
 
 /* Add application styles & imports to this file! */
-.hide-dropdown-toggle.dropdown-toggle::after {
+.hide-dropdown-toggle.dropdown-toggle::after,
+.dropup .hide-dropdown-toggle.dropdown-toggle::after {
   display: none;
 }
 
 .menu-small {
+  height: auto;
   max-height: 10rem;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 /* Rules for sizing the icon. */
@@ -39,8 +42,34 @@
 
 /* Rules for using icons as white on a dark background. */
 .material-icons.md-light {
-  color: rgba(255, 255, 255, 1);
+  color: var(--light, #f8f9fa);
 }
-.material-icons.md-light.md-inactive {
-  color: rgba(255, 255, 255, 0.3);
+.material-icons.md-dark {
+  color: var(--dark, #343a40);
+}
+.material-icons.md-primary {
+  color: var(--primary, #007bff);
+}
+.material-icons.md-secondary {
+  color: var(--secondary, #6c757d);
+}
+.material-icons.md-success {
+  color: var(--success, #28a745);
+}
+.material-icons.md-info {
+  color: var(--info, #17a2b8);
+}
+.material-icons.md-warning {
+  color: var(--warning, #ffc107);
+}
+.material-icons.md-danger {
+  color: var(--danger, #dc3545);
+}
+.material-icons.md-green {
+  color: $green;
+}
+
+/* Set the vertical alignment of an icon. */
+.material-icons.md-align-bottom {
+  vertical-align: bottom;
 }

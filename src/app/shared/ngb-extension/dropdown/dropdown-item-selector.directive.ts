@@ -2,6 +2,10 @@ import { Directive, Input, Output, EventEmitter, OnDestroy } from '@angular/core
 import { Subscription } from 'rxjs';
 import { DropdownDirective } from './dropdown.directive';
 
+/**
+ * A directive that helps to select an item in the dropdown menu.
+ * It postpones an item selection till the drop is open.
+ */
 @Directive({
   selector: '[appDropdownItemSelector]'
 })

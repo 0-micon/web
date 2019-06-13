@@ -9,7 +9,7 @@ export interface IMultiButton {
 @Component({
   selector: 'app-multi-button',
   templateUrl: './multi-button.component.html',
-  styleUrls: ['./multi-button.component.sass']
+  styleUrls: ['./multi-button.component.scss']
 })
 export class MultiButtonComponent implements OnInit {
   @Input() classOff = '';

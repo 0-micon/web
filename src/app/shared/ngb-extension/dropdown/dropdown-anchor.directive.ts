@@ -15,6 +15,7 @@ import { DropdownDirective } from './dropdown.directive';
  */
 @Directive({
   selector: '[appDropdownAnchor]',
+  exportAs: 'appDropdownAnchor',
   host: {
     '[class.dropdown-toggle]': 'true',
     'aria-haspopup': 'true'

@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
   { path: 'dict', loadChildren: './dictionary/dictionary.module#DictionaryModule' },
+  // { path: 'dict', component: AddDictionaryComponent },
   { path: '**', redirectTo: 'dict' }
 ];
 

@@ -16,7 +16,7 @@ import {
 @Component({
   selector: 'app-simple-virtual-list',
   templateUrl: './simple-virtual-list.component.html',
-  styleUrls: ['./simple-virtual-list.component.sass']
+  styleUrls: ['./simple-virtual-list.component.scss']
 })
 export class SimpleVirtualListComponent implements OnInit, OnChanges {
   // pointerEvents: 'none' | 'auto' = 'auto';
