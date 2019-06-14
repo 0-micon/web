@@ -3,9 +3,9 @@
 </app-multi-button>
 <div appDropdown #drop="appDropdown" class="btn-group" autoClose="outside">
   <button type="button" class="btn btn-outline-info hide-dropdown-toggle" appDropdownToggle
-    [title]="drop.isOpen() ? 'Less' : 'More'">
+    [title]="drop.opened ? 'Less' : 'More'">
     <i class="material-icons md-sm">
-      {{drop.isOpen() ? 'expand_less' : 'expand_more'}}
+      {{drop.opened ? 'expand_less' : 'expand_more'}}
     </i>
   </button>
   <div appDropdownMenu>

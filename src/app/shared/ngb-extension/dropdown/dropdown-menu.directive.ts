@@ -4,14 +4,15 @@ import {
   Directive,
   ContentChildren,
   QueryList,
-  ElementRef,
   Input,
   HostListener,
-  forwardRef
+  forwardRef,
+  ElementRef
 } from '@angular/core';
 
 import { DropdownItemDirective } from './dropdown-item.directive';
 import { DropdownMenuBaseDirective } from './dropdown-menu-base.directive';
+import { DropdownBaseDirective } from './dropdown-base.directive';
 
 /**
  * A directive that wraps dropdown menu content and dropdown items.
@@ -43,8 +44,8 @@ export class DropdownMenuDirective extends DropdownMenuBaseDirective {
     }
   }
 
-  constructor(elementRef: ElementRef<HTMLElement>) {
-    super(elementRef);
+  constructor(dropdown: DropdownBaseDirective, elementRef: ElementRef<HTMLElement>) {
+    super(dropdown, elementRef);
   }
 
   setFocus(commands: 'first' | 'last' | 'next' | 'prev') {
@@ -59,7 +60,6 @@ export class DropdownMenuDirective extends DropdownMenuBaseDirective {
         position = itemElements.length - 1;
       } else if (commands === 'next' || commands === 'prev') {
         const activeElement = document ? document.activeElement : null;
-        // const activeElement = this.dropdown.getActiveElement();
         for (position = itemElements.length; position-- > 0; ) {
           if (itemElements[position] === activeElement) {
             break;

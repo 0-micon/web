@@ -1,14 +1,9 @@
 // tslint:disable: use-host-property-decorator
 
-import {
-  Directive,
-  HostBinding,
-  Output,
-  EventEmitter,
-  ElementRef,
-} from '@angular/core';
+import { Directive, HostBinding, Output, EventEmitter, ElementRef } from '@angular/core';
 
 import { Placement } from '@ng-bootstrap/ng-bootstrap';
+import { DropdownBaseDirective } from './dropdown-base.directive';
 
 /**
  * A directive for a dropdown menu content.
@@ -24,12 +19,17 @@ export class DropdownMenuBaseDirective {
   placement: Placement = 'bottom';
 
   @HostBinding('class.show')
-  isOpen = false;
+  get isOpen() {
+    return this.dropdown && this.dropdown.opened;
+  }
 
   @Output()
   itemFocusRequest = new EventEmitter<string>();
 
-  constructor(private _elementRef: ElementRef<HTMLElement>) {}
+  constructor(
+    public dropdown: DropdownBaseDirective,
+    private _elementRef: ElementRef<HTMLElement>
+  ) {}
 
   getNativeElement() {
     return this._elementRef.nativeElement;

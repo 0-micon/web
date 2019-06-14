@@ -74,13 +74,13 @@ export class DropdownInputComponent implements OnInit {
 
   onItemClick(index: number) {
     this.modelChange.emit(this.items[index]);
-    if (this.drop.isOpen()) {
+    if (this.drop.opened) {
       this.drop.close();
     }
   }
 
   onInputEnter() {
-    if (this.drop.isOpen()) {
+    if (this.drop.opened) {
       if (this.selection >= 0 && this.selection < this.items.length) {
         this.modelChange.emit(this.items[this.selection]);
       }

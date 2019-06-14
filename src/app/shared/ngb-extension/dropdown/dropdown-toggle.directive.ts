@@ -1,8 +1,8 @@
 // tslint:disable: use-host-property-decorator
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, forwardRef } from '@angular/core';
 
 import { DropdownAnchorDirective } from './dropdown-anchor.directive';
-import { DropdownDirective } from './dropdown.directive';
+import { DropdownBaseDirective } from './dropdown-base.directive';
 
 /**
  * A directive to mark an element that will toggle dropdown via the `click` event.
@@ -15,10 +15,12 @@ import { DropdownDirective } from './dropdown.directive';
     '[class.dropdown-toggle]': 'true',
     'aria-haspopup': 'true'
   },
-  providers: [{ provide: DropdownAnchorDirective, useExisting: DropdownToggleDirective }]
+  providers: [
+    { provide: DropdownAnchorDirective, useExisting: forwardRef(() => DropdownToggleDirective) }
+  ]
 })
 export class DropdownToggleDirective extends DropdownAnchorDirective {
-  constructor(dropdown: DropdownDirective, elementRef: ElementRef<HTMLElement>) {
+  constructor(dropdown: DropdownBaseDirective, elementRef: ElementRef<HTMLElement>) {
     super(dropdown, elementRef);
   }
   @HostListener('click') onclick() {

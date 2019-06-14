@@ -1,8 +1,7 @@
 // tslint:disable: use-host-property-decorator
 
-import { Directive, Inject, forwardRef, ElementRef, HostBinding } from '@angular/core';
-
-import { DropdownDirective } from './dropdown.directive';
+import { Directive, ElementRef, HostBinding, Inject, ContentChild } from '@angular/core';
+import { DropdownBaseDirective } from './dropdown-base.directive';
 
 /**
  * A directive to mark an element to which dropdown menu will be anchored.
@@ -15,7 +14,6 @@ import { DropdownDirective } from './dropdown.directive';
  */
 @Directive({
   selector: '[appDropdownAnchor]',
-  exportAs: 'appDropdownAnchor',
   host: {
     '[class.dropdown-toggle]': 'true',
     'aria-haspopup': 'true'
@@ -23,13 +21,13 @@ import { DropdownDirective } from './dropdown.directive';
 })
 export class DropdownAnchorDirective {
   constructor(
-    @Inject(forwardRef(() => DropdownDirective)) public dropdown: DropdownDirective,
+    public dropdown: DropdownBaseDirective,
     private _elementRef: ElementRef<HTMLElement>
   ) {}
 
   @HostBinding('attr.aria-expanded')
   get isOpen(): boolean {
-    return this.dropdown.isOpen();
+    return this.dropdown && this.dropdown.opened;
   }
 
   getNativeElement() {

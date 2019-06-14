@@ -4,16 +4,15 @@
 import {
   Directive,
   forwardRef,
-  Inject,
-  ElementRef,
   HostListener,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  ElementRef
 } from '@angular/core';
 
 import { DropdownAnchorDirective } from './dropdown-anchor.directive';
-import { DropdownDirective } from './dropdown.directive';
+import { DropdownBaseDirective } from './dropdown-base.directive';
 
 @Directive({
   selector: '[appDropdownInput]',
@@ -49,10 +48,7 @@ export class DropdownInputDirective extends DropdownAnchorDirective {
     this.appDropdownInputChange.emit(value);
   }
 
-  constructor(
-    @Inject(forwardRef(() => DropdownDirective)) dropdown: DropdownDirective,
-    elementRef: ElementRef<HTMLElement>
-  ) {
+  constructor(dropdown: DropdownBaseDirective, elementRef: ElementRef<HTMLElement>) {
     super(dropdown, elementRef);
   }
 

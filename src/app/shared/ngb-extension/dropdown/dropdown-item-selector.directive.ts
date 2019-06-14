@@ -1,6 +1,6 @@
 import { Directive, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DropdownDirective } from './dropdown.directive';
+import { DropdownBaseDirective } from './dropdown-base.directive';
 
 /**
  * A directive that helps to select an item in the dropdown menu.
@@ -24,7 +24,7 @@ export class DropdownItemSelectorDirective implements OnDestroy {
 
   private _select() {
     setTimeout(() => {
-      if (this.dropdown.isOpen()) {
+      if (this.dropdown.opened) {
         this.selectedItemChange.emit(this._selectedItem);
         this._selectOnOpen = false;
       } else {
@@ -33,8 +33,8 @@ export class DropdownItemSelectorDirective implements OnDestroy {
     }, 0);
   }
 
-  constructor(public dropdown: DropdownDirective) {
-    this._openChangeSubscription = dropdown.openChange.subscribe(value => {
+  constructor(public dropdown: DropdownBaseDirective) {
+    this._openChangeSubscription = dropdown.openedChange.subscribe(value => {
       if (value && this._selectOnOpen) {
         this._select();
       }
