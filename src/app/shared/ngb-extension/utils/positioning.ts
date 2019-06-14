@@ -14,14 +14,14 @@ export class Positioning {
   }
 
   private offsetParent(element: HTMLElement): HTMLElement {
-    let offsetParentEl = <HTMLElement>element.offsetParent || document.documentElement;
+    let offsetParentEl = (element.offsetParent as HTMLElement) || document.documentElement;
 
     while (
       offsetParentEl &&
       offsetParentEl !== document.documentElement &&
       this.isStaticPositioned(offsetParentEl)
     ) {
-      offsetParentEl = <HTMLElement>offsetParentEl.offsetParent;
+      offsetParentEl = offsetParentEl.offsetParent as HTMLElement;
     }
 
     return offsetParentEl || document.documentElement;
@@ -76,7 +76,7 @@ export class Positioning {
       left: window.pageXOffset - document.documentElement.clientLeft
     };
 
-    let elOffset = {
+    const elOffset = {
       height: elBcr.height || element.offsetHeight,
       width: elBcr.width || element.offsetWidth,
       top: elBcr.top + viewportOffset.top,
@@ -201,7 +201,7 @@ export function positionElements(
   appendToBody?: boolean,
   baseClass?: string
 ): Placement {
-  let placementVals: Array<Placement> = Array.isArray(placement)
+  const placementVals: Array<Placement> = Array.isArray(placement)
     ? placement
     : (placement.split(placementSeparator) as Array<Placement>);
 
@@ -247,7 +247,7 @@ export function positionElements(
   // replace auto placement with other placements
   let hasAuto = placementVals.findIndex(val => val === 'auto');
   if (hasAuto >= 0) {
-    allowedPlacements.forEach(function(obj) {
+    allowedPlacements.forEach(obj => {
       if (placementVals.find(val => val.search('^' + obj) !== -1) == null) {
         placementVals.splice(hasAuto++, 1, obj as Placement);
       }
@@ -267,7 +267,7 @@ export function positionElements(
   let testPlacement: Placement;
   let isInViewport = false;
   for (testPlacement of placementVals) {
-    let addedClasses = addClassesToTarget(testPlacement);
+    const addedClasses = addClassesToTarget(testPlacement);
 
     if (positionService.positionElements(hostElement, targetElement, testPlacement, appendToBody)) {
       isInViewport = true;

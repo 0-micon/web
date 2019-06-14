@@ -1,12 +1,12 @@
 // tslint:disable: use-host-property-decorator
 
-import { Directive, ElementRef, HostBinding, Inject, ContentChild } from '@angular/core';
+import { Directive, ElementRef, HostBinding } from '@angular/core';
 import { DropdownBaseDirective } from './dropdown-base.directive';
 
 /**
  * A directive to mark an element to which dropdown menu will be anchored.
  *
- * This is a simple version of the `NgbDropdownToggle` directive.
+ * This is a simple version of the `appDropdownToggle` directive.
  * It plays the same role, but doesn't listen to click events to toggle dropdown menu thus enabling support
  * for events other than click.
  *

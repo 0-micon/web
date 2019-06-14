@@ -3,50 +3,40 @@ import { CommonModule } from '@angular/common';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import {
-  DropdownDirective,
-  // DropdownItemDirective,
-  // DropdownMenuBaseDirective,
-  // DropdownMenuDirective,
-  // DropdownAnchorDirective,
-  // DropdownInputDirective,
-  // DropdownToggleDirective,
-  // DropdownItemSelectorDirective
-} from './dropdown/dropdown.directive';
-
+import { DropdownAnchorDirective } from './dropdown/dropdown-anchor.directive';
+import { DropdownBaseDirective } from './dropdown/dropdown-base.directive';
+import { DropdownInputDirective } from './dropdown/dropdown-input.directive';
 import { DropdownItemDirective } from './dropdown/dropdown-item.directive';
+import { DropdownItemSelectorDirective } from './dropdown/dropdown-item-selector.directive';
 import { DropdownMenuBaseDirective } from './dropdown/dropdown-menu-base.directive';
 import { DropdownMenuDirective } from './dropdown/dropdown-menu.directive';
-import { DropdownAnchorDirective } from './dropdown/dropdown-anchor.directive';
-import { DropdownInputDirective } from './dropdown/dropdown-input.directive';
 import { DropdownToggleDirective } from './dropdown/dropdown-toggle.directive';
-import { DropdownItemSelectorDirective } from './dropdown/dropdown-item-selector.directive';
-import { DropdownBaseDirective } from './dropdown/dropdown-base.directive';
+import { DropdownDirective } from './dropdown/dropdown.directive';
 
 @NgModule({
   imports: [CommonModule, NgbModule],
   declarations: [
+    DropdownAnchorDirective,
+    DropdownBaseDirective,
+    DropdownInputDirective,
     DropdownItemDirective,
+    DropdownItemSelectorDirective,
     DropdownMenuBaseDirective,
     DropdownMenuDirective,
-    DropdownAnchorDirective,
     DropdownToggleDirective,
-    DropdownDirective,
-    DropdownInputDirective,
-    DropdownItemSelectorDirective,
-    DropdownBaseDirective
+    DropdownDirective
   ],
   exports: [
     NgbModule,
+    DropdownAnchorDirective,
     DropdownBaseDirective,
+    DropdownInputDirective,
     DropdownItemDirective,
+    DropdownItemSelectorDirective,
     DropdownMenuBaseDirective,
     DropdownMenuDirective,
-    DropdownAnchorDirective,
     DropdownToggleDirective,
-    DropdownDirective,
-    DropdownInputDirective,
-    DropdownItemSelectorDirective
+    DropdownDirective
   ]
 })
 export class NgbExtensionModule {}

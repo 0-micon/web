@@ -2,8 +2,8 @@
 
 import { Directive, HostBinding, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { Placement } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownBaseDirective } from './dropdown-base.directive';
+import { Placement } from '../utils/positioning';
 
 /**
  * A directive for a dropdown menu content.
