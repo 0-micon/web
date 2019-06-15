@@ -7,6 +7,19 @@
   display: none;
 }
 
+.btn-link.nav-link {
+  border-bottom-left-radius: unset;
+  border-bottom-right-radius: unset;
+}
+// .btn-link.nav-link:focus {
+//   text-decoration-color: var(--primary, #007bff);
+//   text-decoration-style: dotted;
+//   text-decoration-line: overline underline;
+// }
+.btn-link.nav-link:focus:not(.active) {
+  box-shadow: 0 0 0 1px rgba(68, 68, 68, 0.25);
+}
+
 .menu-small {
   height: auto;
   max-height: 10rem;

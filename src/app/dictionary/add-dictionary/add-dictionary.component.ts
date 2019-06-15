@@ -1,5 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 
+type Card = string[];
+
+class Dict {
+  alphabeticalIndex = new Map<string, Card[]>();
+
+  constructor(words: Card[]) {
+    // Split by first letter.
+    words.forEach(card => {
+      const word = card[0];
+      const key = word.substr(0, 1).toLowerCase();
+      if (this.alphabeticalIndex.has(key)) {
+        this.alphabeticalIndex.get(key).push(card);
+      } else {
+        this.alphabeticalIndex.set(key, [card]);
+      }
+    });
+  }
+}
+
 @Component({
   selector: 'app-add-dictionary',
   templateUrl: './add-dictionary.component.html',
@@ -7,20 +26,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AddDictionaryComponent implements OnInit {
   words: string[][] = [];
-  test: string[];
+  activeTab = 0;
 
   constructor() {}
 
   ngOnInit() {}
 
   onUpload(data: string[][]) {
-    // console.log(data.length);
-    // if (data) {
-    //   console.log(data[0]);
-    // }
-
     this.words = data;
-    this.test = data.map((card: string[]) => card[0]);
+    if (data) {
+      this.activeTab = 1;
+    }
   }
 
   onUploadError(message: string) {
