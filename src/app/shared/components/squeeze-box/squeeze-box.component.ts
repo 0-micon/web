@@ -1,4 +1,12 @@
-import { Component, OnInit, OnChanges, Input, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnChanges,
+  Input,
+  SimpleChanges,
+  Output,
+  EventEmitter
+} from '@angular/core';
 
 @Component({
   selector: 'app-squeeze-box',
@@ -10,6 +18,8 @@ export class SqueezeBoxComponent implements OnInit, OnChanges {
   @Input() itemCountMax = 256;
   @Input() groupCount = 10;
   @Input() expanded = false;
+
+  @Output() selectionChange = new EventEmitter<number>();
 
   groups: string[][];
 
@@ -44,5 +54,13 @@ export class SqueezeBoxComponent implements OnInit, OnChanges {
         this.groups = null;
       }
     }
+  }
+
+  onChildSelection(group: number, index: number) {
+    console.log('onChildSelection:', group, index);
+    for (let i = 0; i < group; i++) {
+      index += this.groups[i].length;
+    }
+    this.selectionChange.emit(index);
   }
 }

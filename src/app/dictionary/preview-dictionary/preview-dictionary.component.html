@@ -1,3 +1,30 @@
-<div class="container">
-  <app-squeeze-box *ngFor="let letter of letters; index as i" [items]="words[i]"></app-squeeze-box>
+<div class="card mb-2">
+  <div class="card-header">
+    <div appDropdown #drop="appDropdown" class="btn-group" autoClose="outside">
+      <button type="button" class="btn btn-outline-primary hide-dropdown-toggle" appDropdownToggle
+        [title]="drop.opened ? 'Less' : 'More'">
+        <i class="material-icons md-sm">
+          {{drop.opened ? 'expand_less' : 'expand_more'}}
+        </i>
+      </button>
+
+      <div class="word-menu" appDropdownMenuBase>
+        <app-squeeze-box *ngFor="let letter of letters; index as i" [items]="words[i]" itemCountMax=1024
+          (selectionChange)="onSelectionChange(i, $event)"></app-squeeze-box>
+      </div>
+    </div>
+    <div class="btn-group mr-4">
+      <button type="button" class="btn btn-outline-primary" [disabled]="!canSelectPrev" (click)="selectPrev()">
+        <i class="material-icons md-sm">chevron_left</i>
+      </button>
+      <button type="button" class="btn btn-outline-primary" [disabled]="!canSelectNext" (click)="selectNext()">
+        <i class="material-icons md-sm">chevron_right</i>
+      </button>
+    </div>
+
+    {{cardHeader}}
+  </div>
+  <div class="card-body">
+    <pre>{{cardBody}}</pre>
+  </div>
 </div>

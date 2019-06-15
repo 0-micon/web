@@ -1,0 +1,13 @@
+.card-body pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.word-menu {
+  height: auto;
+  max-height: 32rem;
+  overflow-y: scroll;
+  min-width: 22rem;
+  max-width: 32rem;
+}

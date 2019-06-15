@@ -9,10 +9,10 @@
 </button>
 <ng-container *ngIf="expanded">
   <div *ngIf="groups" class="squeeze-box">
-    <app-squeeze-box *ngFor="let group of groups" [items]="group" [itemCountMax]="itemCountMax"
-      [groupCount]="groupCount">
+    <app-squeeze-box *ngFor="let group of groups; index as i" [items]="group" [itemCountMax]="itemCountMax"
+      [groupCount]="groupCount" (selectionChange)="onChildSelection(i, $event)">
     </app-squeeze-box>
   </div>
-  <app-simple-virtual-list *ngIf="!groups" [items]="items">
+  <app-simple-virtual-list *ngIf="!groups" [items]="items" (selectionChange)="selectionChange.emit($event)">
   </app-simple-virtual-list>
 </ng-container>
