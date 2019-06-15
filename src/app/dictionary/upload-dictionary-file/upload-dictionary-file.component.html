@@ -75,6 +75,9 @@
   <!-- <span class="text-primary"></span> -->
 </ng-template>
 
+<ngx-loading [show]="loading">
+</ngx-loading>
+
 <form class="container-fluid" #form="ngForm" (ngSubmit)="upload(form)">
   <div class="row">
     <!-- Choose file -->

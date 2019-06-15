@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+import { NgxLoadingModule } from 'ngx-loading';
 import { NgbExtensionModule } from './ngb-extension/ngb-extension.module';
 
 import { XrangePipe } from './pipes/xrange.pipe';
@@ -14,7 +15,7 @@ import { DropdownInputComponent } from './components/dropdown-input/dropdown-inp
 import { SqueezeBoxComponent } from './components/squeeze-box/squeeze-box.component';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, NgbExtensionModule],
+  imports: [CommonModule, FormsModule, NgbExtensionModule, NgxLoadingModule.forRoot({})],
   declarations: [
     XrangePipe,
     DropdownInputComponent,
@@ -25,6 +26,7 @@ import { SqueezeBoxComponent } from './components/squeeze-box/squeeze-box.compon
     SqueezeBoxComponent
   ],
   exports: [
+    NgxLoadingModule,
     NgbExtensionModule,
     XrangePipe,
     DropdownInputComponent,

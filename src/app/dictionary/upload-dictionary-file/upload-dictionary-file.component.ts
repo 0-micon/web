@@ -21,6 +21,7 @@ function create(name: string, codes: string[]): IMultiButton {
 export class UploadDictionaryFileComponent implements OnInit {
   model = new UploadDictionaryFileModel();
   showHelp = false;
+  loading = false;
 
   readonly codes = Enc.getEncodings();
   codeDisplayNames: string[];
@@ -65,15 +66,18 @@ export class UploadDictionaryFileComponent implements OnInit {
   private _readTextFile(): void {
     const reader = new FileReader();
     reader.onload = () => {
+      this.loading = false;
       if (typeof reader.result === 'string') {
         const words = this.model.parse(reader.result);
         this.uploadChange.emit(words);
       }
     };
     reader.onerror = () => {
+      this.loading = false;
       this.errorChange.emit(reader.error.message);
     };
 
+    this.loading = true;
     reader.readAsText(this.model.file, this.model.encoding);
   }
 }

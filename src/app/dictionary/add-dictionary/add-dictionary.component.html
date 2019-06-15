@@ -1,10 +1,10 @@
 <div class="container mt-3">
   <h2>Add Dictionary File</h2>
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs">
+  <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
       <button type="button" class="btn btn-link nav-link" [class.active]="activeTab === 0" (click)="activeTab = 0">
-        Upload Dictionary File
+        Upload
       </button>
     </li>
     <li class="nav-item">
@@ -21,17 +21,17 @@
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <div id="home" class="container tab-pane" [class.active]="activeTab === 0" [class.fade]="activeTab !== 0">
-      <h3>Form</h3>
+    <div class="container tab-pane" [class.active]="activeTab === 0" [class.fade]="activeTab !== 0">
+      <!-- <h3>Form</h3> -->
       <app-upload-dictionary-file (uploadChange)="onUpload($event)" (errorChange)="onUploadError($event)">
       </app-upload-dictionary-file>
     </div>
-    <div id="menu1" class="container tab-pane" [class.active]="activeTab === 1" [class.fade]="activeTab !== 1">
-      <h3>List</h3>
+    <div class="container tab-pane" [class.active]="activeTab === 1" [class.fade]="activeTab !== 1">
+      <!-- <h3>List</h3> -->
       <!-- <app-simple-virtual-list [items]="test"></app-simple-virtual-list> -->
       <app-preview-dictionary [items]="words"></app-preview-dictionary>
     </div>
-    <div id="menu2" class="container tab-pane" [class.active]="activeTab === 2" [class.fade]="activeTab !== 2">
+    <div class="container tab-pane" [class.active]="activeTab === 2" [class.fade]="activeTab !== 2">
       <h3>Menu 2</h3>
       <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
         aperiam.</p>

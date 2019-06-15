@@ -27,10 +27,12 @@ export class PreviewDictionaryComponent implements OnInit, OnChanges {
   }
 
   get canSelectNext() {
-    const lastBucket = this.buckets.length - 1;
+    const lastBucket = this.buckets ? this.buckets.length - 1 : -1;
     return (
-      (lastBucket >= 0 && this.currentGroup < lastBucket) ||
-      (this.currentGroup === lastBucket && this.currentIndex < this.buckets[lastBucket].length - 1)
+      lastBucket >= 0 &&
+      (this.currentGroup < lastBucket ||
+        (this.currentGroup === lastBucket &&
+          this.currentIndex < this.buckets[lastBucket].length - 1))
     );
   }
 
