@@ -13,6 +13,11 @@ function create(name: string, codes: string[]): IMultiButton {
   return { name, values, titles };
 }
 
+export interface UploadEvent {
+  name: string;
+  data: string[][];
+}
+
 @Component({
   selector: 'app-upload-dictionary-file',
   templateUrl: './upload-dictionary-file.component.html',
@@ -28,7 +33,7 @@ export class UploadDictionaryFileComponent implements OnInit {
   buttons: IMultiButton[];
   readonly tags = Object.keys(Enc.getTags(this.codes));
 
-  @Output() uploadChange = new EventEmitter<string[][]>();
+  @Output() uploadChange = new EventEmitter<UploadEvent>();
   @Output() errorChange = new EventEmitter<string>();
 
   removeButton(index: number) {
@@ -53,7 +58,7 @@ export class UploadDictionaryFileComponent implements OnInit {
   }
 
   canUpload(): boolean {
-    return !false;
+    return !false; // this.model.isValid
   }
 
   upload(form: NgForm) {
@@ -64,12 +69,13 @@ export class UploadDictionaryFileComponent implements OnInit {
   }
 
   private _readTextFile(): void {
+    const name = this.model.file.name;
     const reader = new FileReader();
     reader.onload = () => {
       this.loading = false;
       if (typeof reader.result === 'string') {
         const words = this.model.parse(reader.result);
-        this.uploadChange.emit(words);
+        this.uploadChange.emit({ name, data: words });
       }
     };
     reader.onerror = () => {

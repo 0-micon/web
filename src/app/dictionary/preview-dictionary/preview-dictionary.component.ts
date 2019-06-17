@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { DropdownDirective } from 'src/app/shared/ngb-extension/dropdown/dropdown.directive';
 
 type Card = string[];
@@ -12,15 +12,26 @@ function compare(a: Card, b: Card): number {
   templateUrl: './preview-dictionary.component.html',
   styleUrls: ['./preview-dictionary.component.scss']
 })
-export class PreviewDictionaryComponent implements OnInit, OnChanges {
-  @Input() items: Card[] = [];
+export class PreviewDictionaryComponent implements OnInit {
+  cardHeader: string;
+  cardBody: string;
 
-  letters: string[] = [];
-  buckets: Card[][] = [];
-  words: string[][] = [];
+  letters: string[];
+  buckets: Card[][];
+  words: string[][];
 
-  currentGroup = -1;
-  currentIndex = -1;
+  currentGroup: number;
+  currentIndex: number;
+  itemCount: number;
+
+  @Input() set items(items: Card[]) {
+    this.reset();
+    if (items) {
+      this.apply(items);
+    }
+  }
+
+  @Input() name: string;
 
   get canSelectPrev() {
     return this.currentGroup > 0 || (this.currentGroup === 0 && this.currentIndex > 0);
@@ -36,55 +47,59 @@ export class PreviewDictionaryComponent implements OnInit, OnChanges {
     );
   }
 
-  cardHeader = '';
-  cardBody = '';
-
   @ViewChild('drop') drop: DropdownDirective;
 
-  constructor() {}
+  reset() {
+    this.cardHeader = this.cardBody = '';
+    this.currentGroup = this.currentIndex = -1;
+    this.itemCount = 0;
 
-  ngOnInit() {}
+    this.letters = [];
+    this.buckets = [];
+    this.words = [];
+  }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.items) {
-      this.cardHeader = this.cardBody = '';
-      this.currentGroup = this.currentIndex = -1;
+  apply(items: Card[]) {
+    this.itemCount = items.length;
 
-      // Split by first letter.
-      const alphabeticalIndex: { [key: string]: Card[] } = {};
-      this.items.forEach(card => {
-        const word = card[0];
-        const key = word.substr(0, 1).toLowerCase();
-        if (alphabeticalIndex[key]) {
-          alphabeticalIndex[key].push(card);
-        } else {
-          alphabeticalIndex[key] = [card];
-        }
-      });
+    // Split by first letter.
+    const alphabeticalIndex: { [key: string]: Card[] } = {};
+    items.forEach(card => {
+      const word = card[0];
+      const key = word.substr(0, 1).toLowerCase();
+      if (alphabeticalIndex[key]) {
+        alphabeticalIndex[key].push(card);
+      } else {
+        alphabeticalIndex[key] = [card];
+      }
+    });
 
-      this.letters = Object.keys(alphabeticalIndex);
-      this.letters.sort();
+    this.letters = Object.keys(alphabeticalIndex);
+    this.letters.sort();
 
-      // Fill buckets.
-      this.buckets = [];
-      this.words = [];
-      for (const key of this.letters) {
-        const bucket: Card[] = alphabeticalIndex[key];
-        bucket.sort(compare);
-        this.buckets.push(bucket);
+    // Fill buckets.
+    for (const key of this.letters) {
+      const bucket: Card[] = alphabeticalIndex[key];
+      bucket.sort(compare);
+      this.buckets.push(bucket);
 
-        const words: string[] = [];
-        for (const card of bucket) {
-          words.push(card[0]);
-        }
-        this.words.push(words);
+      const words: string[] = [];
+      for (const card of bucket) {
+        words.push(card[0]);
+      }
+      this.words.push(words);
 
-        if (this.buckets) {
-          this.onSelectionChange(0, 0);
-        }
+      if (this.buckets) {
+        this.onSelectionChange(0, 0);
       }
     }
   }
+
+  constructor() {
+    this.reset();
+  }
+
+  ngOnInit() {}
 
   onSelectionChange(group: number, index: number) {
     const card = this.buckets[group][index];

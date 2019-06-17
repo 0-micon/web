@@ -14,7 +14,7 @@
     </li>
     <li class="nav-item">
       <button type="button" class="btn btn-link nav-link" [class.active]="activeTab === 2" (click)="activeTab = 2">
-        Add To Local DB
+        Add To IndexedDB
       </button>
     </li>
   </ul>
@@ -28,20 +28,10 @@
     </div>
     <div class="container tab-pane" [class.active]="activeTab === 1" [class.fade]="activeTab !== 1">
       <!-- <h3>List</h3> -->
-      <!-- <app-simple-virtual-list [items]="test"></app-simple-virtual-list> -->
-      <app-preview-dictionary [items]="words"></app-preview-dictionary>
+      <app-preview-dictionary [items]="words" [name]="name"></app-preview-dictionary>
     </div>
     <div class="container tab-pane" [class.active]="activeTab === 2" [class.fade]="activeTab !== 2">
-      <h3>Menu 2</h3>
-      <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-        aperiam.</p>
+      <app-add-dictionary-to-db [items]="words" [name]="name"></app-add-dictionary-to-db>
     </div>
   </div>
 </div>
-
-
-
-
-<!-- <p>
-  Here!!!
-</p> -->

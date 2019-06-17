@@ -1,0 +1,35 @@
+<form class="container-fluid" #form="ngForm" (ngSubmit)="onSubmit(form)">
+  <div class="row">
+
+    <!-- Card separator -->
+    <div class="col-md-6">
+      <app-form-label helpTopic="fileNameTopic" helpTitle="fileNameTitle" [showHelp]="showHelp" [showSuccess]="!!name"
+        [showError]="form.submitted" errorMessage="Dictionary name is required.">
+        Add As
+      </app-form-label>
+
+      <input type="text" class="form-control" placeholder="name" name="name" [(ngModel)]="name" [disabled]="loading" />
+    </div>
+
+    <div class="col-md-6">
+      <app-form-label helpTopic="headTopic" helpTitle="headTitle" [showHelp]="showHelp">
+        Details
+      </app-form-label>
+
+      <textarea class="form-control" rows=3 placeholder="Extra information" name="info" [(ngModel)]="info"
+        [disabled]="loading"></textarea>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col">
+      <button type="submit" class="btn btn-primary mb-2" [disabled]="loading">Add</button>
+      <button type="button" class="btn btn-link" (click)="showHelp = !showHelp" [title]="showHelp ? 'Hide' : 'Show'">
+        <i class="material-icons">{{ showHelp ? 'help' : 'help_outline' }}</i>
+      </button>
+    </div>
+  </div>
+  <div *ngIf="loading" class="progress" style="height: 3px;">
+    <div class="progress-bar" role=progressbar aria-valuemin=0 aria-valuemax=100 [style.width.%]="progress">
+    </div>
+  </div>
+</form>

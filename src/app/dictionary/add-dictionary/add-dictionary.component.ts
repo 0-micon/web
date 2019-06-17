@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UploadEvent } from '../upload-dictionary-file/upload-dictionary-file.component';
 
 type Card = string[];
 
@@ -26,15 +27,17 @@ class Dict {
 })
 export class AddDictionaryComponent implements OnInit {
   words: string[][] = [];
+  name: string;
   activeTab = 0;
 
   constructor() {}
 
   ngOnInit() {}
 
-  onUpload(data: string[][]) {
-    this.words = data;
-    if (data) {
+  onUpload(event: UploadEvent) {
+    this.words = event.data;
+    this.name = event.name;
+    if (event.data) {
       this.activeTab = 1;
     }
   }
