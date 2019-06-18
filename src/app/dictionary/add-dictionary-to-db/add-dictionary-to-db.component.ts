@@ -31,22 +31,37 @@ export class AddDictionaryToDbComponent implements OnInit {
     if (name && data && !this.loading) {
       this.progress = 0;
       this.loading = true;
-      this._db.addBook(
-        name,
-        info,
-        isbn => {
-          this._db.addCards(
-            isbn as string,
-            data,
-            progress => {
-              this.progress = progress;
-              this.loading = progress < 100;
-            },
-            error => this.onError(error)
-          );
-        },
+      this._db.addBookObservable(name, info).subscribe(
+        isbn =>
+          this._db.addCardsObservable(isbn, data).subscribe(
+            progress => (this.progress = progress),
+            error => this.onError(error),
+            () => {
+              // Wait a sec or two to show the full progress bar.
+              setTimeout(() => {
+                this.loading = false;
+              }, 1000);
+            }
+          ),
         error => this.onError(error)
       );
+
+      // this._db.addBook(
+      //   name,
+      //   info,
+      //   isbn => {
+      //     this._db.addCards(
+      //       isbn as string,
+      //       data,
+      //       progress => {
+      //         this.progress = progress;
+      //         this.loading = progress < 100;
+      //       },
+      //       error => this.onError(error)
+      //     );
+      //   },
+      //   error => this.onError(error)
+      // );
     }
   }
 

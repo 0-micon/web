@@ -9,13 +9,18 @@ import { AddDictionaryComponent } from './add-dictionary/add-dictionary.componen
 import { UploadDictionaryFileComponent } from './upload-dictionary-file/upload-dictionary-file.component';
 import { PreviewDictionaryComponent } from './preview-dictionary/preview-dictionary.component';
 import { AddDictionaryToDbComponent } from './add-dictionary-to-db/add-dictionary-to-db.component';
+import { BookshelfComponent } from './bookshelf/bookshelf.component';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'add',
     component: AddDictionaryComponent
   },
-  { path: '**', redirectTo: '' }
+  {
+    path: 'shelf',
+    component: BookshelfComponent
+  },
+  { path: '**', redirectTo: 'shelf' }
 ];
 
 @NgModule({
@@ -24,7 +29,8 @@ const routes: Routes = [
     AddDictionaryComponent,
     UploadDictionaryFileComponent,
     PreviewDictionaryComponent,
-    AddDictionaryToDbComponent
+    AddDictionaryToDbComponent,
+    BookshelfComponent
   ],
   exports: [AddDictionaryComponent]
 })
