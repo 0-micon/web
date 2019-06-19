@@ -10,22 +10,31 @@ export class BookshelfComponent implements OnInit {
   items: Book[] = [];
   errorMessage: string;
 
+  loading = false;
+  showAddDictionary: false;
+
   constructor(private _db: DictionaryDbService) {}
 
-  private _getBooks() {
+  getBooks() {
+    this.loading = true;
     this._db
-      .getBooksPromise()
+      .getAllBooks()
       .then(books => (this.items = books))
-      .catch(error => (this.errorMessage = error));
+      .catch(error => (this.errorMessage = error))
+      .finally(() => (this.loading = false));
   }
 
   ngOnInit() {
     // this._db.getBooksObservable().subscribe(books => (this.items = books));
-    this._getBooks();
+    this.getBooks();
   }
 
   deleteBook(isbn: string) {
-    this._db.deleteBook(isbn).then(() => this._getBooks());
+    this.loading = true;
+    this._db
+      .deleteBook(isbn)
+      .then(() => this.getBooks())
+      .finally(() => (this.loading = false));
   }
 
   // private _getBooks() {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { UploadEvent } from '../upload-dictionary-file/upload-dictionary-file.component';
 
 type Card = string[];
@@ -29,6 +29,8 @@ export class AddDictionaryComponent implements OnInit {
   words: string[][] = [];
   name: string;
   activeTab = 0;
+
+  @Output() dictionaryChange = new EventEmitter<string>();
 
   constructor() {}
 

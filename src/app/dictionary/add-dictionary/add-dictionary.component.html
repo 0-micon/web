@@ -31,7 +31,9 @@
       <app-preview-dictionary [items]="words" [name]="name"></app-preview-dictionary>
     </div>
     <div class="container tab-pane" [class.active]="activeTab === 2" [class.fade]="activeTab !== 2">
-      <app-add-dictionary-to-db [items]="words" [name]="name"></app-add-dictionary-to-db>
+      <app-add-dictionary-to-db [items]="words" [name]="name" (addBookChange)="dictionaryChange.emit($event)">
+      </app-add-dictionary-to-db>
     </div>
   </div>
 </div>
+<!-- <a class="btn btn-primary" role="button" routerLink="/dict/shelf" routerLinkActive="active">Go to Shelf</a> -->

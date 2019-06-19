@@ -1,3 +1,6 @@
+<ngx-loading [show]="loading">
+</ngx-loading>
+
 <table class="table">
   <thead>
     <tr>
@@ -18,4 +21,16 @@
       <!-- <td>{{book.date}}</td> -->
     </tr>
   </tbody>
+  <!-- <a class="btn btn-primary" role="button" routerLink="/dict/add" routerLinkActive="active">New</a> -->
 </table>
+<div class="container">
+  <button *ngIf="!showAddDictionary" class="btn btn-outline-success" type="button"
+    (click)="showAddDictionary = !showAddDictionary" title="Add local file">
+    New <i class="material-icons md-align-bottom">library_add</i>
+  </button>
+  <button *ngIf="showAddDictionary" class="btn btn-sm btn-outline-secondary float-right" type="button"
+    (click)="showAddDictionary = !showAddDictionary" title="close">
+    <i class="material-icons md-align-bottom">close</i>
+  </button>
+  <app-add-dictionary *ngIf="showAddDictionary" (dictionaryChange)="getBooks()"></app-add-dictionary>
+</div>

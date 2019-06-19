@@ -4,10 +4,12 @@ import { Subject, BehaviorSubject, Observable, Subscriber, Subscription } from '
 const DB_NAME = 'test-library-v-001';
 const DB_VERSION = 1;
 
-const BOOK_STORE_NAME = 'books';
+type StoreName = 'books' | 'cards';
+
+const BOOK_STORE_NAME: StoreName = 'books';
 const BOOK_ID = 'isbn';
 
-const CARD_STORE_NAME = 'cards';
+const CARD_STORE_NAME: StoreName = 'cards';
 const CARD_ID = 'pkey';
 
 export interface Book {
@@ -21,6 +23,13 @@ export interface Card {
   isbn: string; // Book's id
   name: string;
   data: string[];
+}
+
+function toPromise<T>(request: IDBRequest<T>) {
+  return new Promise<T>((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error.message);
+  });
 }
 
 export type Resolver<T> = (key: T) => void;
@@ -69,32 +78,25 @@ export class DictionaryDbService {
     // request.onsuccess = event => this.onOpenSuccess(request, event);
   }
 
-  // NOTE: DB should be already opened.
-  private _getStoreAsPromise(name: string, mode?: IDBTransactionMode): Promise<IDBObjectStore> {
-    return new Promise<IDBObjectStore>((resolve, reject) => {
-      if (this._db.objectStoreNames.contains(name)) {
-        const transaction: IDBTransaction = this._db.transaction([name], mode);
-        resolve(transaction.objectStore(name));
-      } else {
-        reject(`DB error: objectStore '${name}' does not exists.`);
-      }
-    });
-  }
+  // // NOTE: DB should be already opened.
+  // private _getStoreAsPromise(name: string, mode?: IDBTransactionMode): Promise<IDBObjectStore> {
+  //   return new Promise<IDBObjectStore>((resolve, reject) => {
+  //     if (this._db.objectStoreNames.contains(name)) {
+  //       const transaction: IDBTransaction = this._db.transaction([name], mode);
+  //       resolve(transaction.objectStore(name));
+  //     } else {
+  //       reject(`DB error: objectStore '${name}' does not exists.`);
+  //     }
+  //   });
+  // }
 
   // Save get store promise.
-  private _getStore(name: string, mode?: IDBTransactionMode): Promise<IDBObjectStore> {
-    return this._openPromise.then(() => this._getStoreAsPromise(name, mode));
+  private _getStore(name: StoreName, mode?: IDBTransactionMode): Promise<IDBObjectStore> {
+    return this._openPromise.then(() => this._db.transaction([name], mode).objectStore(name));
   }
 
-  getBooksPromise(): Promise<Book[]> {
-    return this._getStore(BOOK_STORE_NAME, 'readonly').then(
-      store =>
-        new Promise<Book[]>((resolve, reject) => {
-          const request: IDBRequest<Book[]> = store.getAll();
-          request.onsuccess = () => resolve(request.result);
-          request.onerror = () => reject('DB get request error: ' + request.error.message);
-        })
-    );
+  getAllBooks(): Promise<Book[]> {
+    return this._getStore(BOOK_STORE_NAME, 'readonly').then(store => toPromise(store.getAll()));
   }
 
   deleteCards(isbn: string): Promise<void> {
@@ -112,21 +114,71 @@ export class DictionaryDbService {
               resolve();
             }
           };
-          request.onerror = () => reject('DB cursor request error: ' + request.error.message);
+          request.onerror = () => reject(request.error.message);
         })
     );
   }
 
   deleteBook(isbn: string): Promise<void> {
-    return this.deleteCards(isbn).then(() =>
-      this._getStore(BOOK_STORE_NAME, 'readwrite').then(
-        store =>
-          new Promise<void>((resolve, reject) => {
-            const request: IDBRequest<void> = store.delete(isbn);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject('DB delete request error: ' + request.error.message);
-          })
-      )
+    return this.deleteCards(isbn)
+      .then(() => this._getStore(BOOK_STORE_NAME, 'readwrite'))
+      .then(store => toPromise(store.delete(isbn)));
+  }
+
+  addBook(
+    name: string,
+    data: string[][],
+    info?: string,
+    onprogress?: (percent: number) => void
+  ): Promise<string> {
+    const book: Book = { name, info, date: getDate() };
+    return this._getStore(BOOK_STORE_NAME, 'readwrite')
+      .then(store => toPromise(store.add(book)))
+      .then(isbn => this._addCards(isbn as string, data, onprogress));
+  }
+
+  private _addCards(
+    isbn: string,
+    data: string[][],
+    onprogress?: (percent: number) => void
+  ): Promise<string> {
+    return this._getStore(CARD_STORE_NAME, 'readwrite').then(
+      store =>
+        new Promise<string>((resolve, reject) => {
+          let percent = 0;
+          let index = -1;
+
+          const next = () => {
+            NgZone.assertNotInAngularZone();
+            index++;
+            if (index < data.length) {
+              if (onprogress) {
+                const p = Math.floor((100 * index) / data.length);
+                if (p !== percent) {
+                  percent = p;
+                  this._ngZone.run(onprogress, undefined, [p]);
+                }
+              }
+
+              const item: Card = {
+                isbn,
+                name: data[index][0],
+                data: data[index].slice(1)
+              };
+              const request: IDBRequest<IDBValidKey> = store.add(item);
+              request.onsuccess = next;
+              request.onerror = () => reject(request.error.message);
+            } else {
+              this._ngZone.run(() => {
+                if (onprogress) {
+                  this._ngZone.run(onprogress, undefined, [100]);
+                }
+              });
+              resolve(isbn);
+            }
+          };
+          this._ngZone.runOutsideAngular(next);
+        })
     );
   }
 
@@ -346,7 +398,7 @@ export class DictionaryDbService {
     }
   }
 
-  addBook(name: string, info?: string, resolve?: Resolver<IDBValidKey>, reject?: Rejector) {
+  _addBook(name: string, info?: string, resolve?: Resolver<IDBValidKey>, reject?: Rejector) {
     const book: Book = { name, info, date: getDate() };
     this.add(BOOK_STORE_NAME, book, undefined, resolve, reject);
   }

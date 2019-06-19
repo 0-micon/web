@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { DictionaryDbService } from '../services/dictionary-db.service';
 
@@ -19,6 +19,8 @@ export class AddDictionaryToDbComponent implements OnInit {
   // Additional Information.
   info: string;
 
+  @Output() addBookChange = new EventEmitter<string>();
+
   constructor(private _db: DictionaryDbService) {}
 
   ngOnInit() {}
@@ -31,20 +33,31 @@ export class AddDictionaryToDbComponent implements OnInit {
     if (name && data && !this.loading) {
       this.progress = 0;
       this.loading = true;
-      this._db.addBookObservable(name, info).subscribe(
-        isbn =>
-          this._db.addCardsObservable(isbn, data).subscribe(
-            progress => (this.progress = progress),
-            error => this.onError(error),
-            () => {
-              // Wait a sec or two to show the full progress bar.
-              setTimeout(() => {
-                this.loading = false;
-              }, 1000);
-            }
-          ),
-        error => this.onError(error)
-      );
+      this._db
+        .addBook(name, data, info, progress => (this.progress = progress))
+        .then(isbn => this.addBookChange.emit(isbn))
+        .catch(error => this.onError(error))
+        .finally(() => {
+          // Wait a sec or two to show the full progress bar.
+          setTimeout(() => {
+            this.loading = false;
+          }, 1000);
+        });
+
+      // this._db.addBookObservable(name, info).subscribe(
+      //   isbn =>
+      //     this._db.addCardsObservable(isbn, data).subscribe(
+      //       progress => (this.progress = progress),
+      //       error => this.onError(error),
+      //       () => {
+      //         // Wait a sec or two to show the full progress bar.
+      //         setTimeout(() => {
+      //           this.loading = false;
+      //         }, 1000);
+      //       }
+      //     ),
+      //   error => this.onError(error)
+      // );
 
       // this._db.addBook(
       //   name,
