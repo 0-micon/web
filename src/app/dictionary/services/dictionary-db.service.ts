@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Subject, BehaviorSubject, Observable, Subscriber, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
-const DB_NAME = 'test-library-v-001';
+const DB_NAME = 'test-library-v-002';
 const DB_VERSION = 1;
 
 type StoreName = 'books' | 'cards';
@@ -28,6 +28,16 @@ export interface Card {
 function toPromise<T>(request: IDBRequest<T>) {
   return new Promise<T>((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error.message);
+  });
+}
+
+function toControlledPromise<T, K>(
+  request: IDBRequest<T>,
+  controller: (result: T, resolve: (value?: K | PromiseLike<K>) => void) => void
+) {
+  return new Promise<K>((resolve, reject) => {
+    request.onsuccess = () => controller(request.result, resolve);
     request.onerror = () => reject(request.error.message);
   });
 }
@@ -63,12 +73,12 @@ export class DictionaryDbService {
     this._openPromise = new Promise<void>((resolve, reject) => {
       const request: IDBOpenDBRequest = window.indexedDB.open(DB_NAME, DB_VERSION);
       request.onerror = event => {
-        this.onOpenError(request, event);
+        this.onOpenError(request);
         reject(request.error.message);
       };
-      request.onupgradeneeded = event => this.onUpgradeNeeded(request, event);
+      request.onupgradeneeded = event => this.onUpgradeNeeded(request);
       request.onsuccess = event => {
-        this.onOpenSuccess(request, event);
+        this.onOpenSuccess(request);
         resolve();
       };
     });
@@ -103,18 +113,23 @@ export class DictionaryDbService {
     return this._getStore(CARD_STORE_NAME, 'readwrite').then(
       store =>
         new Promise<void>((resolve, reject) => {
-          const index: IDBIndex = store.index('isbn');
-          const request: IDBRequest<IDBCursor> = index.openCursor(isbn);
-          request.onsuccess = () => {
-            const cursor = request.result;
-            if (cursor) {
-              cursor.delete();
-              cursor.continue();
-            } else {
-              resolve();
-            }
+          store.transaction.oncomplete = () => this._ngZone.run(resolve); // resolve();
+          store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
+
+          const next = () => {
+            const index: IDBIndex = store.index('isbn');
+            const request: IDBRequest<IDBCursor> = index.openCursor(isbn);
+            request.onsuccess = () => {
+              NgZone.assertNotInAngularZone();
+              const cursor = request.result;
+              if (cursor) {
+                cursor.delete();
+                cursor.continue();
+              }
+            };
+            // request.onerror = () => reject(request.error);
           };
-          request.onerror = () => reject(request.error.message);
+          this._ngZone.runOutsideAngular(next);
         })
     );
   }
@@ -148,6 +163,16 @@ export class DictionaryDbService {
           let percent = 0;
           let index = -1;
 
+          store.transaction.oncomplete = () => {
+            this._ngZone.run(() => {
+              if (onprogress) {
+                onprogress(100);
+              }
+              resolve(isbn);
+            });
+          };
+          store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
+
           const next = () => {
             NgZone.assertNotInAngularZone();
             index++;
@@ -167,15 +192,16 @@ export class DictionaryDbService {
               };
               const request: IDBRequest<IDBValidKey> = store.add(item);
               request.onsuccess = next;
-              request.onerror = () => reject(request.error.message);
-            } else {
-              this._ngZone.run(() => {
-                if (onprogress) {
-                  this._ngZone.run(onprogress, undefined, [100]);
-                }
-              });
-              resolve(isbn);
+              // request.onerror = () => reject(request.error.message);
             }
+            //  else {
+            //   this._ngZone.run(() => {
+            //     if (onprogress) {
+            //       this._ngZone.run(onprogress, undefined, [100]);
+            //     }
+            //   });
+            //   resolve(isbn);
+            // }
           };
           this._ngZone.runOutsideAngular(next);
         })
@@ -185,7 +211,7 @@ export class DictionaryDbService {
   // Handles the event whereby a new version of the database needs to be created.
   // Either one has not been created before, or a new version number has been submitted
   // via the window.indexedDB.open.
-  onUpgradeNeeded(request: IDBOpenDBRequest, event: IDBVersionChangeEvent) {
+  onUpgradeNeeded(request: IDBOpenDBRequest) {
     this._db = request.result;
 
     // Create an objectStore for this database.
@@ -210,13 +236,13 @@ export class DictionaryDbService {
     cardStore.createIndex('isbn', 'isbn', { unique: false });
   }
 
-  onOpenSuccess(request: IDBOpenDBRequest, event: Event) {
+  onOpenSuccess(request: IDBOpenDBRequest) {
     this._db = request.result;
     this._isOpen.next(true);
     console.log('DB open success:', request.result.name);
   }
 
-  onOpenError(request: IDBOpenDBRequest, event: Event) {
+  onOpenError(request: IDBOpenDBRequest) {
     this.openError = 'DB open error: ' + request.error.message;
     this._isOpen.error('DB open error: ' + request.error);
     console.error('DB Error:', request.error);

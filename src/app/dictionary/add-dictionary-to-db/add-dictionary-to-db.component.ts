@@ -35,7 +35,11 @@ export class AddDictionaryToDbComponent implements OnInit {
       this.loading = true;
       this._db
         .addBook(name, data, info, progress => (this.progress = progress))
-        .then(isbn => this.addBookChange.emit(isbn))
+        .then(isbn => {
+          setTimeout(() => {
+            this.addBookChange.emit(isbn);
+          }, 2000);
+        })
         .catch(error => this.onError(error))
         .finally(() => {
           // Wait a sec or two to show the full progress bar.
