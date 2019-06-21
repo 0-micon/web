@@ -16,7 +16,12 @@
       <td>{{book.name}}</td>
       <td>{{book.info}}</td>
       <td>
-        <button class="btn" (click)="deleteBook(book.isbn)">Delete</button>
+        <button class="btn" *ngIf="deleteItem !== book" (click)="deleteBook(book)"
+          [disabled]="loading">Delete</button>
+        <div *ngIf="deleteItem === book" class="progress" style="height: 3px;">
+          <div class="progress-bar" role=progressbar aria-valuemin=0 aria-valuemax=100 [style.width.%]="deleteProgress">
+          </div>
+        </div>
       </td>
       <!-- <td>{{book.date}}</td> -->
     </tr>

@@ -32,15 +32,15 @@ function toPromise<T>(request: IDBRequest<T>) {
   });
 }
 
-function toControlledPromise<T, K>(
-  request: IDBRequest<T>,
-  controller: (result: T, resolve: (value?: K | PromiseLike<K>) => void) => void
-) {
-  return new Promise<K>((resolve, reject) => {
-    request.onsuccess = () => controller(request.result, resolve);
-    request.onerror = () => reject(request.error.message);
-  });
-}
+// function toControlledPromise<T, K>(
+//   request: IDBRequest<T>,
+//   controller: (result: T, resolve: (value?: K | PromiseLike<K>) => void) => void
+// ) {
+//   return new Promise<K>((resolve, reject) => {
+//     request.onsuccess = () => controller(request.result, resolve);
+//     request.onerror = () => reject(request.error.message);
+//   });
+// }
 
 export type Resolver<T> = (key: T) => void;
 export type Rejector = (reason: string) => void;
@@ -58,7 +58,6 @@ function getDate(): string {
   providedIn: 'root'
 })
 export class DictionaryDbService {
-  private _isOpen = new BehaviorSubject<boolean>(false);
   private _openPromise: Promise<void>; // Note: .then() may be called many times on the same promise.
 
   // Our connection to the database.
@@ -109,33 +108,99 @@ export class DictionaryDbService {
     return this._getStore(BOOK_STORE_NAME, 'readonly').then(store => toPromise(store.getAll()));
   }
 
-  deleteCards(isbn: string): Promise<void> {
-    return this._getStore(CARD_STORE_NAME, 'readwrite').then(
-      store =>
-        new Promise<void>((resolve, reject) => {
-          store.transaction.oncomplete = () => this._ngZone.run(resolve); // resolve();
-          store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
-
-          const next = () => {
-            const index: IDBIndex = store.index('isbn');
-            const request: IDBRequest<IDBCursor> = index.openCursor(isbn);
-            request.onsuccess = () => {
-              NgZone.assertNotInAngularZone();
-              const cursor = request.result;
-              if (cursor) {
-                cursor.delete();
-                cursor.continue();
-              }
-            };
-            // request.onerror = () => reject(request.error);
-          };
-          this._ngZone.runOutsideAngular(next);
-        })
+  getCardCount(isbn: string): Promise<number> {
+    return this._getStore(CARD_STORE_NAME, 'readonly').then(store =>
+      toPromise(store.index('isbn').count(isbn))
     );
   }
 
-  deleteBook(isbn: string): Promise<void> {
-    return this.deleteCards(isbn)
+  private _deleteCards(
+    isbn: string,
+    count: number,
+    onprogress: (percent: number) => void
+  ): Promise<void> {
+    return this._getStore(CARD_STORE_NAME, 'readwrite').then(store =>
+      this._runStoreOutsideAngular(store, () => {
+        let done = 0;
+        let percent = 0;
+        const request = store.index('isbn').openCursor(isbn);
+        request.onsuccess = () => {
+          NgZone.assertNotInAngularZone();
+          const cursor = request.result;
+          if (cursor && done < count) {
+            cursor.delete();
+            cursor.continue();
+
+            done++;
+            const p = Math.floor((100 * done) / count);
+            if (p !== percent) {
+              percent = p;
+              this._ngZone.run(onprogress, undefined, [percent]);
+            }
+          }
+        };
+      })
+    );
+  }
+
+  private _clearCards(isbn: string): Promise<void> {
+    return this._getStore(CARD_STORE_NAME, 'readwrite').then(store =>
+      this._runStoreOutsideAngular(store, () => {
+        const request = store.index('isbn').openCursor(isbn);
+        request.onsuccess = () => {
+          NgZone.assertNotInAngularZone();
+          const cursor = request.result;
+          if (cursor) {
+            cursor.delete();
+            cursor.continue();
+          }
+        };
+      })
+    );
+  }
+
+  // private _runStoreOutsideAngular<T>(
+  //   store: IDBObjectStore,
+  //   fn: () => T,
+  //   oncomplete: () => void,
+  //   onerror: () => void
+  // ): T {
+  //   store.transaction.oncomplete = () => this._ngZone.run(oncomplete);
+  //   store.transaction.onerror = () => this._ngZone.run(onerror);
+  //   return this._ngZone.run(fn);
+  // }
+
+  private _runStoreOutsideAngular(store: IDBObjectStore, run: () => void): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      store.transaction.oncomplete = () => this._ngZone.run(resolve);
+      store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
+      this._ngZone.runOutsideAngular(run);
+    });
+  }
+
+  // private _toRunOutsideAngularPromise<T>(
+  //   store: IDBObjectStore,
+  //   request: IDBRequest<T>,
+  //   onsuccess: Resolver<T>
+  // ): Promise<void> {
+  //   return new Promise<void>((resolve, reject) => {
+  //     store.transaction.oncomplete = () => this._ngZone.run(resolve);
+  //     store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
+
+  //     request.onsuccess = () => this._ngZone.runOutsideAngular(() => onsuccess(request.result));
+  //   });
+  // }
+
+  deleteCards(isbn: string, onprogress?: (percent: number) => void): Promise<void> {
+    if (onprogress) {
+      return this.getCardCount(isbn).then(count => this._deleteCards(isbn, count, onprogress));
+    } else {
+      return this._clearCards(isbn);
+    }
+  }
+
+  deleteBook(isbn: string, onprogress?: (percent: number) => void): Promise<void> {
+    return this.deleteCards(isbn, onprogress)
       .then(() => this._getStore(BOOK_STORE_NAME, 'readwrite'))
       .then(store => toPromise(store.delete(isbn)));
   }
@@ -157,55 +222,34 @@ export class DictionaryDbService {
     data: string[][],
     onprogress?: (percent: number) => void
   ): Promise<string> {
-    return this._getStore(CARD_STORE_NAME, 'readwrite').then(
-      store =>
-        new Promise<string>((resolve, reject) => {
-          let percent = 0;
-          let index = -1;
+    return this._getStore(CARD_STORE_NAME, 'readwrite')
+      .then(store => {
+        let percent = 0;
+        let index = 0;
+        const next = () => {
+          NgZone.assertNotInAngularZone();
+          if (index < data.length) {
+            const item: Card = {
+              isbn,
+              name: data[index][0],
+              data: data[index].slice(1)
+            };
 
-          store.transaction.oncomplete = () => {
-            this._ngZone.run(() => {
-              if (onprogress) {
-                onprogress(100);
-              }
-              resolve(isbn);
-            });
-          };
-          store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
-
-          const next = () => {
-            NgZone.assertNotInAngularZone();
             index++;
-            if (index < data.length) {
-              if (onprogress) {
-                const p = Math.floor((100 * index) / data.length);
-                if (p !== percent) {
-                  percent = p;
-                  this._ngZone.run(onprogress, undefined, [p]);
-                }
+            if (onprogress) {
+              const p = Math.floor((100 * index) / data.length);
+              if (p !== percent) {
+                percent = p;
+                this._ngZone.run(onprogress, undefined, [p]);
               }
-
-              const item: Card = {
-                isbn,
-                name: data[index][0],
-                data: data[index].slice(1)
-              };
-              const request: IDBRequest<IDBValidKey> = store.add(item);
-              request.onsuccess = next;
-              // request.onerror = () => reject(request.error.message);
             }
-            //  else {
-            //   this._ngZone.run(() => {
-            //     if (onprogress) {
-            //       this._ngZone.run(onprogress, undefined, [100]);
-            //     }
-            //   });
-            //   resolve(isbn);
-            // }
-          };
-          this._ngZone.runOutsideAngular(next);
-        })
-    );
+
+            store.add(item).onsuccess = next;
+          }
+        };
+        return this._runStoreOutsideAngular(store, next);
+      })
+      .then(() => Promise.resolve(isbn));
   }
 
   // Handles the event whereby a new version of the database needs to be created.
@@ -238,264 +282,11 @@ export class DictionaryDbService {
 
   onOpenSuccess(request: IDBOpenDBRequest) {
     this._db = request.result;
-    this._isOpen.next(true);
     console.log('DB open success:', request.result.name);
   }
 
   onOpenError(request: IDBOpenDBRequest) {
     this.openError = 'DB open error: ' + request.error.message;
-    this._isOpen.error('DB open error: ' + request.error);
     console.error('DB Error:', request.error);
-  }
-
-  // CRUD operations:
-  // create(storeName: string, value: any, key?: IDBValidKey): Promise<IDBValidKey> {
-  //   return new Promise<IDBValidKey>((resolve, reject) => {
-  //     if (this.isOpen) {
-  //       if (this._db.objectStoreNames.contains(storeName)) {
-  //         const transaction: IDBTransaction = this._db.transaction([storeName], 'readwrite');
-  //         const request: IDBRequest<IDBValidKey> = transaction
-  //           .objectStore(storeName)
-  //           .add(value, key);
-  //         request.onsuccess = () => resolve(request.result);
-  //         request.onerror = () =>
-  //           reject('There has been an error while adding the data: ' + request.error);
-  //       } else {
-  //         reject('objectStore does not exists: ' + storeName);
-  //       }
-  //     } else {
-  //       reject('Database is not open!');
-  //     }
-  //   });
-  // }
-
-  onError(reason: string, reject?: Rejector) {
-    if (reject) {
-      reject(reason);
-    } else {
-      console.error('DB error:', reason);
-    }
-  }
-
-  onSuccess<T>(key: T, resolve?: Resolver<T>) {
-    if (resolve) {
-      resolve(key);
-    } else {
-      console.log('DB success:', key);
-    }
-  }
-
-  getStore(name: string, mode?: IDBTransactionMode, reject?: Rejector): IDBObjectStore | null {
-    if (this.isOpen) {
-      if (this._db.objectStoreNames.contains(name)) {
-        const transaction: IDBTransaction = this._db.transaction([name], mode);
-        return transaction.objectStore(name);
-      } else {
-        this.onError('objectStore does not exists: ' + name, reject);
-      }
-    } else {
-      this.onError('Database is not open!', reject);
-    }
-    return null;
-  }
-
-  getStoreObservable(name: string, mode?: IDBTransactionMode): Observable<IDBObjectStore> {
-    return new Observable<IDBObjectStore>(subscriber => {
-      const subscription = new Subscription();
-      subscription.add(
-        this._isOpen.subscribe(
-          open => {
-            if (open) {
-              subscription.unsubscribe();
-              if (this._db.objectStoreNames.contains(name)) {
-                const transaction: IDBTransaction = this._db.transaction([name], mode);
-                subscriber.next(transaction.objectStore(name));
-              } else {
-                subscriber.error(`DB error: objectStore '${name}' does not exists.`);
-              }
-              subscriber.complete();
-            }
-          },
-          error => subscriber.error(error)
-        )
-      );
-    });
-  }
-
-  getBooksObservable(): Observable<Book[]> {
-    return new Observable<Book[]>(subscriber => {
-      this.getStoreObservable(BOOK_STORE_NAME, 'readonly').subscribe(
-        store => {
-          const request: IDBRequest<Book[]> = store.getAll();
-          request.onsuccess = () => {
-            subscriber.next(request.result);
-            subscriber.complete();
-          };
-          request.onerror = () =>
-            subscriber.error('DB get request error: ' + request.error.message);
-        },
-        error => subscriber.error(error)
-      );
-    });
-  }
-
-  addObservable(storeName: string, value: any, key?: IDBValidKey): Observable<IDBValidKey> {
-    return new Observable<IDBValidKey>(subscriber => {
-      this.getStoreObservable(storeName, 'readwrite').subscribe(
-        store => {
-          const request: IDBRequest<IDBValidKey> = store.add(value, key);
-          request.onsuccess = () => {
-            subscriber.next(request.result);
-            subscriber.complete();
-          };
-          request.onerror = () =>
-            subscriber.error('DB add request error: ' + request.error.message);
-        },
-        error => subscriber.error(error)
-      );
-    });
-  }
-
-  addBookObservable(name: string, info?: string): Observable<string> {
-    const book: Book = { name, info, date: getDate() };
-    return this.addObservable(BOOK_STORE_NAME, book) as Observable<string>;
-  }
-
-  addCardObservable(isbn: string, name: string, data: string[]): Observable<string> {
-    const item: Card = {
-      isbn,
-      name,
-      data
-    };
-    return this.addObservable(CARD_STORE_NAME, item) as Observable<string>;
-  }
-
-  addCardsObservable(isbn: string, data: string[][]): Observable<number> {
-    return new Observable<number>(subscriber => {
-      this.getStoreObservable(CARD_STORE_NAME, 'readwrite').subscribe(
-        store => {
-          let percent = 0;
-          let index = -1;
-
-          const next = () => {
-            NgZone.assertNotInAngularZone();
-            index++;
-            if (index < data.length) {
-              const p = Math.floor((100 * index) / data.length);
-              if (p !== percent) {
-                percent = p;
-                this._ngZone.run(() => subscriber.next(percent));
-              }
-
-              const item: Card = {
-                isbn,
-                name: data[index][0],
-                data: data[index].slice(1)
-              };
-              const request: IDBRequest<IDBValidKey> = store.add(item);
-              request.onsuccess = next;
-              request.onerror = () => subscriber.error(request.error);
-            } else {
-              this._ngZone.run(() => {
-                subscriber.next(100);
-                subscriber.complete();
-              });
-            }
-          };
-          this._ngZone.runOutsideAngular(next);
-        },
-        error => subscriber.error(error)
-      );
-    });
-  }
-
-  add(
-    storeName: string,
-    value: any,
-    key?: IDBValidKey,
-    resolve?: Resolver<IDBValidKey>,
-    reject?: Rejector
-  ) {
-    const store: IDBObjectStore = this.getStore(storeName, 'readwrite', reject);
-    if (store) {
-      const request: IDBRequest<IDBValidKey> = store.add(value, key);
-      request.onsuccess = () => this.onSuccess(request.result, resolve);
-      request.onerror = () => this.onError('Error while adding the data: ' + request.error, reject);
-    }
-  }
-
-  _addBook(name: string, info?: string, resolve?: Resolver<IDBValidKey>, reject?: Rejector) {
-    const book: Book = { name, info, date: getDate() };
-    this.add(BOOK_STORE_NAME, book, undefined, resolve, reject);
-  }
-
-  addCard(
-    isbn: string,
-    name: string,
-    data: string[],
-    resolve?: Resolver<IDBValidKey>,
-    reject?: Rejector
-  ) {
-    const item: Card = {
-      isbn,
-      name,
-      data
-    };
-    return this.add(CARD_STORE_NAME, item, undefined, resolve, reject);
-  }
-
-  addCards(isbn: string, data: string[][], progress?: Resolver<number>, reject?: Rejector) {
-    const store: IDBObjectStore = this.getStore(CARD_STORE_NAME, 'readwrite', reject);
-    if (store && data) {
-      let percent = 0;
-      let index = -1;
-
-      const onerror = (request: IDBRequest) => {
-        this.onError('There has been an error while adding the data: ' + request.error, reject);
-      };
-
-      const next = () => {
-        NgZone.assertNotInAngularZone();
-        index++;
-        const p = Math.floor((100 * index) / data.length);
-        if (p !== percent) {
-          percent = p;
-          // progress(p);
-          this._ngZone.run(progress, undefined, [p]);
-        }
-        if (index < data.length) {
-          const item: Card = {
-            isbn,
-            name: data[index][0],
-            data: data[index].slice(1)
-          };
-          const request: IDBRequest<IDBValidKey> = store.add(item);
-          request.onsuccess = next;
-          request.onerror = () => onerror(request);
-        }
-      };
-      // next();
-      this._ngZone.runOutsideAngular(next);
-    }
-  }
-
-  getBookKeys(resolve: Resolver<IDBValidKey[]>, reject?: Rejector) {
-    const store: IDBObjectStore = this.getStore(BOOK_STORE_NAME, 'readonly', reject);
-    if (store) {
-      const request: IDBRequest<IDBValidKey[]> = store.getAllKeys();
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () =>
-        this.onError('Error while getting the data: ' + request.error, reject);
-    }
-  }
-
-  getBooks(resolve: Resolver<Book[]>, reject?: Rejector) {
-    const store: IDBObjectStore = this.getStore(BOOK_STORE_NAME, 'readonly', reject);
-    if (store) {
-      const request: IDBRequest<Book[]> = store.getAll();
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () =>
-        this.onError('Error while getting the data: ' + request.error, reject);
-    }
   }
 }

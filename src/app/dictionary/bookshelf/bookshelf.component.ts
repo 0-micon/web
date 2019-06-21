@@ -13,10 +13,14 @@ export class BookshelfComponent implements OnInit {
   loading = false;
   showAddDictionary: false;
 
+  deleteItem: Book;
+  deleteProgress = 0;
+
   constructor(private _db: DictionaryDbService) {}
 
   getBooks() {
     this.loading = true;
+    this.deleteItem = null;
     this._db
       .getAllBooks()
       .then(books => (this.items = books))
@@ -29,10 +33,12 @@ export class BookshelfComponent implements OnInit {
     this.getBooks();
   }
 
-  deleteBook(isbn: string) {
+  deleteBook(book: Book) {
     this.loading = true;
+    this.deleteItem = book;
+    this.deleteProgress = 0;
     this._db
-      .deleteBook(isbn)
+      .deleteBook(book.isbn, percent => (this.deleteProgress = percent))
       .then(() => this.getBooks())
       .finally(() => (this.loading = false));
   }
