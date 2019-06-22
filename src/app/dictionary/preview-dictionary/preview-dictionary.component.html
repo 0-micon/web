@@ -27,7 +27,24 @@
   <div class="card-body">
     <pre>{{cardBody}}</pre>
   </div>
-  <div class="card-footer small text-right">
-    File {{ name }} contains {{ itemCount | number }} entries
+  <div class="card-footer">
+    <div>
+      Tags: {{ tags.length }}
+    </div>
+    <div class="small text-right">
+      File {{ name }} contains {{ itemCount | number }} entries
+    </div>
   </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <app-simple-virtual-list [items]="tags" (selectionChange)="selectTag($event)"></app-simple-virtual-list>
+    </div>
+    <div class="col">
+      <app-simple-virtual-list [items]="data"></app-simple-virtual-list>
+    </div>
+  </div>
+  <label for="typeahead-basic">Search for a word:</label>
+  <input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" />
 </div>

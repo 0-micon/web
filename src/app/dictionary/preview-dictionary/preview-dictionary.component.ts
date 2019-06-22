@@ -1,10 +1,72 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { DropdownDirective } from 'src/app/shared/ngb-extension/dropdown/dropdown.directive';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 type Card = string[];
 
 function compare(a: Card, b: Card): number {
   return a[0].toLocaleLowerCase().localeCompare(b[0].toLocaleLowerCase());
+}
+
+function getTags(word: string): string[] {
+  const set = new Set<string>();
+  const l = word.length;
+  const minL = 3;
+  for (let i = 0; i <= l - minL; i++) {
+    const a = word[i];
+    if (a === ' ') {
+      continue;
+    }
+
+    for (let j = i + 1; j <= l - minL + 1; j++) {
+      const b = word[j];
+      if (b === ' ') {
+        continue;
+      }
+
+      for (let k = j + 1; k <= l - minL + 2; k++) {
+        const c = word[k];
+        if (c !== ' ') {
+          const sub = a + b + c;
+          set.add(sub);
+        }
+      }
+    }
+  }
+  return Array.from(set.values());
+}
+
+function addTags(word: string, accum: Map<string, Set<string>>) {
+  const l = word.length;
+  const minL = 3;
+  for (let i = 0; i <= l - minL; i++) {
+    const a = word[i];
+    if (a === ' ') {
+      continue;
+    }
+
+    for (let j = i + 1; j <= l - minL + 1; j++) {
+      const b = word[j];
+      if (b === ' ') {
+        continue;
+      }
+
+      for (let k = j + 1; k <= l - minL + 2; k++) {
+        const c = word[k];
+        if (c !== ' ') {
+          const sub = a + b + c;
+          if (accum.has(sub)) {
+            accum.get(sub).add(word);
+          } else {
+            const set = new Set<string>();
+            set.add(word);
+            accum.set(sub, set);
+          }
+        }
+      }
+    }
+  }
 }
 
 @Component({
@@ -23,6 +85,12 @@ export class PreviewDictionaryComponent implements OnInit {
   currentGroup: number;
   currentIndex: number;
   itemCount: number;
+
+  map = new Map<string, Set<string>>();
+  tags: string[] = [];
+  data: string[] = [];
+
+  model: string;
 
   @Input() set items(items: Card[]) {
     this.reset();
@@ -49,6 +117,14 @@ export class PreviewDictionaryComponent implements OnInit {
 
   @ViewChild('drop') drop: DropdownDirective;
 
+  search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => (term.length < 3 ? [] : this._searchFor(term)))
+      // tslint:disable-next-line: semicolon
+    );
+
   reset() {
     this.cardHeader = this.cardBody = '';
     this.currentGroup = this.currentIndex = -1;
@@ -57,6 +133,8 @@ export class PreviewDictionaryComponent implements OnInit {
     this.letters = [];
     this.buckets = [];
     this.words = [];
+
+    this.map = new Map<string, Set<string>>();
   }
 
   apply(items: Card[]) {
@@ -71,6 +149,11 @@ export class PreviewDictionaryComponent implements OnInit {
         alphabeticalIndex[key].push(card);
       } else {
         alphabeticalIndex[key] = [card];
+      }
+
+      // Generate tags.
+      if (word.length > 3) {
+        addTags(word.toLowerCase(), this.map);
       }
     });
 
@@ -93,6 +176,9 @@ export class PreviewDictionaryComponent implements OnInit {
         this.onSelectionChange(0, 0);
       }
     }
+
+    this.tags = Array.from(this.map.keys());
+    this.tags.sort((a, b) => this.map.get(b).size - this.map.get(a).size);
   }
 
   constructor() {
@@ -111,6 +197,108 @@ export class PreviewDictionaryComponent implements OnInit {
     if (this.drop) {
       this.drop.opened = false;
     }
+
+    // if (this.cardHeader) {
+    // const word = this.cardHeader.toLowerCase();
+    // if (word.length >= 3) {
+    //   addTags(word, this.map);
+    //   this.tags = Array.from(this.map.keys());
+    //   this.tags.sort();
+    // }
+    // const l = word.length;
+    // const minL = 3;
+    // const set: { [key: string]: boolean } = {};
+    // for (let i = 0; i <= l - minL; i++) {
+    //   for (let j = i + 1; j <= l - minL + 1; j++) {
+    //     for (let k = j + 1; k <= l - minL + 2; k++) {
+    //       const sub = word[i] + word[j] + word[k];
+    //       set[sub] = true;
+    //     }
+    //   }
+    // }
+    // const arr = Object.keys(set);
+    // arr.sort();
+    // console.log(word, l);
+    // console.log('Substring array:', arr);
+    // const arr: string[] = [];
+    // const map = new Map<string, number>();
+    // // Substring it.
+    // for (let k = l - 1; k >= minL; k--) {
+    //   for (let i = 0; i <= l - k; i++) {
+    //     const sub = word.substring(i, i + k);
+    //     if (!map.has(sub)) {
+    //       map.set(sub, i);
+    //     }
+    //   }
+    // }
+    // console.log('Substring array:', Array.from(map.keys()));
+    // }
+  }
+
+  _searchFor(term: string): string[] {
+    term = term.toLowerCase();
+    const tags = getTags(term);
+    if (tags) {
+      // All tags should have word sets.
+      for (const t of tags) {
+        if (!this.map.has(t)) {
+          return [];
+        }
+      }
+      const list = Array.from(this.map.get(tags[0]));
+      for (let i = tags.length; i-- > 1; ) {
+        const set = this.map.get(tags[i]);
+        for (let j = list.length; j-- > 0; ) {
+          if (!set.has(list[j])) {
+            list.splice(j, 1);
+          }
+        }
+      }
+      list.sort((a, b) => {
+        const i = a.indexOf(term);
+        const j = b.indexOf(term);
+        if (i >= 0) {
+          if (j >= 0) {
+            if (i !== j) {
+              return i - j;
+            }
+          } else {
+            return -1;
+          }
+        } else {
+          if (j >= 0) {
+            return 1;
+          }
+        }
+        return a.localeCompare(b);
+      });
+      return list.slice(0, 10);
+    }
+    return [];
+  }
+
+  selectTag(selection: number) {
+    const w = this.tags[selection];
+    const set = this.map.get(w);
+    this.data = Array.from(set.values());
+    this.data.sort((a, b) => {
+      const i = a.indexOf(w);
+      const j = b.indexOf(w);
+      if (i >= 0) {
+        if (j >= 0) {
+          if (i !== j) {
+            return i - j;
+          }
+        } else {
+          return -1;
+        }
+      } else {
+        if (j >= 0) {
+          return 1;
+        }
+      }
+      return a.localeCompare(b);
+    });
   }
 
   selectPrev() {
@@ -135,4 +323,6 @@ export class PreviewDictionaryComponent implements OnInit {
       }
     }
   }
+
+  generateTags() {}
 }

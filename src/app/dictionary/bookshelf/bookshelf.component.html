@@ -16,8 +16,7 @@
       <td>{{book.name}}</td>
       <td>{{book.info}}</td>
       <td>
-        <button class="btn" *ngIf="deleteItem !== book" (click)="deleteBook(book)"
-          [disabled]="loading">Delete</button>
+        <button class="btn" *ngIf="deleteItem !== book" (click)="deleteBook(book)" [disabled]="loading">Delete</button>
         <div *ngIf="deleteItem === book" class="progress" style="height: 3px;">
           <div class="progress-bar" role=progressbar aria-valuemin=0 aria-valuemax=100 [style.width.%]="deleteProgress">
           </div>
@@ -25,17 +24,27 @@
       </td>
       <!-- <td>{{book.date}}</td> -->
     </tr>
+    <tr>
+      <th scope="row">
+        <button *ngIf="!showAddDictionary" class="btn btn-outline-success" type="button"
+          (click)="showAddDictionary = !showAddDictionary" title="Add local dictionary file">
+          New <i class="material-icons md-align-bottom">library_add</i>
+        </button>
+      </th>
+      <td></td>
+      <td></td>
+      <td>
+      </td>
+    </tr>
   </tbody>
   <!-- <a class="btn btn-primary" role="button" routerLink="/dict/add" routerLinkActive="active">New</a> -->
 </table>
 <div class="container">
-  <button *ngIf="!showAddDictionary" class="btn btn-outline-success" type="button"
-    (click)="showAddDictionary = !showAddDictionary" title="Add local file">
-    New <i class="material-icons md-align-bottom">library_add</i>
-  </button>
   <button *ngIf="showAddDictionary" class="btn btn-sm btn-outline-secondary float-right" type="button"
     (click)="showAddDictionary = !showAddDictionary" title="close">
     <i class="material-icons md-align-bottom">close</i>
   </button>
   <app-add-dictionary *ngIf="showAddDictionary" (dictionaryChange)="getBooks()"></app-add-dictionary>
 </div>
+
+<app-dictionary-search></app-dictionary-search>

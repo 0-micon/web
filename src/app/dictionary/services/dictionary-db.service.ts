@@ -170,11 +170,11 @@ export class DictionaryDbService {
   //   return this._ngZone.run(fn);
   // }
 
-  private _runStoreOutsideAngular(store: IDBObjectStore, run: () => void): Promise<void> {
+  private _runStoreOutsideAngular(store: IDBObjectStore, task: () => void): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       store.transaction.oncomplete = () => this._ngZone.run(resolve);
       store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
-      this._ngZone.runOutsideAngular(run);
+      this._ngZone.runOutsideAngular(task);
     });
   }
 
@@ -231,8 +231,8 @@ export class DictionaryDbService {
           if (index < data.length) {
             const item: Card = {
               isbn,
-              name: data[index][0],
-              data: data[index].slice(1)
+              name: data[index][0].toLowerCase(),
+              data: data[index] // .slice(1)
             };
 
             index++;
@@ -250,6 +250,18 @@ export class DictionaryDbService {
         return this._runStoreOutsideAngular(store, next);
       })
       .then(() => Promise.resolve(isbn));
+  }
+
+  getCards(query?: IDBValidKey | IDBKeyRange, count?: number): Promise<Card[]> {
+    return this._getStore(CARD_STORE_NAME, 'readonly').then(store =>
+      toPromise<Card[]>(store.index('name').getAll(query, count))
+    );
+  }
+
+  getCardRange(query: string, count?: number): Promise<Card[]> {
+    query = query.toLowerCase();
+    const range = IDBKeyRange.lowerBound(query); // All keys ≥ query
+    return this.getCards(range, count);
   }
 
   // Handles the event whereby a new version of the database needs to be created.

@@ -10,6 +10,7 @@ import { UploadDictionaryFileComponent } from './upload-dictionary-file/upload-d
 import { PreviewDictionaryComponent } from './preview-dictionary/preview-dictionary.component';
 import { AddDictionaryToDbComponent } from './add-dictionary-to-db/add-dictionary-to-db.component';
 import { BookshelfComponent } from './bookshelf/bookshelf.component';
+import { DictionarySearchComponent } from './dictionary-search/dictionary-search.component';
 
 const routes: Routes = [
   {
@@ -30,7 +31,8 @@ const routes: Routes = [
     UploadDictionaryFileComponent,
     PreviewDictionaryComponent,
     AddDictionaryToDbComponent,
-    BookshelfComponent
+    BookshelfComponent,
+    DictionarySearchComponent
   ],
   exports: [AddDictionaryComponent]
 })
