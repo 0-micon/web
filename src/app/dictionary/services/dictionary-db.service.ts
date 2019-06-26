@@ -130,6 +130,17 @@ function makeUnique(list: number[]): void {
   }
 }
 
+function filterOut(list: number[], filter: number[]): number[] {
+  const len = filter.length;
+  let i = 0;
+  return list.filter(value => {
+    while (i < len && filter[i] < value) {
+      i++;
+    }
+    return i >= len || value !== filter[i];
+  });
+}
+
 function toPromise<T>(request: IDBRequest<T>) {
   return new Promise<T>((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
@@ -163,23 +174,28 @@ class Progress<T> {
   index = -1;
   percent = 0;
   onsuccess: () => void;
+  request?: IDBRequest<any>;
 
   constructor(public data: T[], public ngZone: NgZone, public onprogress?: OnProgress) {}
 
   progress(): T {
     NgZone.assertNotInAngularZone();
     if (++this.index < this.data.length) {
-      if (this.onprogress) {
-        const p = Math.floor((100 * this.index) / this.data.length);
-        if (p !== this.percent) {
-          this.percent = p;
-          this.ngZone.run(this.onprogress, undefined, [p]);
-        }
-      }
+      this.updateProgress(this.index, this.data.length);
       return this.data[this.index];
     }
     if (this.index === this.data.length) {
       this.onsuccess();
+    }
+  }
+
+  updateProgress(index: number, length: number) {
+    if (this.onprogress) {
+      const p = Math.floor((100 * index) / length);
+      if (p !== this.percent) {
+        this.percent = p;
+        this.ngZone.run(this.onprogress, undefined, [p]);
+      }
     }
   }
 }
@@ -207,21 +223,50 @@ class CardUpdate extends Progress<string[]> {
     if (data) {
       const id = this.book.firstCardIndex + this.index;
       const card: Card = { id, book_id: this.book.id, data };
-      const word = cardToWord(data);
-      if (this.wordMap.has(word)) {
-        this.wordMap.get(word).push(id);
-      } else {
-        this.wordMap.set(word, [id]);
-      }
+      this.addWord(data[0], id);
       this.store.add(card).onsuccess = this.next;
+    }
+  };
+
+  addWord(word: string, card_id: number) {
+    word = word.toLowerCase();
+    if (this.wordMap.has(word)) {
+      this.wordMap.get(word).push(card_id);
+    } else {
+      this.wordMap.set(word, [card_id]);
+    }
+  }
+}
+
+class CardDelete extends CardUpdate {
+  constructor(store: IDBObjectStore, book: Book, ngZone: NgZone, onprogress?: OnProgress) {
+    super(store, book, null, ngZone, onprogress);
+  }
+
+  run = () => {
+    this.request = this.store.index(BOOK_ID).openCursor(this.book.id);
+    this.request.onsuccess = this.next;
+  };
+
+  next = () => {
+    NgZone.assertNotInAngularZone();
+    const cursor: IDBCursorWithValue = this.request.result;
+    if (cursor) {
+      this.index++;
+      this.updateProgress(this.index, this.book.cardCount);
+
+      const card: Card = cursor.value;
+      this.addWord(card.data[0], +card.id);
+      cursor.delete();
+      cursor.continue();
+    } else {
+      this.onsuccess();
     }
   };
 }
 
 class WordUpdate extends Progress<string> {
   tagMap = new Map<string, number[]>();
-
-  request: IDBRequest<any>;
 
   constructor(
     public store: IDBObjectStore,
@@ -252,11 +297,13 @@ class WordUpdate extends Progress<string> {
     const card_ids = this.wordMap.get(name);
     const word: Word = this.request.result;
     if (word) {
+      // The word exists. No need to update tags.
       word.card_ids = word.card_ids.concat(card_ids);
       makeUnique(word.card_ids);
       this.request = this.store.put(word);
       this.request.onsuccess = this.next;
     } else {
+      // Add a new word and generate tags for it.
       this.request = this.store.add({ name, card_ids });
       this.request.onsuccess = this.getTags;
     }
@@ -264,21 +311,67 @@ class WordUpdate extends Progress<string> {
 
   getTags = () => {
     NgZone.assertNotInAngularZone();
-    const word_id: number = this.request.result;
-    for (const t of wordToTags(this.data[this.index])) {
-      if (this.tagMap.has(t)) {
-        this.tagMap.get(t).push(word_id);
+    this.updateTags(this.data[this.index], this.request.result);
+  };
+
+  updateTags(word: string, word_id: number) {
+    for (const tag of wordToTags(word)) {
+      if (this.tagMap.has(tag)) {
+        this.tagMap.get(tag).push(word_id);
       } else {
-        this.tagMap.set(t, [word_id]);
+        this.tagMap.set(tag, [word_id]);
       }
     }
     this.next();
+  }
+}
+
+class WordDelete extends WordUpdate {
+  word_id: number;
+
+  constructor(
+    store: IDBObjectStore,
+    wordMap: Map<string, number[]>,
+    ngZone: NgZone,
+    onprogress?: OnProgress
+  ) {
+    super(store, wordMap, ngZone, onprogress);
+  }
+
+  update = () => {
+    NgZone.assertNotInAngularZone();
+    const name = this.data[this.index];
+    const card_ids = this.wordMap.get(name);
+    makeUnique(card_ids);
+
+    const word: Word = this.request.result;
+    if (word) {
+      // console.log(word.card_ids, card_ids);
+      word.card_ids = filterOut(word.card_ids, card_ids);
+      // console.log(word.card_ids);
+      if (word.card_ids.length > 0) {
+        // Just update the word.
+        this.request = this.store.put(word);
+        this.request.onsuccess = this.next;
+      } else {
+        // Remove the word and update tags.
+        this.word_id = +word.id;
+        this.request = this.store.delete(word.id);
+        this.request.onsuccess = this.getTags;
+      }
+    } else {
+      // TODO: Probably we should throw an Error here.
+      this.next();
+    }
+  };
+
+  getTags = () => {
+    NgZone.assertNotInAngularZone();
+    this.updateTags(this.data[this.index], this.word_id);
   };
 }
 
 class TagUpdate extends Progress<string> {
-  request: IDBRequest<any>;
-
   constructor(
     public store: IDBObjectStore,
     public tagMap: Map<string, number[]>,
@@ -317,6 +410,42 @@ class TagUpdate extends Progress<string> {
       this.request = this.store.add({ name, word_ids });
     }
     this.request.onsuccess = this.next;
+  };
+}
+
+class TagDelete extends TagUpdate {
+  constructor(
+    store: IDBObjectStore,
+    tagMap: Map<string, number[]>,
+    ngZone: NgZone,
+    onprogress?: OnProgress
+  ) {
+    super(store, tagMap, ngZone, onprogress);
+  }
+
+  update = () => {
+    NgZone.assertNotInAngularZone();
+    const name = this.data[this.index];
+    const word_ids = this.tagMap.get(name);
+    makeUnique(word_ids);
+
+    const tag: Tag = this.request.result;
+    if (tag) {
+      // console.log(tag.word_ids, word_ids);
+      tag.word_ids = filterOut(tag.word_ids, word_ids);
+      // console.log(tag.word_ids);
+      if (tag.word_ids.length > 0) {
+        // Just update the tag.
+        this.request = this.store.put(tag);
+      } else {
+        // Remove an empty tag from the DB.
+        this.request = this.store.delete(tag.name);
+      }
+      this.request.onsuccess = this.next;
+    } else {
+      // TODO: Probably we should throw an Error here.
+      this.next();
+    }
   };
 }
 
@@ -494,12 +623,49 @@ export class DictionaryDbService {
   }
 
   deleteBook(book_id: IDBValidKey, onprogress?: (percent: number) => void): Promise<void> {
-    return this.getBook(book_id)
-      .then(book =>
-        this._deleteCardRange(book.firstCardIndex, book.firstCardIndex + book.cardCount)
-      )
-      .then(() => this._getStore(BOOK_STORE_NAME, 'readwrite'))
-      .then(store => toPromise(store.delete(book_id)));
+    return this._createTransaction(
+      [BOOK_STORE_NAME, CARD_STORE_NAME, WORD_STORE_NAME, TAG_STORE_NAME],
+      'readwrite'
+    ).then(transaction =>
+      toPromise(transaction.objectStore(BOOK_STORE_NAME).get(book_id))
+        .then(
+          book =>
+            new Promise<void>((resolve, reject) => {
+              const zone = this._ngZone;
+
+              const cardDelete = new CardDelete(
+                transaction.objectStore(CARD_STORE_NAME),
+                book,
+                zone,
+                onprogress
+              );
+              const wordDelete = new WordDelete(
+                transaction.objectStore(WORD_STORE_NAME),
+                cardDelete.wordMap,
+                zone,
+                onprogress
+              );
+              const tagDelete = new TagDelete(
+                transaction.objectStore(TAG_STORE_NAME),
+                wordDelete.tagMap,
+                zone,
+                onprogress
+              );
+              cardDelete.onsuccess = wordDelete.run;
+              wordDelete.onsuccess = tagDelete.run;
+              tagDelete.onsuccess = () => resolve();
+              zone.runOutsideAngular(cardDelete.run);
+            })
+        )
+        .then(() => toPromise(transaction.objectStore(BOOK_STORE_NAME).delete(book_id)))
+    );
+    // return this.getBook(book_id)
+    //   .then(book =>
+    //     this._deleteCardRange(book.firstCardIndex, book.firstCardIndex + book.cardCount)
+    //   )
+    //   .then(() => this._getStore(BOOK_STORE_NAME, 'readwrite'))
+    //   .then(store => toPromise(store.delete(book_id)));
+
     // return this.deleteCards(book_id, onprogress)
     //   .then(() => this._getStore(BOOK_STORE_NAME, 'readwrite'))
     //   .then(store => toPromise(store.delete(book_id)));
