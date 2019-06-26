@@ -35,9 +35,9 @@ export class AddDictionaryToDbComponent implements OnInit {
       this.loading = true;
       this._db
         .addBook(name, data, info, progress => (this.progress = progress))
-        .then(isbn => {
+        .then(book => {
           setTimeout(() => {
-            this.addBookChange.emit(isbn);
+            this.addBookChange.emit('' + book.id);
           }, 2000);
         })
         .catch(error => this.onError(error))
@@ -85,5 +85,13 @@ export class AddDictionaryToDbComponent implements OnInit {
   onError(reason: string) {
     console.warn('Error: ', reason);
     this.loading = false;
+  }
+
+  getWord() {
+    this._db.addWord('aaa', 999).then(value => console.log('Value:', value));
+    // this._db
+    //   .getWord('test')
+    //   .then(value => console.log('Value:', value))
+    //   .catch(error => console.log('Catched error:', error));
   }
 }

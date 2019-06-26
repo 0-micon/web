@@ -38,7 +38,7 @@ export class BookshelfComponent implements OnInit {
     this.deleteItem = book;
     this.deleteProgress = 0;
     this._db
-      .deleteBook(book.isbn, percent => (this.deleteProgress = percent))
+      .deleteBook(book.id, percent => (this.deleteProgress = percent))
       .then(() => this.getBooks())
       .finally(() => (this.loading = false));
   }
