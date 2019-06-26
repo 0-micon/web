@@ -1,6 +1,9 @@
 <ngx-loading [show]="loading">
 </ngx-loading>
 
+<label for="typeahead-basic">Search for a word:</label>
+<input id="typeahead-basic" type="text" class="form-control" [(ngModel)]="model" [ngbTypeahead]="search" />
+
 <table class="table">
   <thead>
     <tr>

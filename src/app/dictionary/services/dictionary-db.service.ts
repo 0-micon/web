@@ -60,12 +60,10 @@ export type OnProgress = (percent: number) => void;
 
 // Mappers/Reducers:
 function cardToWord(card: string[]): string {
-  // console.log(card);
-  // console.log(card[0]);
   return card[0].toLowerCase();
 }
 
-function wordToTags(word: string): string[] {
+export function wordToTags(word: string): string[] {
   // const regex = /\p{L}/gm;
   const regex = /[^\d\s()\[\]\-_\.\,\'\n\r\t\0]/;
   const chars = Array.from(word).filter(ch => regex.test(ch));
@@ -346,9 +344,7 @@ class WordDelete extends WordUpdate {
 
     const word: Word = this.request.result;
     if (word) {
-      // console.log(word.card_ids, card_ids);
       word.card_ids = filterOut(word.card_ids, card_ids);
-      // console.log(word.card_ids);
       if (word.card_ids.length > 0) {
         // Just update the word.
         this.request = this.store.put(word);
@@ -431,9 +427,7 @@ class TagDelete extends TagUpdate {
 
     const tag: Tag = this.request.result;
     if (tag) {
-      // console.log(tag.word_ids, word_ids);
       tag.word_ids = filterOut(tag.word_ids, word_ids);
-      // console.log(tag.word_ids);
       if (tag.word_ids.length > 0) {
         // Just update the tag.
         this.request = this.store.put(tag);
@@ -476,664 +470,154 @@ export class DictionaryDbService {
         resolve();
       };
     });
-    // const request: IDBOpenDBRequest = window.indexedDB.open(DB_NAME, DB_VERSION);
-    // request.onerror = event => this.onOpenError(request, event);
-    // request.onupgradeneeded = event => this.onUpgradeNeeded(request, event);
-    // request.onsuccess = event => this.onOpenSuccess(request, event);
   }
 
-  // // NOTE: DB should be already opened.
-  // private _getStoreAsPromise(name: string, mode?: IDBTransactionMode): Promise<IDBObjectStore> {
-  //   return new Promise<IDBObjectStore>((resolve, reject) => {
-  //     if (this._db.objectStoreNames.contains(name)) {
-  //       const transaction: IDBTransaction = this._db.transaction([name], mode);
-  //       resolve(transaction.objectStore(name));
-  //     } else {
-  //       reject(`DB error: objectStore '${name}' does not exists.`);
-  //     }
-  //   });
-  // }
+  getTags(word: string) {
+    // word = word.toLowerCase();
+    // const tags = wordToTags(word);
+    // this._getStore(TAG_STORE_NAME).then(store => {
+    //   if (tags.length > 1) {
+    //     toPromise(store.get(tags[0])).then((tag: Tag) => )
+    //   }
+    // });
+  }
 
-  private _createTransaction(
+  private async _createTransaction(
     storeNames: string | string[],
     mode: IDBTransactionMode = 'readonly'
   ): Promise<IDBTransaction> {
-    return this._openPromise.then(() => this._db.transaction(storeNames, mode));
+    await this._openPromise;
+    return this._db.transaction(storeNames, mode);
   }
 
-  private _getStore(name: StoreName, mode?: IDBTransactionMode): Promise<IDBObjectStore> {
-    return this._createTransaction([name], mode).then(transaction => transaction.objectStore(name));
+  private async _getStore(
+    name: StoreName,
+    mode: IDBTransactionMode = 'readonly'
+  ): Promise<IDBObjectStore> {
+    const transaction = await this._createTransaction([name], mode);
+    return transaction.objectStore(name);
   }
 
-  getBook(book_id: IDBValidKey): Promise<Book> {
-    return this._getStore(BOOK_STORE_NAME, 'readonly').then(store => toPromise(store.get(book_id)));
+  async getBook(book_id: IDBValidKey): Promise<Book> {
+    const store = await this._getStore(BOOK_STORE_NAME, 'readonly');
+    return toPromise(store.get(book_id));
   }
 
-  getAllBooks(): Promise<Book[]> {
-    return this._getStore(BOOK_STORE_NAME, 'readonly').then(store => toPromise(store.getAll()));
+  async getAllBooks(): Promise<Book[]> {
+    const store = await this._getStore(BOOK_STORE_NAME, 'readonly');
+    return toPromise(store.getAll());
   }
 
-  getCardCount(book_id: IDBValidKey): Promise<number> {
-    return this._getStore(CARD_STORE_NAME, 'readonly').then(store =>
-      toPromise(store.index(BOOK_ID).count(book_id))
-    );
+  async getCardCount(book_id: IDBValidKey): Promise<number> {
+    const store = await this._getStore(CARD_STORE_NAME, 'readonly');
+    return toPromise(store.index(BOOK_ID).count(book_id));
   }
 
-  private _deleteCards(
-    book_id: IDBValidKey,
-    count: number,
-    onprogress: (percent: number) => void
-  ): Promise<void> {
-    return this._getStore(CARD_STORE_NAME, 'readwrite').then(store =>
-      this._runStoreOutsideAngular(store, () => {
-        let done = 0;
-        let percent = 0;
-        const request = store.index(BOOK_ID).openCursor(book_id);
-        request.onsuccess = () => {
-          NgZone.assertNotInAngularZone();
-          const cursor = request.result;
-          if (cursor && done < count) {
-            cursor.delete();
-            cursor.continue();
-
-            done++;
-            const p = Math.floor((100 * done) / count);
-            if (p !== percent) {
-              percent = p;
-              this._ngZone.run(onprogress, undefined, [percent]);
-            }
-          }
-        };
-      })
-    );
-  }
-
-  private _clearCards(book_id: IDBValidKey): Promise<void> {
-    return this._getStore(CARD_STORE_NAME, 'readwrite').then(store =>
-      this._runStoreOutsideAngular(store, () => {
-        const request = store.index(BOOK_ID).openCursor(book_id);
-        request.onsuccess = () => {
-          NgZone.assertNotInAngularZone();
-          const cursor = request.result;
-          if (cursor) {
-            cursor.delete();
-            cursor.continue();
-          }
-        };
-      })
-    );
-  }
-
-  // private _runStoreOutsideAngular<T>(
-  //   store: IDBObjectStore,
-  //   fn: () => T,
-  //   oncomplete: () => void,
-  //   onerror: () => void
-  // ): T {
-  //   store.transaction.oncomplete = () => this._ngZone.run(oncomplete);
-  //   store.transaction.onerror = () => this._ngZone.run(onerror);
-  //   return this._ngZone.run(fn);
-  // }
-
-  private _runStoreOutsideAngular(store: IDBObjectStore, task: () => void): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      store.transaction.oncomplete = () => this._ngZone.run(resolve);
-      store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
-      this._ngZone.runOutsideAngular(task);
-    });
-  }
-  private _runTransactionOutsideAngular(
-    transaction: IDBTransaction,
-    task: () => void
-  ): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      transaction.oncomplete = () => this._ngZone.run(resolve);
-      transaction.onerror = () => this._ngZone.run(() => reject(transaction.error));
-      this._ngZone.runOutsideAngular(task);
-    });
-  }
-
-  // private _toRunOutsideAngularPromise<T>(
-  //   store: IDBObjectStore,
-  //   request: IDBRequest<T>,
-  //   onsuccess: Resolver<T>
-  // ): Promise<void> {
-  //   return new Promise<void>((resolve, reject) => {
-  //     store.transaction.oncomplete = () => this._ngZone.run(resolve);
-  //     store.transaction.onerror = () => this._ngZone.run(() => reject(store.transaction.error));
-
-  //     request.onsuccess = () => this._ngZone.runOutsideAngular(() => onsuccess(request.result));
-  //   });
-  // }
-
-  deleteCards(book_id: IDBValidKey, onprogress?: (percent: number) => void): Promise<void> {
-    if (onprogress) {
-      return this.getCardCount(book_id).then(count =>
-        this._deleteCards(book_id, count, onprogress)
-      );
-    } else {
-      return this._clearCards(book_id);
-    }
-  }
-
-  private _deleteCardRange(begin: number, end: number): Promise<void> {
-    return this._getStore(CARD_STORE_NAME, 'readwrite').then(store =>
-      toPromise(store.delete(IDBKeyRange.bound(begin, end, false, true)))
-    );
-  }
-
-  deleteBook(book_id: IDBValidKey, onprogress?: (percent: number) => void): Promise<void> {
-    return this._createTransaction(
+  async deleteBook(book_id: IDBValidKey, onprogress?: (percent: number) => void): Promise<void> {
+    const transaction = await this._createTransaction(
       [BOOK_STORE_NAME, CARD_STORE_NAME, WORD_STORE_NAME, TAG_STORE_NAME],
       'readwrite'
-    ).then(transaction =>
-      toPromise(transaction.objectStore(BOOK_STORE_NAME).get(book_id))
-        .then(
-          book =>
-            new Promise<void>((resolve, reject) => {
-              const zone = this._ngZone;
-
-              const cardDelete = new CardDelete(
-                transaction.objectStore(CARD_STORE_NAME),
-                book,
-                zone,
-                onprogress
-              );
-              const wordDelete = new WordDelete(
-                transaction.objectStore(WORD_STORE_NAME),
-                cardDelete.wordMap,
-                zone,
-                onprogress
-              );
-              const tagDelete = new TagDelete(
-                transaction.objectStore(TAG_STORE_NAME),
-                wordDelete.tagMap,
-                zone,
-                onprogress
-              );
-              cardDelete.onsuccess = wordDelete.run;
-              wordDelete.onsuccess = tagDelete.run;
-              tagDelete.onsuccess = () => resolve();
-              zone.runOutsideAngular(cardDelete.run);
-            })
-        )
-        .then(() => toPromise(transaction.objectStore(BOOK_STORE_NAME).delete(book_id)))
     );
-    // return this.getBook(book_id)
-    //   .then(book =>
-    //     this._deleteCardRange(book.firstCardIndex, book.firstCardIndex + book.cardCount)
-    //   )
-    //   .then(() => this._getStore(BOOK_STORE_NAME, 'readwrite'))
-    //   .then(store => toPromise(store.delete(book_id)));
+    const book = await toPromise(transaction.objectStore(BOOK_STORE_NAME).get(book_id));
+    await new Promise<void>((resolve, reject) => {
+      transaction.onerror = () => reject(transaction.error);
 
-    // return this.deleteCards(book_id, onprogress)
-    //   .then(() => this._getStore(BOOK_STORE_NAME, 'readwrite'))
-    //   .then(store => toPromise(store.delete(book_id)));
-  }
-
-  private _addTags(book_id: IDBValidKey) {
-    return this._getStore(CARD_STORE_NAME, 'readonly').then(store =>
-      this._runStoreOutsideAngular(store, () => {
-        const request = store.index(BOOK_ID).openCursor(book_id);
-        request.onsuccess = () => {
-          NgZone.assertNotInAngularZone();
-          const cursor = request.result;
-          if (cursor) {
-            const card: Card = cursor.value;
-
-            cursor.continue();
-          }
-        };
-      })
-    );
-  }
-
-  addTags(book_id: IDBValidKey) {
-    return this.getBook(book_id).then(book =>
-      book.hasTags ? Promise.reject(new Error('Already has tags')) : this._addTags(book_id)
-    );
-  }
-
-  private _getFirstCardIndex(): Promise<number> {
-    return this.getAllBooks().then(books => {
-      let firstCardIndex = 0;
-      for (const book of books) {
-        firstCardIndex = Math.max(firstCardIndex, book.firstCardIndex + book.cardCount);
-      }
-      return firstCardIndex;
+      const zone = this._ngZone;
+      const cardDelete = new CardDelete(
+        transaction.objectStore(CARD_STORE_NAME),
+        book,
+        zone,
+        onprogress
+      );
+      const wordDelete = new WordDelete(
+        transaction.objectStore(WORD_STORE_NAME),
+        cardDelete.wordMap,
+        zone,
+        onprogress
+      );
+      const tagDelete = new TagDelete(
+        transaction.objectStore(TAG_STORE_NAME),
+        wordDelete.tagMap,
+        zone,
+        onprogress
+      );
+      cardDelete.onsuccess = wordDelete.run;
+      wordDelete.onsuccess = tagDelete.run;
+      tagDelete.onsuccess = () => {
+        transaction.onerror = null;
+        resolve();
+      };
+      zone.runOutsideAngular(cardDelete.run);
     });
+    return toPromise(transaction.objectStore(BOOK_STORE_NAME).delete(book_id));
   }
 
-  addBook(
+  private async _getFirstCardIndex(): Promise<number> {
+    const books = await this.getAllBooks();
+    let firstCardIndex = 0;
+    for (const book of books) {
+      firstCardIndex = Math.max(firstCardIndex, book.firstCardIndex + book.cardCount);
+    }
+    return firstCardIndex;
+  }
+
+  async addBook(
     name: string,
     data: string[][],
     info?: string,
     onprogress?: (percent: number) => void
   ): Promise<Book> {
-    // return this._getFirstCardIndex().then(firstCardIndex => {
-    //   const book: Book = { name, info, date: getDate(), firstCardIndex, cardCount: data.length };
-    //   return this._getStore(BOOK_STORE_NAME, 'readwrite')
-    //     .then(store => toPromise(store.add(book)))
-    //     .then(book_id => this._addCards(book_id, data, firstCardIndex, onprogress))
-    //     .then(book_id => this._addWords(book_id, data, firstCardIndex, onprogress));
-    // });
-    return this._getFirstCardIndex().then(firstCardIndex =>
-      this._addBook(
-        { name, info, date: getDate(), firstCardIndex, cardCount: data.length },
-        data,
-        onprogress
-      )
-    );
+    const firstCardIndex = await this._getFirstCardIndex();
+    const book: Book = { name, info, date: getDate(), firstCardIndex, cardCount: data.length };
+    return this._addBook(book, data, onprogress);
   }
 
-  private _addBook(
+  private async _addBook(
     book: Book,
     data: string[][],
     onprogress?: (percent: number) => void
   ): Promise<Book> {
-    return this._createTransaction(
+    const transaction = await this._createTransaction(
       [BOOK_STORE_NAME, CARD_STORE_NAME, WORD_STORE_NAME, TAG_STORE_NAME],
       'readwrite'
-    ).then(transaction =>
-      toPromise(transaction.objectStore(BOOK_STORE_NAME).add(book)).then(
-        id =>
-          new Promise<Book>((resolve, reject) => {
-            const zone = this._ngZone;
-            book.id = id;
-            const cardUpdate = new CardUpdate(
-              transaction.objectStore(CARD_STORE_NAME),
-              book,
-              data,
-              zone,
-              onprogress
-            );
-            const wordUpdate = new WordUpdate(
-              transaction.objectStore(WORD_STORE_NAME),
-              cardUpdate.wordMap,
-              zone,
-              onprogress
-            );
-            const tagUpdate = new TagUpdate(
-              transaction.objectStore(TAG_STORE_NAME),
-              wordUpdate.tagMap,
-              zone,
-              onprogress
-            );
-            cardUpdate.onsuccess = wordUpdate.run;
-            wordUpdate.onsuccess = tagUpdate.run;
-            tagUpdate.onsuccess = () => resolve(book);
-            zone.runOutsideAngular(cardUpdate.run);
-          })
-      )
     );
-  }
+    book.id = await toPromise(transaction.objectStore(BOOK_STORE_NAME).add(book));
+    return new Promise<Book>((resolve, reject) => {
+      transaction.onerror = () => reject(transaction.error);
 
-  private _addTags_3(
-    transaction: IDBTransaction,
-    tags: Map<string, number[]>,
-    onprogress?: OnProgress
-  ) {}
-
-  private _addWords_3(
-    transaction: IDBTransaction,
-    map: Map<string, number[]>,
-    onprogress?: OnProgress
-  ) {
-    const tags = new Map<string, number[]>();
-    const store = transaction.objectStore(WORD_STORE_NAME);
-    const words = Array.from(map.keys());
-
-    let index = -1;
-    let percent = 0;
-
-    const state: {
-      request?: IDBRequest<any>;
-      next?: () => void;
-      update?: () => void;
-      tags?: () => void;
-    } = {};
-
-    state.next = () => {
-      NgZone.assertNotInAngularZone();
-      if (++index < words.length) {
-        if (onprogress) {
-          const p = Math.floor(((100 * index) / words.length + 100) / 3);
-          if (p !== percent) {
-            percent = p;
-            this._ngZone.run(onprogress, undefined, [p]);
-          }
-        }
-
-        state.request = store.index('name').get(words[index]);
-        state.request.onsuccess = state.update;
-      } else {
-        this._addTags_3(transaction, tags, onprogress);
-      }
-    };
-
-    state.update = () => {
-      NgZone.assertNotInAngularZone();
-      const name = words[index];
-      const card_ids = map.get(name);
-      const word: Word = state.request.result;
-      if (word) {
-        word.card_ids = word.card_ids.concat(card_ids);
-        makeUnique(word.card_ids);
-        state.request = store.put(word);
-        state.request.onsuccess = state.next;
-      } else {
-        state.request = store.add({ name, card_ids });
-        state.request.onsuccess = state.tags;
-      }
-    };
-
-    state.tags = () => {
-      NgZone.assertNotInAngularZone();
-      const word_id: number = state.request.result;
-      for (const t of wordToTags(words[index])) {
-        if (tags.has(t)) {
-          tags.get(t).push(word_id);
-        } else {
-          tags.set(t, [word_id]);
-        }
-      }
-      state.next();
-    };
-  }
-
-  private _addCards_3(
-    transaction: IDBTransaction,
-    book: Book,
-    data: string[][],
-    onprogress?: (percent: number) => void
-  ) {
-    const map = new Map<string, number[]>();
-    const store = transaction.objectStore(CARD_STORE_NAME);
-    const book_id = book.id;
-
-    let index = -1;
-    let percent = 0;
-
-    const next = () => {
-      NgZone.assertNotInAngularZone();
-      if (++index < data.length) {
-        if (onprogress) {
-          const p = Math.floor((100 * index) / data.length / 3);
-          if (p !== percent) {
-            percent = p;
-            this._ngZone.run(onprogress, undefined, [p]);
-          }
-        }
-
-        const id = book.firstCardIndex + index;
-        const card: Card = { id, book_id, data: data[index] };
-        const word = cardToWord(data[index]);
-        if (map.has(word)) {
-          map.get(word).push(id);
-        } else {
-          map.set(word, [id]);
-        }
-        store.add(card).onsuccess = next;
-      } else {
-        this._addWords_3(transaction, map, onprogress);
-      }
-    };
-  }
-
-  private _addCards_2(
-    transaction: IDBTransaction,
-    book: Book,
-    data: string[][],
-    onprogress?: (percent: number) => void
-  ): Promise<Book> {
-    const state: any = {
-      index: -1,
-      percent: 0,
-      tags: {},
-      cardStore: transaction.objectStore(CARD_STORE_NAME),
-      wordStore: transaction.objectStore(WORD_STORE_NAME),
-      tagStore: transaction.objectStore(TAG_STORE_NAME)
-    };
-
-    state.nextWord = () => {
-      NgZone.assertNotInAngularZone();
-      state.index++;
-      if (onprogress) {
-        const p = state.index < data.length ? Math.floor((100 * state.index) / data.length) : 100;
-        if (p !== state.percent) {
-          state.percent = p;
-          this._ngZone.run(onprogress, undefined, [p]);
-        }
-      }
-      if (state.index < data.length) {
-        state.card_id = book.firstCardIndex + state.index;
-        state.name = cardToWord(data[state.index]);
-        state.request = state.wordStore.index('name').get(state.name);
-        state.request.onsuccess = state.updateWord;
-      } else {
-        state.addTags();
-      }
-    };
-
-    state.updateWord = () => {
-      NgZone.assertNotInAngularZone();
-      let word: Word = state.request.result;
-      if (word) {
-        insertUnique(word.card_ids, state.card_id);
-        state.request = state.wordStore.put(word);
-      } else {
-        word = { name: state.name, card_ids: [state.card_id] };
-        state.request = state.wordStore.add(word);
-      }
-      state.request.onsuccess = state.updateTags;
-    };
-
-    state.updateTags = () => {
-      NgZone.assertNotInAngularZone();
-      // state.word_id = state.request.result;
-      // state.tags = wordToTags(state.name);
-      // state.tag_index = -1;
-      // state.nextTag();
-      const word_id = state.request.result;
-      for (const tag of wordToTags(state.name)) {
-        if (state.tags[tag]) {
-          insertUnique(state.tags[tag], word_id);
-        } else {
-          state.tags[tag] = [word_id];
-        }
-      }
-      state.nextCard();
-    };
-
-    state.addTags = () => {
-      NgZone.assertNotInAngularZone();
-      state.tag_keys = Object.keys(state.tags);
-      state.tag_index = 0;
-      state.nextTag();
-    };
-
-    state.nextTag = () => {
-      NgZone.assertNotInAngularZone();
-      if (state.tag_index < state.tag_keys.length) {
-        const name = state.tag_keys[state.tag_index];
-        state.request = state.tagStore.get(name);
-        state.request.onsuccess = state.updateTag;
-      }
-      // state.tag_index++;
-      // if (state.tag_index < state.tags.length) {
-      //   state.request = state.tagStore.get(state.tags[state.tag_index]);
-      //   state.request.onsuccess = state.updateTag;
-      // } else {
-      //   state.nextCard();
-      // }
-    };
-
-    state.updateTag = () => {
-      NgZone.assertNotInAngularZone();
-      // let tag: Tag = state.request.result;
-      // if (tag) {
-      //   insertUnique(tag.word_ids, state.word_id);
-      //   state.request = state.tagStore.put(tag);
-      // } else {
-      //   tag = { name: state.tags[state.tag_index], word_ids: [state.word_id] };
-      //   state.request = state.tagStore.add(tag);
-      // }
-      const name = state.tag_keys[state.tag_index];
-      const word_ids = state.tags[name];
-
-      let tag: Tag = state.request.result;
-      if (tag) {
-        tag.word_ids = tag.word_ids.concat(word_ids);
-        makeUnique(tag.word_ids);
-        state.request = state.tagStore.put(tag);
-      } else {
-        tag = { name, word_ids };
-        state.request = state.tagStore.add(tag);
-      }
-      state.tag_index++;
-      state.request.onsuccess = state.nextTag;
-    };
-
-    state.nextCard = () => {
-      NgZone.assertNotInAngularZone();
-      const item: Card = { book_id: book.id, data: data[state.index], id: state.card_id };
-      state.request = state.cardStore.add(item);
-      state.request.onsuccess = state.nextWord;
-    };
-    return this._runTransactionOutsideAngular(transaction, state.nextWord).then(() =>
-      Promise.resolve(book)
-    );
-  }
-
-  private _addCards(
-    book_id: IDBValidKey,
-    data: string[][],
-    firstCardIndex: number,
-    onprogress?: (percent: number) => void
-  ): Promise<IDBValidKey> {
-    return this._getStore(CARD_STORE_NAME, 'readwrite')
-      .then(store => {
-        let percent = 0;
-        let index = 0;
-        const next = () => {
-          NgZone.assertNotInAngularZone();
-          if (index < data.length) {
-            const item: Card = { book_id, data: data[index], id: firstCardIndex + index };
-            index++;
-            if (onprogress) {
-              const p = Math.floor((100 * index) / data.length);
-              if (p !== percent) {
-                percent = p;
-                this._ngZone.run(onprogress, undefined, [p]);
-              }
-            }
-
-            store.add(item).onsuccess = next;
-          }
-        };
-        return this._runStoreOutsideAngular(store, next);
-      })
-      .then(() => Promise.resolve(book_id));
-  }
-
-  private _addWords(
-    book_id: IDBValidKey,
-    data: string[][],
-    firstCardIndex: number,
-    onprogress?: (percent: number) => void
-  ): Promise<IDBValidKey> {
-    return this._getStore(WORD_STORE_NAME, 'readwrite')
-      .then(store => {
-        let percent = 0;
-        let index = 0;
-        const next = () => {
-          NgZone.assertNotInAngularZone();
-          if (index < data.length) {
-            const name = cardToWord(data[index]);
-            const card_id = firstCardIndex + index;
-            index++;
-            if (onprogress) {
-              const p = Math.floor((100 * index) / data.length);
-              if (p !== percent) {
-                percent = p;
-                this._ngZone.run(onprogress, undefined, [p]);
-              }
-            }
-            const request = store.get(name);
-            request.onsuccess = () => {
-              let word: Word = request.result;
-              if (word) {
-                insertUnique(word.card_ids, card_id);
-              } else {
-                word = { name, card_ids: [card_id] };
-              }
-              store.put(word).onsuccess = next;
-            };
-          }
-        };
-        return this._runStoreOutsideAngular(store, next);
-      })
-      .then(() => Promise.resolve(book_id));
+      const zone = this._ngZone;
+      const cardUpdate = new CardUpdate(
+        transaction.objectStore(CARD_STORE_NAME),
+        book,
+        data,
+        zone,
+        onprogress
+      );
+      const wordUpdate = new WordUpdate(
+        transaction.objectStore(WORD_STORE_NAME),
+        cardUpdate.wordMap,
+        zone,
+        onprogress
+      );
+      const tagUpdate = new TagUpdate(
+        transaction.objectStore(TAG_STORE_NAME),
+        wordUpdate.tagMap,
+        zone,
+        onprogress
+      );
+      cardUpdate.onsuccess = wordUpdate.run;
+      wordUpdate.onsuccess = tagUpdate.run;
+      tagUpdate.onsuccess = () => {
+        transaction.onerror = null;
+        resolve(book);
+      };
+      zone.runOutsideAngular(cardUpdate.run);
+    });
   }
 
   getCardKeys(book_id: IDBValidKey): Promise<IDBValidKey[]> {
     return this._getStore(CARD_STORE_NAME, 'readonly').then(store =>
       toPromise(store.index(BOOK_ID).getAllKeys(book_id))
-    );
-  }
-
-  getCardToWordMap(book_id: IDBValidKey): Promise<Map<IDBValidKey, string>> {
-    const names = new Map<IDBValidKey, string>();
-    return this._getStore(CARD_STORE_NAME, 'readonly')
-      .then(store =>
-        this._runStoreOutsideAngular(store, () => {
-          const request = store.index(BOOK_ID).openCursor(book_id);
-          request.onsuccess = () => {
-            NgZone.assertNotInAngularZone();
-            const cursor = request.result;
-            if (cursor) {
-              const card: Card = cursor.value as Card;
-              // names.set(cursor.key, card.data[0].toLowerCase());
-              cursor.continue();
-            }
-          };
-        })
-      )
-      .then(() => Promise.resolve(names));
-  }
-
-  // addWords(book_id: IDBValidKey): Promise<void> {
-  //   return this.getCardToWordMap(book_id).then(map =>
-  //     this._getStore(WORD_STORE_NAME, 'readwrite').then(store => {
-  //       const iterator = map.keys();
-  //       const next = () => {
-  //         NgZone.assertNotInAngularZone();
-  //         const x = iterator.next();
-  //         if (!x.done) {
-  //           const item: Word = { name: map.get(x.value), card_id: x.value };
-  //           store.add(item).onsuccess = next;
-  //         }
-  //       };
-  //       return this._runStoreOutsideAngular(store, next);
-  //     })
-  //   );
-  // }
-
-  deleteWords(book_id: IDBValidKey): Promise<void> {
-    return this.getCardKeys(book_id).then(cards =>
-      this._getStore(WORD_STORE_NAME, 'readwrite').then(store =>
-        this._runStoreOutsideAngular(store, () => {
-          const request = store.index(CARD_ID).openCursor(cards);
-          request.onsuccess = () => {
-            NgZone.assertNotInAngularZone();
-            const cursor = request.result;
-            if (cursor) {
-              cursor.delete();
-              cursor.continue();
-            }
-          };
-        })
-      )
     );
   }
 
@@ -1165,10 +649,6 @@ export class DictionaryDbService {
       })
     );
   }
-
-  // putWord(word: Word): Promise<IDBValidKey> {
-  //   return this._getStore(WORD_STORE_NAME, 'readwrite').then(store => toPromise(store.put(word)));
-  // }
 
   // Handles the event whereby a new version of the database needs to be created.
   // Either one has not been created before, or a new version number has been submitted
