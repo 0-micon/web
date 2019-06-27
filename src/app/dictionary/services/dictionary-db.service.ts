@@ -483,6 +483,24 @@ export class DictionaryDbService {
     });
   }
 
+  private _getWord(word: string): Promise<Word> {
+    return this._getStore(WORD_STORE_NAME).then(store => toPromise(store.index('name').get(word)));
+  }
+
+  async getCards(name: string) {
+    const word: Word = await this._getWord(name);
+    console.log('getCards:', name, word);
+    const buffer = [];
+    if (word) {
+      const store = await this._getStore(CARD_STORE_NAME);
+      for (const card_id of word.card_ids) {
+        const card: Card = await toPromise(store.get(card_id));
+        buffer.push(card.data);
+      }
+    }
+    return buffer;
+  }
+
   async getTags(word: string) {
     word = word.toLowerCase();
     const tags = wordToTags(word);
@@ -670,17 +688,17 @@ export class DictionaryDbService {
     );
   }
 
-  getCards(query?: IDBValidKey | IDBKeyRange, count?: number): Promise<Card[]> {
-    return this._getStore(CARD_STORE_NAME, 'readonly').then(store =>
-      toPromise<Card[]>(store.index('name').getAll(query, count))
-    );
-  }
+  // getCards(query?: IDBValidKey | IDBKeyRange, count?: number): Promise<Card[]> {
+  //   return this._getStore(CARD_STORE_NAME, 'readonly').then(store =>
+  //     toPromise<Card[]>(store.index('name').getAll(query, count))
+  //   );
+  // }
 
-  getCardRange(query: string, count?: number): Promise<Card[]> {
-    query = query.toLowerCase();
-    const range = IDBKeyRange.lowerBound(query); // All keys >= query
-    return this.getCards(range, count);
-  }
+  // getCardRange(query: string, count?: number): Promise<Card[]> {
+  //   query = query.toLowerCase();
+  //   const range = IDBKeyRange.lowerBound(query); // All keys >= query
+  //   return this.getCards(range, count);
+  // }
 
   getWord(name: string): Promise<Word> {
     return this._getStore(WORD_STORE_NAME, 'readonly').then(store => toPromise(store.get(name)));

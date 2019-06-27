@@ -19,6 +19,7 @@ export class BookshelfComponent implements OnInit {
   deleteProgress = 0;
 
   model = '';
+  cards = '';
 
   search = (text$: Observable<string>) =>
     text$.pipe(
@@ -77,6 +78,18 @@ export class BookshelfComponent implements OnInit {
       .deleteBook(book.id, percent => (this.deleteProgress = percent))
       .then(() => this.getBooks())
       .finally(() => (this.loading = false));
+  }
+
+  onWordChange(word: string) {
+    this._db.getCards(word).then(buffer => this._setCards(buffer));
+  }
+
+  private _setCards(buffer: string[][][]) {
+    this.cards = '';
+    for (const card of buffer) {
+      this.cards += card.join('\n');
+      this.cards += '\n-=-=-=-=-=-\n';
+    }
   }
 
   // private _getBooks() {

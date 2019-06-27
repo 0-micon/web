@@ -50,4 +50,5 @@
   <app-add-dictionary *ngIf="showAddDictionary" (dictionaryChange)="getBooks()"></app-add-dictionary>
 </div>
 
-<app-dictionary-search></app-dictionary-search>
+<app-dictionary-search (wordChange)="onWordChange($event)"></app-dictionary-search>
+<textarea cols="100" rows="20" [ngModel]="cards"></textarea>

@@ -9,6 +9,9 @@
   <app-simple-virtual-list #list appDropdownMenuBase appDropdownItemSelector [selectedItem]="selection"
     (selectedItemChange)="list.scrollToItem($event)" [style.width.%]="100" [items]="items" [selection]="selection"
     (itemFocusRequest)="list.setFocus()" (selectionChange)="onItemClick($event)">
+    <ng-template appSimpleVirtualListChild let-i>
+      <app-marker [text]="items[i]" [filter]="term" [ignoreCases]="false"></app-marker>
+    </ng-template>
   </app-simple-virtual-list>
 
 </div>

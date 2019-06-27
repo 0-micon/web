@@ -1,3 +1,5 @@
+<ng-template #defaultItem let-itemIndex>{{items[itemIndex]}}</ng-template>
+
 <div class="scroll-view" #view tabindex="0" [style.height.px]="lineHeight * rows" (keydown)="onKeyDown($event)"
   (scroll)="onScroll($event)" (focus)="hasFocus = true" (blur)="hasFocus = false">
 
@@ -8,9 +10,14 @@
 
     <div class="scroll-item" *ngFor="let offset of bufferCount | xrange" [style.height.px]="lineHeight">
 
-      <a class="dropdown-item" [class.focus]="bufferIsFocus(offset)" [class.active]="bufferIsSelection(offset)"
+      <!-- <a class="dropdown-item" [class.focus]="bufferIsFocus(offset)" [class.active]="bufferIsSelection(offset)"
         (click)="bufferOnClick(offset)" title="{{bufferGetTitle(offset)}}">
         {{bufferGetItem(offset)}}
+      </a> -->
+      <a class="dropdown-item" [class.focus]="bufferIsFocus(offset)" [class.active]="bufferIsSelection(offset)"
+        (click)="bufferOnClick(offset)" title="{{bufferGetTitle(offset)}}">
+        <ng-template [ngTemplateOutlet]="itemTemplate?.templateRef || defaultItem"
+          [ngTemplateOutletContext]="{ $implicit: toIndex(offset) }"></ng-template>
       </a>
 
     </div>

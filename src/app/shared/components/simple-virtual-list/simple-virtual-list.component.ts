@@ -10,8 +10,18 @@ import {
   Output,
   EventEmitter,
   SimpleChanges,
-  SimpleChange
+  SimpleChange,
+  ContentChild,
+  TemplateRef,
+  Directive
 } from '@angular/core';
+
+@Directive({
+  selector: '[appSimpleVirtualListChild]'
+})
+export class SimpleVirtualListChildDirective {
+  constructor(public templateRef: TemplateRef<any>) {}
+}
 
 @Component({
   selector: 'app-simple-virtual-list',
@@ -19,6 +29,7 @@ import {
   styleUrls: ['./simple-virtual-list.component.scss']
 })
 export class SimpleVirtualListComponent implements OnInit, OnChanges {
+  @ContentChild(SimpleVirtualListChildDirective) itemTemplate: SimpleVirtualListChildDirective;
   // pointerEvents: 'none' | 'auto' = 'auto';
 
   // TODO: rename bufferCount into bufferSize.

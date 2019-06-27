@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { DropdownDirective } from 'src/app/shared/ngb-extension/dropdown/dropdown.directive';
@@ -10,12 +10,16 @@ import { DictionaryDbService } from '../services/dictionary-db.service';
   styleUrls: ['./dictionary-search.component.scss']
 })
 export class DictionarySearchComponent implements OnInit {
+  @Output() wordChange = new EventEmitter<string>();
+
   @ViewChild('drop') drop: DropdownDirective;
+
   private _items: string[] = [];
 
   get items(): string[] {
     return this._items;
   }
+
   set items(value: string[]) {
     this._items = value;
     this.drop.opened = !!value;
@@ -24,6 +28,7 @@ export class DictionarySearchComponent implements OnInit {
 
   selection = -1;
   word = '';
+  term = '';
   search = new BehaviorSubject<string>('');
 
   constructor(private _db: DictionaryDbService) {}
@@ -46,6 +51,7 @@ export class DictionarySearchComponent implements OnInit {
     if (this.drop.opened) {
       if (this.selection >= 0 && this.selection < this._items.length) {
         this.word = this._items[this.selection];
+        this.wordChange.emit(this.word);
       }
       this.drop.opened = false;
     }
@@ -57,8 +63,8 @@ export class DictionarySearchComponent implements OnInit {
   }
 
   private async _searchFor(term: string) {
-    term = term.toLowerCase();
-    const list: string[] = await this._db.getTags(term);
+    this.term = term.toLowerCase();
+    const list: string[] = await this._db.getTags(this.term);
     list.sort((a, b) => {
       const i = a.indexOf(term);
       const j = b.indexOf(term);
