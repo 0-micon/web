@@ -139,6 +139,17 @@ function filterOut(list: number[], filter: number[]): number[] {
   });
 }
 
+function filterIn(list: number[], filter: number[]): number[] {
+  const len = filter.length;
+  let i = 0;
+  return list.filter(value => {
+    while (i < len && filter[i] < value) {
+      i++;
+    }
+    return i < len && value === filter[i];
+  });
+}
+
 function toPromise<T>(request: IDBRequest<T>) {
   return new Promise<T>((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
@@ -472,14 +483,52 @@ export class DictionaryDbService {
     });
   }
 
-  getTags(word: string) {
-    // word = word.toLowerCase();
-    // const tags = wordToTags(word);
+  async getTags(word: string) {
+    word = word.toLowerCase();
+    const tags = wordToTags(word);
+    const length = tags.length;
+    if (length < 1) {
+      return [];
+    }
+    const store = await this._getStore(TAG_STORE_NAME);
+    let tagEntry: Tag = await toPromise(store.get(tags[0]));
+    if (!tagEntry) {
+      return [];
+    }
+
+    let words = tagEntry.word_ids;
+    for (let i = 1; words.length > 0 && i < length; i++) {
+      tagEntry = await toPromise(store.get(tags[i]));
+      if (tagEntry) {
+        words = filterIn(words, tagEntry.word_ids);
+      } else {
+        return [];
+      }
+    }
+
+    if (!words) {
+      return [];
+    }
+
+    return this.getWords(words);
+    // console.log('Words:', words);
+
     // this._getStore(TAG_STORE_NAME).then(store => {
     //   if (tags.length > 1) {
     //     toPromise(store.get(tags[0])).then((tag: Tag) => )
     //   }
     // });
+  }
+
+  async getWords(word_ids: number[]) {
+    console.log('Getting words for:', word_ids.length);
+    const words: string[] = [];
+    const store = await this._getStore(WORD_STORE_NAME);
+    for (const key of word_ids) {
+      const entry: Word = await toPromise(store.get(key));
+      words.push(entry.name);
+    }
+    return words;
   }
 
   private async _createTransaction(

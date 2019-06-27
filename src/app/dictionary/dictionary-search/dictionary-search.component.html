@@ -1,1 +1,14 @@
-<input type="search" (change)="onChange($event.target.value)">
+<div class="input-group" appDropdown #drop="appDropdown" autoClose="outside">
+  <input type="search" class="form-control" [(appDropdownInput)]="selection" [itemCount]="items.length"
+    (keyup.Enter)="onInputEnter()" (keydown.Enter)="$event.preventDefault()" placeholder="search" [ngModel]="word"
+    (ngModelChange)="onChange($event)" />
+  <div class="input-group-append">
+    <button type="button" class="btn btn-outline-primary" appDropdownToggle></button>
+  </div>
+
+  <app-simple-virtual-list #list appDropdownMenuBase appDropdownItemSelector [selectedItem]="selection"
+    (selectedItemChange)="list.scrollToItem($event)" [style.width.%]="100" [items]="items" [selection]="selection"
+    (itemFocusRequest)="list.setFocus()" (selectionChange)="onItemClick($event)">
+  </app-simple-virtual-list>
+
+</div>
