@@ -8,9 +8,32 @@ export const showProductCode = createSelector(
   state => state.showProductCode
 );
 
+export const currentProductId = createSelector(
+  product,
+  state => state.currentProductId
+);
+
 export const currentProduct = createSelector(
   product,
-  state => state.currentProduct
+  currentProductId,
+  (state, id) => {
+    if (id === 0) {
+      return {
+        id: 0,
+        productName: null,
+        productCode: null,
+        releaseDate: null,
+        price: null,
+        description: null,
+        starRating: null,
+        imageUrl: null,
+        tags: []
+      };
+    } else if (id > 0) {
+      return state.products.find(p => p.id === id);
+    }
+    return null;
+  }
 );
 
 export const products = createSelector(

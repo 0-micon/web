@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 import { NumericValidator } from 'src/app/share/validators/numeric-validator';
 import { debounceTime } from 'rxjs/operators';
 
-import { ProductService } from 'src/app/product/product.service';
+// import { ProductService } from 'src/app/product/product.service';
 
 import { IProduct } from 'src/app/product/product';
 import { IResolvedProduct } from '../product-resolver.service';
@@ -47,8 +47,8 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
   constructor(
     private _fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router,
-    private productService: ProductService
+    private router: Router
+    // private productService: ProductService
   ) {
     super();
   }
@@ -158,9 +158,9 @@ export class ProductEditComponent extends FormBase implements OnInit, AfterViewI
           ...this.info.value,
           tags: this.tags.controls.map(c => c.value)
         };
-        this.productService
-          .updateProduct(product)
-          .subscribe(() => this.onSaveComplete(), error => (this.errorMessage = error));
+        // this.productService
+        //   .updateProduct(product)
+        //   .subscribe(() => this.onSaveComplete(), error => (this.errorMessage = error));
       } else {
         this.onSaveComplete();
       }

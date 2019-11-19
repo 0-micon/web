@@ -32,6 +32,10 @@ export class ProductStateService {
     this._store.dispatch(Actions.setCurrentProduct(product));
   }
 
+  updateProduct(product: IProduct): void {
+    this._store.dispatch(Actions.updateProduct(product));
+  }
+
   showProductCode(value: boolean): void {
     this._store.dispatch(Actions.showProductCode(value));
   }
