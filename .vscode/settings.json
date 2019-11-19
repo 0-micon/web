@@ -1,5 +1,10 @@
 {
   "files.exclude": {
     "**/node_modules": true
-  }
+  },
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+
+  "prettier.singleQuote": true,
+  "prettier.printWidth": 100
 }
