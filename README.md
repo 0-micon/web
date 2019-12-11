@@ -534,3 +534,276 @@ app.listen(3000, function () {
     },
     ...
 ```
+
+# Code Splitting
+There are three general approaches to code splitting available:
++ Entry Points: Manually split code using entry configuration.
++ Prevent Duplication: Use the SplitChunksPlugin to dedupe and split chunks.
++ Dynamic Imports: Split code via inline function calls within modules.
+
+## Entry Points
+```diff
+  project
++ |- /src/another-module.js
+```
+
+### another-module.js
+```js
+import _ from 'lodash';
+console.log(
+  _.join(['Another', 'module', 'loaded!'], ' ')
+);
+```
+
+### webpack.config.js
+```diff
+module.exports = {
+  entry: {
+    ...
++   another: './src/another-module.js',
+  },
+};
+```
+
+## Prevent Duplication
+### webpack.config.js
+```diff
+  module.exports = {
+    ...
++   optimization: {
++     splitChunks: {
++       chunks: 'all',
++     },
++   },
+  };
+```
+
+## Dynamic Imports
+```diff
+  project
+- |- /src/another-module.js
+```
+### webpack.config.js
+```diff
+  module.exports = {
+    entry: {
+      ...
+-     another: './src/another-module.js',
+    },
+    output: {
+      filename: '[name].bundle.js',
++     chunkFilename: '[name].bundle.js',
+      publicPath: 'dist/',
+      path: path.resolve(__dirname, 'dist'),
+    },
+-   optimization: {
+-     splitChunks: {
+-       chunks: 'all',
+-     },
+-   },
+  };
+```
+
+Now, instead of statically importing lodash, we'll use dynamic importing to separate a chunk:
+
+### src/index.js
+```diff
+- import _ from 'lodash';
+-
+- function component() {
++ function getComponent() {
+-   const element = document.createElement('div');
+-
+-   // Lodash, now imported by this script
+-   element.innerHTML = _.join(['Hello', 'webpack'], ' ');
++   return import(/* webpackChunkName: "lodash" */ 'lodash').then(({ default: _ }) => {
++     const element = document.createElement('div');
++
++     element.innerHTML = _.join(['Hello', 'webpack'], ' ');
++
++     return element;
++
++   }).catch(error => 'An error occurred while loading the component');
+  }
+
+- document.body.appendChild(component());
++ getComponent().then(component => {
++   document.body.appendChild(component);
++ })
+```
+
+# Caching
+## Output Filenames
+### webpack.config.js
+```diff
+  module.exports = {
+    plugins: [
+      new CleanWebpackPlugin(),
+      new HtmlWebpackPlugin({
+-       title: 'Output Management',
++       title: 'Caching',
+      }),
+    ],
+    output: {
+-     filename: 'bundle.js',
++     filename: '[name].[contenthash].js',
+      path: path.resolve(__dirname, 'dist'),
+    },
+  };
+```
+
+## Extracting Boilerplate
+Set runtimeChunk to 'single' to create a single runtime bundle for all chunks.
+### webpack.config.js
+```diff
+  module.exports = {
+    ...
++   optimization: {
++     runtimeChunk: 'single',
++   },
+  };
+```
+Set runtimeChunk to 'cacheGroups' to extract third-party libraries.
+### webpack.config.js
+```diff
+  module.exports = {
+    ...
+    optimization: {
+      runtimeChunk: 'single',
++     splitChunks: {
++       cacheGroups: {
++         vendor: {
++           test: /[\\/]node_modules[\\/]/,
++           name: 'vendors',
++           chunks: 'all',
++         },
++       },
++     },
+    },
+  };
+```
+
+## Module Identifiers
+```
+project
+|- package.json
+|- webpack.config.js
+|- /dist
+|- /src
+  |- index.js
+  |- print.js
+|- /node_modules
+```
+### print.js
+```js
+export default function print(text) {
+   console.log(text);
+};
+```
+### src/index.js
+```diff
++ import Print from './print';
+
+  function component() {
+    ...
++   element.onclick = Print.bind(null, 'Hello webpack!');
+    ...
+```
+### webpack.config.js
+```diff
+  module.exports = {
+    ...
+    optimization: {
++     moduleIds: 'hashed',
+    ...
+```
+
+# TypeScript
+
+## Basic Setup
+```shell
+npm install --save-dev typescript ts-loader
+```
+```diff
+  project
+  |- package.json
++ |- tsconfig.json
+  |- webpack.config.js
+  |- /src
+    |- index.js
++   |- index.ts
+```
+### tsconfig.json
+```json
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es5",
+    "jsx": "react",
+    "allowJs": true
+  }
+}
+```
+### webpack.config.js
+```js
+const path = require('path');
+
+module.exports = {
+  entry: './src/index.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: [ '.tsx', '.ts', '.js' ],
+  },
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+};
+```
+
+## Source Maps
+### tsconfig.json
+```diff
+  {
+    "compilerOptions": {
+      ...
++     "sourceMap": true,
+    }
+  }
+```
+### webpack.config.js
+```diff
+  module.exports = {
++   devtool: 'inline-source-map',
+    ...
+  };
+```
+
+## Using Third Party Libraries
+When installing third party libraries from __npm__, it is important to remember to install the typing definition for that library. These definitions can be found at [TypeSearch](https://microsoft.github.io/TypeSearch/).
+
+For example if we want to install __lodash__ we can run the following command to get the typings for it:
+```shell
+npm install --save-dev @types/lodash
+```
+
+## Importing Other Assets
+To use non-code assets with TypeScript, we need to defer the type for these imports. This requires a __custom.d.ts__ file which signifies custom definitions for TypeScript in our project. Let's set up a declaration for _.svg_ files:
+### custom.d.ts
+```ts
+declare module "*.svg" {
+  const content: any;
+  export default content;
+}
+```
+Here we declare a new module for SVGs by specifying any import that ends in _.svg_ and defining the module's content as any. We could be more explicit about it being a url by defining the type as string. The same concept applies to other assets including CSS, SCSS, JSON and more.
